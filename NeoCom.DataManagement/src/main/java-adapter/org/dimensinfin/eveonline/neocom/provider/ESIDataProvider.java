@@ -67,7 +67,7 @@ import retrofit2.Response;
 public class ESIDataProvider extends ESIUniverseDataProvider {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
-	public static final String DEFAULT_CONTENT_TYPE = "application/json";
+//	public static final String DEFAULT_CONTENT_TYPE = "application/json";
 	//	private static final List<Long> id4Names = new ArrayList<>();
 	// - C A C H E S
 	private static final Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();

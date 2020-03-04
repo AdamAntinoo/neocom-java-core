@@ -51,7 +51,7 @@ public class Credential extends UpdatableEntity {
 	private Integer accountId = -2;
 	@DatabaseField
 	private String accountName;
-//	@DatabaseField
+	@DatabaseField
 	private int corporationId = -3; // Store the pilot's corporation identifier to be used on the UI.
 	@DatabaseField
 	private String dataSource = "Tranquility".toLowerCase();
@@ -71,6 +71,8 @@ public class Credential extends UpdatableEntity {
 	private Double miningResourcesEstimatedValue = 0.0;
 	@DatabaseField
 	private String raceName;
+	@DatabaseField
+	private String jwtToken;
 
 	// - C O N S T R U C T O R S
 	public Credential() {
@@ -88,18 +90,34 @@ public class Credential extends UpdatableEntity {
 	public boolean isValid() {
 		if (StringUtils.isEmpty( this.dataSource )) return false;
 		if (StringUtils.isEmpty( this.accessToken )) return false;
-		if (StringUtils.isEmpty( this.refreshToken )) return false;
-		return true;
+		return !StringUtils.isEmpty( this.refreshToken );
 	}
 
 	public String getUniqueId() {
 		return this.uniqueCredential;
 	}
 
+	/**
+	 * This is a virtual method which requirement is to have the right input/output api for the repository converters.
+	 * @param dummy not used parameter
+	 * @return the self instance.
+	 * @deprecated
+	 */
+	@Deprecated
+	public Credential setUniqueId( final String dummy ) {
+		return this;
+	}
+
 	public Integer getAccountId() {
 		return this.accountId;
 	}
 
+	/**
+	 *
+	 * @param accountId the new account identifier to be set
+	 * @return the self instance.
+	 * @deprecated
+	 */
 	@Deprecated
 	public Credential setAccountId( final Integer accountId ) {
 		this.accountId = accountId;
@@ -128,6 +146,15 @@ public class Credential extends UpdatableEntity {
 		return this;
 	}
 
+	public String getJwtToken() {
+		return this.jwtToken;
+	}
+
+	public Credential setJwtToken( final String jwtToken ) {
+		this.jwtToken = jwtToken;
+		return this;
+	}
+
 	public String getRefreshToken() {
 		return this.refreshToken;
 	}
@@ -136,6 +163,11 @@ public class Credential extends UpdatableEntity {
 		return this.dataSource.toLowerCase();
 	}
 
+	/**
+	 * This is mostly not required since there is only a single data source.
+	 * @param dataSource the data source to be set.
+	 * @deprecated
+	 */
 	@Deprecated
 	public void setDataSource( final String dataSource ) {
 		if (null != dataSource) this.dataSource = dataSource.toLowerCase();
@@ -179,10 +211,6 @@ public class Credential extends UpdatableEntity {
 
 	public String getScope() {
 		return scope;
-	}
-
-	public Credential setUniqueId( final String dummy ) {
-		return this;
 	}
 
 	// - C O R E
@@ -250,13 +278,28 @@ public class Credential extends UpdatableEntity {
 			this.onConstruction = new Credential( account );
 		}
 
+		public Credential build() {
+			Objects.requireNonNull( this.onConstruction.accountName );
+			return this.onConstruction;
+		}
+
+		public Builder withAccessToken( final String accessToken ) {
+			if (null != accessToken) this.onConstruction.accessToken = accessToken;
+			return this;
+		}
+
 		public Builder withAccountId( final Integer accountId ) {
-			if (null != accountId) this.onConstruction.setAccountId( accountId );
+			if (null != accountId) this.onConstruction.accountId = accountId;
 			return this;
 		}
 
 		public Builder withAccountName( final String accountName ) {
 			if (null != accountName) this.onConstruction.accountName = accountName;
+			return this;
+		}
+
+		public Builder withAssetsCount( final Integer assetsCount ) {
+			if (null != assetsCount) this.onConstruction.assetsCount = assetsCount;
 			return this;
 		}
 
@@ -267,36 +310,6 @@ public class Credential extends UpdatableEntity {
 
 		public Builder withDataSource( final String dataSource ) {
 			if (null != dataSource) this.onConstruction.dataSource = dataSource;
-			return this;
-		}
-
-		public Builder withTokenType( final String tokenType ) {
-			if (null != tokenType) this.onConstruction.tokenType = tokenType;
-			return this;
-		}
-
-		public Builder withAccessToken( final String accessToken ) {
-			if (null != accessToken) this.onConstruction.accessToken = accessToken;
-			return this;
-		}
-
-		public Builder withRefreshToken( final String refreshToken ) {
-			if (null != refreshToken) this.onConstruction.refreshToken = refreshToken;
-			return this;
-		}
-
-		public Builder withScope( final String scope ) {
-			if (null != scope) this.onConstruction.scope = scope;
-			return this;
-		}
-
-		public Builder withWalletBalance( final Double walletBalance ) {
-			if (null != walletBalance) this.onConstruction.walletBalance = walletBalance;
-			return this;
-		}
-
-		public Builder withAssetsCount( final Integer assetsCount ) {
-			if (null != assetsCount) this.onConstruction.assetsCount = assetsCount;
 			return this;
 		}
 
@@ -311,9 +324,24 @@ public class Credential extends UpdatableEntity {
 			return this;
 		}
 
-		public Credential build() {
-			Objects.requireNonNull( this.onConstruction.accountName );
-			return this.onConstruction;
+		public Builder withRefreshToken( final String refreshToken ) {
+			if (null != refreshToken) this.onConstruction.refreshToken = refreshToken;
+			return this;
+		}
+
+		public Builder withScope( final String scope ) {
+			if (null != scope) this.onConstruction.scope = scope;
+			return this;
+		}
+
+		public Builder withTokenType( final String tokenType ) {
+			if (null != tokenType) this.onConstruction.tokenType = tokenType;
+			return this;
+		}
+
+		public Builder withWalletBalance( final Double walletBalance ) {
+			if (null != walletBalance) this.onConstruction.walletBalance = walletBalance;
+			return this;
 		}
 	}
 }
