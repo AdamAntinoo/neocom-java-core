@@ -11,24 +11,4 @@ public class CredentialStoreResponse {
 	public String getJwtToken() {
 		return jwtToken;
 	}
-
-//	// - B U I L D E R
-//	public static class Builder {
-//		private CredentialStoreResponse onConstruction;
-//
-//		public Builder() {
-//			this.onConstruction = new CredentialStoreResponse();
-//		}
-//
-//		public CredentialStoreResponse build() {
-//			Objects.requireNonNull( this.onConstruction.jwtToken );
-//			return this.onConstruction;
-//		}
-//
-//		public CredentialStoreResponse.Builder withJwtToken( final String jwtToken ) {
-//			Objects.requireNonNull( jwtToken );
-//			this.onConstruction.jwtToken = jwtToken;
-//			return this;
-//		}
-//	}
 }

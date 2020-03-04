@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -26,11 +25,48 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 public class AssetRepository {
 	private static final Logger logger = LoggerFactory.getLogger( AssetRepository.class );
+	private static final String OWNERID = "ownerId";
 	// - C O M P O N E N T S
 	protected Dao<NeoAsset, UUID> assetDao;
 	protected ConnectionSource connection4Transaction;
 
 	protected AssetRepository() {}
+
+	/**
+	 * removes from the application database any asset and blueprint that contains the special -1 code as the
+	 * owner identifier. Those records are from older downloads and have to be removed to avoid merging with the
+	 * new download.
+	 */
+	public synchronized void clearInvalidRecords( final long pilotIdentifier ) {
+		NeoComLogger.enter( "pilotIdentifier: {}", Long.toString( pilotIdentifier ) );
+		synchronized (this.connection4Transaction) {
+			try {
+				TransactionManager.callInTransaction( this.connection4Transaction, () -> {
+					// Remove all assets that do not have a valid owner.
+					final DeleteBuilder<NeoAsset, UUID> deleteBuilder = assetDao.deleteBuilder();
+					deleteBuilder.where().eq( OWNERID, (pilotIdentifier * -1) );
+					int count = deleteBuilder.delete();
+					NeoComLogger.info( "Invalid assets cleared for owner {}: {}",
+							(pilotIdentifier * -1) + "", count + "" );
+
+					// Remove all blueprints that do not have a valid owner.
+					// TODO - to activate when processing blueprints.
+//					final DeleteBuilder<NeoComBlueprint, String> deleteBuilderBlueprint = getBlueprintDao().deleteBuilder();
+//					deleteBuilderBlueprint.where().eq( "ownerId", (pilotIdentifier * -1) );
+//					count = deleteBuilderBlueprint.delete();
+//					logger.info(
+//							"-- [NeoComAndroidDBHelper.clearInvalidRecords]> Invalid blueprints cleared for owner {}: {}",
+//							(pilotIdentifier * -1),
+//							count );
+					return null;
+				} );
+			} catch (final SQLException sqle) {
+				NeoComLogger.info( "Problem clearing invalid records", sqle );
+			} finally {
+				NeoComLogger.exit();
+			}
+		}
+	}
 
 	/**
 	 * Get the complete list of the assets that belong to this owner.
@@ -40,10 +76,9 @@ public class AssetRepository {
 		try {
 			QueryBuilder<NeoAsset, UUID> queryBuilder = this.assetDao.queryBuilder();
 			Where<NeoAsset, UUID> where = queryBuilder.where();
-			where.eq( "ownerId", ownerId );
+			where.eq( OWNERID, ownerId );
 			final List<NeoAsset> assetList = assetDao.query( queryBuilder.prepare() );
 			NeoComLogger.info( "Assets read: {}", assetList.size() + "" );
-			final List<NeoAsset> resultList = new ArrayList<>();
 			return Stream.of( assetList )
 					.map( this::assetReconstructor )
 					.collect( Collectors.toList() );
@@ -66,39 +101,12 @@ public class AssetRepository {
 		}
 	}
 
-	/**
-	 * removes from the application database any asset and blueprint that contains the special -1 code as the
-	 * owner identifier. Those records are from older downloads and have to be removed to avoid merging with the
-	 * new download.
-	 */
-	public synchronized void clearInvalidRecords( final long pilotIdentifier ) {
-		NeoComLogger.enter( "pilotIdentifier: {}", Long.toString( pilotIdentifier ) );
-		synchronized (this.connection4Transaction) {
-			try {
-				TransactionManager.callInTransaction( this.connection4Transaction, (Callable<Void>) () -> {
-					// Remove all assets that do not have a valid owner.
-					final DeleteBuilder<NeoAsset, UUID> deleteBuilder = assetDao.deleteBuilder();
-					deleteBuilder.where().eq( "ownerId", (pilotIdentifier * -1) );
-					int count = deleteBuilder.delete();
-					NeoComLogger.info( "Invalid assets cleared for owner {}: {}",
-							(pilotIdentifier * -1) + "", count + "" );
-
-					// Remove all blueprints that do not have a valid owner.
-//					final DeleteBuilder<NeoComBlueprint, String> deleteBuilderBlueprint = getBlueprintDao().deleteBuilder();
-//					deleteBuilderBlueprint.where().eq( "ownerId", (pilotIdentifier * -1) );
-//					count = deleteBuilderBlueprint.delete();
-//					logger.info(
-//							"-- [NeoComAndroidDBHelper.clearInvalidRecords]> Invalid blueprints cleared for owner {}: {}",
-//							(pilotIdentifier * -1),
-//							count );
-					return null;
-				} );
-			} catch (final SQLException ex) {
-				logger.warn(
-						"W> [NeoComAndroidDBHelper.clearInvalidRecords]> Problem clearing invalid records. " + ex.getMessage() );
-			} finally {
-				logger.info( "<< [NeoComAndroidDBHelper.clearInvalidRecords]" );
-			}
+	public void persist( final NeoAsset record ) throws SQLException {
+		if (null != record) {
+			record.timeStamp();
+			record.generateUid();
+			this.assetDao.createOrUpdate( record );
+			NeoComLogger.info( "Wrote asset to database id [" + record.getAssetId() + "]" );
 		}
 	}
 
@@ -107,41 +115,32 @@ public class AssetRepository {
 	 * completes the download and the assignment of the resources to the character without interrupting the
 	 * processing of data by the application.
 	 */
-	public synchronized void replaceAssets( final long pilotid ) {
-		logger.info( ">> [AndroidNeoComDBHelper.clearInvalidRecords]> pilotid: {}", pilotid );
+	public synchronized void replaceAssets( final long pilotIdentifier ) {
+		NeoComLogger.enter( "pilotIdentifier: {}", Long.toString( pilotIdentifier ) );
 		synchronized (this.connection4Transaction) {
 			try {
-				TransactionManager.callInTransaction( this.connection4Transaction, (Callable<Void>) () -> {
+				TransactionManager.callInTransaction( this.connection4Transaction, () -> {
 					// Remove all assets from this owner before adding the new set.
 					final DeleteBuilder<NeoAsset, UUID> deleteBuilder = this.assetDao.deleteBuilder();
-					deleteBuilder.where().eq( "ownerId", pilotid );
+					deleteBuilder.where().eq( OWNERID, pilotIdentifier );
 					int count = deleteBuilder.delete();
-					logger.info( "-- [AndroidNeoComDBHelper.replaceAssets]> Invalid assets cleared for owner {}: {}", pilotid,
+					logger.info( "-- [AndroidNeoComDBHelper.replaceAssets]> Invalid assets cleared for owner {}: {}", pilotIdentifier,
 							count );
 
 					// Replace the owner to vake the assets valid.
 					final UpdateBuilder<NeoAsset, UUID> updateBuilder = this.assetDao.updateBuilder();
-					updateBuilder.updateColumnValue( "ownerId", pilotid )
-							.where().eq( "ownerId", (pilotid * -1) );
+					updateBuilder.updateColumnValue( OWNERID, pilotIdentifier )
+							.where().eq( OWNERID, (pilotIdentifier * -1) );
 					count = updateBuilder.update();
-					logger.info( "-- [AndroidNeoComDBHelper.replaceAssets]> Replace owner {} for assets: {}", pilotid,
+					logger.info( "-- [AndroidNeoComDBHelper.replaceAssets]> Replace owner {} for assets: {}", pilotIdentifier,
 							count );
 					return null;
 				} );
-			} catch (final SQLException ex) {
-				logger.warn( "W> [AndroidNeoComDBHelper.replaceAssets]> Problem replacing records. " + ex.getMessage() );
+			} catch (final SQLException sqle) {
+				NeoComLogger.info( "Problem replacing records", sqle );
 			} finally {
-				logger.info( "<< [AndroidNeoComDBHelper.replaceAssets]" );
+				NeoComLogger.exit();
 			}
-		}
-	}
-
-	public void persist( final NeoAsset record ) throws SQLException {
-		if (null != record) {
-			record.timeStamp();
-			record.generateUid();
-			this.assetDao.createOrUpdate( record );
-			NeoComLogger.info( "Wrote asset to database id [" + record.getAssetId() + "]" );
 		}
 	}
 
@@ -169,6 +168,12 @@ public class AssetRepository {
 			this.onConstruction = new AssetRepository();
 		}
 
+		public AssetRepository build() {
+			Objects.requireNonNull( this.onConstruction.assetDao );
+			Objects.requireNonNull( this.onConstruction.connection4Transaction );
+			return this.onConstruction;
+		}
+
 		public AssetRepository.Builder withAssetDao( final Dao<NeoAsset, UUID> assetsDao ) {
 			Objects.requireNonNull( assetsDao );
 			this.onConstruction.assetDao = assetsDao;
@@ -179,12 +184,6 @@ public class AssetRepository {
 			Objects.requireNonNull( connection );
 			this.onConstruction.connection4Transaction = connection;
 			return this;
-		}
-
-		public AssetRepository build() {
-			Objects.requireNonNull( this.onConstruction.assetDao );
-			Objects.requireNonNull( this.onConstruction.connection4Transaction );
-			return this.onConstruction;
 		}
 	}
 }

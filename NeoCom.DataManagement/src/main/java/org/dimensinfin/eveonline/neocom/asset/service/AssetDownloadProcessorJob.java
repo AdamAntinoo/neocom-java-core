@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.asset.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @NeoComComponent
 public class AssetDownloadProcessorJob extends Job {
-	private static final Map<EsiAssets200Ok.LocationFlagEnum, Integer> officeContainerLocationFlags = new HashMap<>( 7 );
+	private static final Map<EsiAssets200Ok.LocationFlagEnum, Integer> officeContainerLocationFlags = new EnumMap<>( EsiAssets200Ok.LocationFlagEnum.class );
 
 	static {
 		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG1, 1 );
@@ -209,7 +210,7 @@ public class AssetDownloadProcessorJob extends Job {
 					if (null != structure) {
 						// SIDE EFFECTS. This is modifying the asset location.
 						workLocationId.setType( LocationIdentifierType.STRUCTURE );
-//						workLocationId.setStructureIdentifier( workLocationId.getSpaceIdentifier() );
+//						workLocationId.set( workLocationId.getSpaceIdentifier() );
 						// SIDE EFFECTS. This is modifying the asset location.
 					}
 				}
@@ -228,7 +229,7 @@ public class AssetDownloadProcessorJob extends Job {
 		}
 	}
 
-	private Boolean processCharacterAssets() throws SQLException {
+	private Boolean processCharacterAssets()  {
 		this.downloadPilotAssets();
 		return true;
 	}

@@ -37,7 +37,7 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
  */
 public class AssetProvider {
 	private static final Long UNREACHABLE_LOCATION_IDENTIFIER = -1000000L;
-	private static SpaceLocation UNREACHABLE_SPACE_LOCATION;
+	private static SpaceLocation unreachableSpaceLocation;
 
 	static {
 		final GetUniverseRegionsRegionIdOk region = new GetUniverseRegionsRegionIdOk();
@@ -55,7 +55,7 @@ public class AssetProvider {
 		solarSystem.setConstellationId( 0 );
 		solarSystem.setSecurityStatus( 0.0F );
 
-		UNREACHABLE_SPACE_LOCATION = new SpaceSystemImplementation.Builder()
+		unreachableSpaceLocation = new SpaceSystemImplementation.Builder()
 				.withRegion( region )
 				.withConstellation( constellation )
 				.withSolarSystem( solarSystem )
@@ -216,7 +216,7 @@ public class AssetProvider {
 		NeoComLogger.info( "Adding to unrechable list: {}", asset.getLocationId().toString() );
 		final LocationAssetContainer hit = this.spaceLocationsCache.computeIfAbsent( UNREACHABLE_LOCATION_IDENTIFIER, key ->
 				new LocationAssetContainer.Builder()
-						.withSpaceLocation( UNREACHABLE_SPACE_LOCATION )
+						.withSpaceLocation( unreachableSpaceLocation )
 						.build() );
 		hit.addContent( asset );
 	}
