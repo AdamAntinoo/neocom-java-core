@@ -6,8 +6,9 @@ public enum ErrorInfoCatalog {
 	FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED( "data.management.retrofit.cache.file.system.error",
 			"File System exception error during retrofit cache configuration." ),
 	RUNTIME_PROCESSING_ASSET( "data.management.assets.download.process.runtime.exception",
-			"Runtime while processing asset; {0}" );
-
+			"Runtime while processing asset; {0}" ),
+	MANDATORY_CONFIGURATION_PROPERTY_EMPTY( "data.management.retrofit.configuration.error",
+			"ESI configuration property is empty while configuring the OAuth parameters." );
 	public final String errorCode;
 	public final String errorMessage;
 

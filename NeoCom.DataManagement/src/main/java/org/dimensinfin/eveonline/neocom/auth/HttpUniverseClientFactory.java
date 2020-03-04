@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.dimensinfin.eveonline.neocom.core.StorageUnits;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 
 import okhttp3.Cache;
 import okhttp3.CertificatePinner;
@@ -13,14 +12,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public class HttpUniverseClientFactory {
-	private static final String ESI_HOST = "login.eveonline.com";
+	private static final String DEFAULT_ESI_LOGIN_BACKEND_HOST = "login.eveonline.com";
 
 	private String agent = "NeoCom Data Management Library Agent.";
 	private Integer timeoutSeconds = 60;
 	private File cacheStoreFile;
-	private Long cacheSizeBytes = StorageUnits.GIGABYTES.toBytes( 2 );
-	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
+	private Long cacheSizeBytes = StorageUnits.GIGABYTES.toBytes( 1 );
 
 	private HttpUniverseClientFactory() {}
 
@@ -35,12 +32,12 @@ public class HttpUniverseClientFactory {
 						.readTimeout( this.timeoutSeconds, TimeUnit.SECONDS )
 						.certificatePinner(
 								new CertificatePinner.Builder()
-										.add( "login.eveonline.com", "sha256/075pvb1KMqiPud6f347Lhzb0ALOY+dX5G7u+Yx+b8U4=" )
-										.add( "login.eveonline.com", "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=" )
-										.add( "login.eveonline.com", "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=" )
+										.add( DEFAULT_ESI_LOGIN_BACKEND_HOST, "sha256/075pvb1KMqiPud6f347Lhzb0ALOY+dX5G7u+Yx+b8U4=" )
+										.add( DEFAULT_ESI_LOGIN_BACKEND_HOST, "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=" )
+										.add( DEFAULT_ESI_LOGIN_BACKEND_HOST, "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=" )
 										.build() );
 		// Additional characteristics
-		if (null != this.cacheStoreFile)
+		if (null != this.cacheStoreFile) // If the cache file is not set then deactivate the cache
 			universeClientBuilder.cache( new Cache( this.cacheStoreFile, this.cacheSizeBytes ) );
 		return universeClientBuilder.build();
 	}
@@ -52,40 +49,31 @@ public class HttpUniverseClientFactory {
 		public Builder() {
 			this.onConstruction = new HttpUniverseClientFactory();
 		}
-
-		public HttpUniverseClientFactory.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
-			Objects.requireNonNull( configurationProvider );
-			this.onConstruction.configurationProvider = configurationProvider;
-			return this;
-		}
-
-		public HttpUniverseClientFactory.Builder withAgent( final String agent ) {
+		public HttpUniverseClientFactory.Builder optionalAgent( final String agent ) {
 			Objects.requireNonNull( agent );
 			this.onConstruction.agent = agent;
 			return this;
 		}
 
-		public HttpUniverseClientFactory.Builder withCacheFile( final File cacheLocation ) {
+		public HttpUniverseClientFactory.Builder optionalCacheFile( final File cacheLocation ) {
 			Objects.requireNonNull( cacheLocation );
 			this.onConstruction.cacheStoreFile = cacheLocation;
 			return this;
 		}
 
-		public HttpUniverseClientFactory.Builder withCacheSize( final Integer size, final StorageUnits unit ) {
+		public HttpUniverseClientFactory.Builder optionalCacheSize( final Integer size, final StorageUnits unit ) {
 			Objects.requireNonNull( size );
 			this.onConstruction.cacheSizeBytes = unit.toBytes( size );
 			return this;
 		}
 
-		public HttpUniverseClientFactory.Builder withTimeout( final Integer seconds ) {
+		public HttpUniverseClientFactory.Builder optionalTimeout( final Integer seconds ) {
 			if (null != seconds)
 				this.onConstruction.timeoutSeconds = seconds;
 			return this;
 		}
 
 		public OkHttpClient generate() {
-			Objects.requireNonNull( this.onConstruction.configurationProvider );
-//			Objects.requireNonNull( this.onConstruction.agent );
 			return this.onConstruction.clientBuilder();
 		}
 	}

@@ -21,8 +21,8 @@ publishing {
     publications {
         jar(MavenPublication) {
             groupId project.group
-            artifactId project.archivesBaseName
             version project.version
+            artifactId project.archivesBaseName
             artifact("$buildDir/libs/${archivesBaseName}-${version}.jar")
         }
     }
