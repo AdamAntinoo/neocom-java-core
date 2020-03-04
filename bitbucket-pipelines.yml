@@ -7,20 +7,44 @@ definitions:
   caches:
     sonar: ~/.sonar/cache  # Caching SonarCloud artifacts will speed up your build
   steps:
-    - step: &build-test-sonarcloud
+    - step: &build
+        name: Build the code to check there are no compilation errors
+        caches:
+          - gradle
+          - sonar
+        script:
+          - ./gradlew clean build
+        artifacts:
+          - build/libs/**
+    - step: &build-test
+        name: Build the code to check there are no compilation errors
+        caches:
+          - gradle
+          - sonar
+        script:
+          - ./gradlew clean build test
+        artifacts:
+          - build/libs/**
+    - step: &build-test-coverage-sonarcloud
         name: Build, test and analyze on SonarCloud
         caches:
           - gradle
           - sonar
         script:
-          - ./gradlew build sonarqube
+          - ./gradlew clean build test
+          - ./gradlew jacocoTestReport
+          - ./gradlew sonarqube
         artifacts:
           - build/libs/**
 
 pipelines:                 # More info here: https://confluence.atlassian.com/bitbucket/configure-bitbucket-pipelines-yml-792298910.html
   branches:
     master:
-      - step: *build-test-sonarcloud
+      - step: *build-test-coverage-sonarcloud
+    development:
+      - step: *build
+    ci:
+      - step: *build-test
   pull-requests:
     '**':
-      - step: *build-test-sonarcloud
+      - step: *build

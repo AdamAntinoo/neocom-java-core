@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.db.PostgresDatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -38,8 +37,10 @@ public class IntegrationEnvironmentDefinition {
 	protected static final int DEFAULT_SCHEMATIC = 127;
 
 	protected static final JdbcConnectionSource connectionSource;
-	private static final int ESI_UNITTESTING_PORT = 6090;
-	private static final GenericContainer<?> esisimulator;
+	protected static final int ESI_UNITTESTING_PORT = 6090;
+	protected static final int BACKEND_UNITTESTING_PORT = 6092;
+	protected static final GenericContainer<?> esisimulator;
+	protected static final GenericContainer<?> backendSimulator;
 	private static final PostgreSQLContainer postgres;
 	private static final String connectionUrl;
 	protected static Credential credential4Test;
@@ -52,6 +53,14 @@ public class IntegrationEnvironmentDefinition {
 						BindMode.READ_WRITE )
 				.withCommand( "bin/apisimulator start /esi-unittesting" );
 		esisimulator.start();
+		backendSimulator = new GenericContainer<>( "apimastery/apisimulator" )
+				.withExposedPorts( BACKEND_UNITTESTING_PORT )
+				.withFileSystemBind(
+						"/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/backend-unittesting",
+						"/backend-unittesting",
+						BindMode.READ_WRITE )
+				.withCommand( "bin/apisimulator start /backend-unittesting -p 6092" );
+		backendSimulator.start();
 	}
 
 	static {
@@ -77,13 +86,13 @@ public class IntegrationEnvironmentDefinition {
 		connectionSource = connectionSource1;
 	}
 
-	@BeforeAll
-	public static void beforeAllCredential() {
-		credential4Test = Mockito.mock( Credential.class );
-		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
-		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
-		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
-	}
+//	@BeforeAll
+//	public static void beforeAllCredential() {
+//		credential4Test = Mockito.mock( Credential.class );
+//		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
+//		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
+//		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
+//	}
 
 	protected SBConfigurationProvider itConfigurationProvider;
 	protected IFileSystem itFileSystemAdapter;

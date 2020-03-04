@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
+import org.dimensinfin.eveonline.neocom.backend.rest.v1.CredentialStoreResponse;
 import org.dimensinfin.eveonline.neocom.backend.rest.v1.NeoComApiv1;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
@@ -22,10 +23,10 @@ public class NeoComBackendService {
 
 	@TimeElapsed
 	@LogEnterExit
-	public String putCredential( final Credential credential ) {
+	public CredentialStoreResponse putCredential( final Credential credential ) {
 		NeoComLogger.enter( "Credential:", credential.toString() );
 		try {
-			final Response<String> backendApiResponse = this.retrofitFactory
+			final Response<CredentialStoreResponse> backendApiResponse = this.retrofitFactory
 					.accessBackendConnector()
 					.create( NeoComApiv1.class )
 					.putCredential( DEFAULT_CONTENT_TYPE, credential.getAccountId(), credential )

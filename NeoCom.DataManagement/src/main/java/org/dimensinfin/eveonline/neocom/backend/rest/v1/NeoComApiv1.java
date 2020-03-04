@@ -10,7 +10,7 @@ import retrofit2.http.Path;
 
 public interface NeoComApiv1 {
 	@POST("/api/v1/neocom/credentials/{credentialId}")
-	Call<String> putCredential( @Header("Content-Type") String contentType,
+	Call<CredentialStoreResponse> putCredential( @Header("Content-Type") String contentType,
 	                                             @Path("credentialId") Integer credentialId,
 	                                             @Body Credential credential);
 }
