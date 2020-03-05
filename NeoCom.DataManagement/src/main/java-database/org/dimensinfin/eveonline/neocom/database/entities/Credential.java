@@ -40,9 +40,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @DatabaseTable(tableName = "Credentials")
 public class Credential extends UpdatableEntity {
 	private static final long serialVersionUID = -4248173464157148843L;
+	private static final String CREDENTIAL_IDENTIFIER_SEPARATOR = ".";
 
 	public static String createUniqueIdentifier( final String server, final Integer identifier ) {
-		return server.toLowerCase() + "/" + identifier.toString();
+		return server.toLowerCase() + CREDENTIAL_IDENTIFIER_SEPARATOR + identifier.toString();
 	}
 
 	@DatabaseField(id = true, index = true)
@@ -75,6 +76,10 @@ public class Credential extends UpdatableEntity {
 	private String jwtToken;
 
 	// - C O N S T R U C T O R S
+
+	/**
+	 * WARNING - This constructor is required because this a repository entity.
+	 */
 	public Credential() {
 		super();
 	}
@@ -99,6 +104,7 @@ public class Credential extends UpdatableEntity {
 
 	/**
 	 * This is a virtual method which requirement is to have the right input/output api for the repository converters.
+	 *
 	 * @param dummy not used parameter
 	 * @return the self instance.
 	 * @deprecated
@@ -113,7 +119,6 @@ public class Credential extends UpdatableEntity {
 	}
 
 	/**
-	 *
 	 * @param accountId the new account identifier to be set
 	 * @return the self instance.
 	 * @deprecated
@@ -165,6 +170,7 @@ public class Credential extends UpdatableEntity {
 
 	/**
 	 * This is mostly not required since there is only a single data source.
+	 *
 	 * @param dataSource the data source to be set.
 	 * @deprecated
 	 */
@@ -274,11 +280,13 @@ public class Credential extends UpdatableEntity {
 	public static class Builder {
 		private Credential onConstruction;
 
-		public Builder( final Integer account ) {
-			this.onConstruction = new Credential( account );
+		public Builder( final Integer accountId ) {
+			Objects.requireNonNull( accountId );
+			this.onConstruction = new Credential( accountId );
 		}
 
 		public Credential build() {
+			Objects.requireNonNull( this.onConstruction.accountId );
 			Objects.requireNonNull( this.onConstruction.accountName );
 			return this.onConstruction;
 		}
@@ -288,6 +296,12 @@ public class Credential extends UpdatableEntity {
 			return this;
 		}
 
+		/**
+		 * This should not be used since the credential identifier is set when creating the credential on the Builder.
+		 *
+		 * @deprecated
+		 */
+		@Deprecated
 		public Builder withAccountId( final Integer accountId ) {
 			if (null != accountId) this.onConstruction.accountId = accountId;
 			return this;
@@ -303,8 +317,8 @@ public class Credential extends UpdatableEntity {
 			return this;
 		}
 
-		public Builder withCorporationId( final int corporationId ) {
-			this.onConstruction.corporationId = corporationId;
+		public Builder withCorporationId( final Integer corporationId ) {
+			if (null != corporationId) this.onConstruction.corporationId = corporationId;
 			return this;
 		}
 
