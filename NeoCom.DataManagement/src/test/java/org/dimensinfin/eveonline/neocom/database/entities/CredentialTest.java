@@ -41,7 +41,7 @@ public class CredentialTest {
 		Assert.assertEquals(123456789.98, credential4Test.getMiningResourcesEstimatedValue(), 0.1);
 		Assert.assertEquals("TEST RACE", credential4Test.getRaceName());
 
-		Assert.assertEquals("tranquility/234567", credential4Test.getUniqueId());
+		Assert.assertEquals("tranquility/234567", credential4Test.getUniqueCredential());
 		Assert.assertEquals("TEST CREDENTIAL", credential4Test.getName());
 	}
 
@@ -106,7 +106,7 @@ public class CredentialTest {
 				.withRaceName("TEST RACE")
 				.build();
 		Assert.assertNotNull(credential);
-		Assert.assertEquals("Verify some credential fields. uniqueId", "tranquility/234567", credential.getUniqueId());
+		Assert.assertEquals("Verify some credential fields. uniqueId", "tranquility/234567", credential.getUniqueCredential());
 		Assert.assertEquals("Verify some credential fields. assets count", 98, credential.getAssetsCount());
 		Assert.assertEquals("Verify some credential fields. wallet balance", new Double(876567.54), credential.getWalletBalance());
 		Assert.assertEquals("Verify some credential fields. mining resources estimated value", new Double(123456789.98),

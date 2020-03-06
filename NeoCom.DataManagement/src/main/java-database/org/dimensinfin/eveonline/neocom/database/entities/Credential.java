@@ -4,6 +4,7 @@ import java.util.Objects;
 import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -38,6 +39,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 @Entity(name = "Credentials")
 @DatabaseTable(tableName = "Credentials")
+@JsonIgnoreProperties
 public class Credential extends UpdatableEntity {
 	private static final long serialVersionUID = -4248173464157148843L;
 	private static final String CREDENTIAL_IDENTIFIER_SEPARATOR = ".";
@@ -98,19 +100,18 @@ public class Credential extends UpdatableEntity {
 		return !StringUtils.isEmpty( this.refreshToken );
 	}
 
-	public String getUniqueId() {
+	public String getUniqueCredential() {
 		return this.uniqueCredential;
 	}
 
 	/**
-	 * This is a virtual method which requirement is to have the right input/output api for the repository converters.
+	 * This is a virtual method which requirement is to have the right input/output api for the repository deserializers.
 	 *
-	 * @param dummy not used parameter
+	 * @param newUniqueId the value to be set by the deserializer
 	 * @return the self instance.
-	 * @deprecated
 	 */
-	@Deprecated
-	public Credential setUniqueId( final String dummy ) {
+	public Credential setUniqueCredential( final String newUniqueId ) {
+		this.uniqueCredential = newUniqueId;
 		return this;
 	}
 

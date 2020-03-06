@@ -25,16 +25,8 @@ import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
  */
 @NeoComAdapter
 public abstract class AConfigurationProvider implements IConfigurationProvider {
-	// - P R O P E R T Y   N A M E S
-	public static final String BACKEND_RETROFIT_CACHE_FILE_NAME = "P.backend.retrofit.cache.directory.name";
-	public static final String NEOCOM_BACKEND_SERVER_BASE_URL = "P.backend.server.base.url";
-	public static final String CACHE_DIRECTORY_PATH = "P.cache.directory.path";
-	public static final String AUTHENTICATED_RETROFIT_SERVER_LOCATION = "P.authenticated.retrofit.server.location";
-	public static final String AUTHENTICATED_RETROFIT_SERVER_AGENT = "P.authenticated.retrofit.server.agent";
-	public static final String UNIVERSE_RETROFIT_SERVER_AGENT = "P.universe.retrofit.server.agent";
 	protected static final Logger logger = LoggerFactory.getLogger( AConfigurationProvider.class );
 	private static final String DEFAULT_PROPERTIES_FOLDER = "properties"; // The default initial location if not specified.
-
 	// - F I E L D - S E C T I O N
 	protected final Properties configurationProperties = new Properties(); // The list of defined properties
 	protected String configuredPropertiesDirectory = DEFAULT_PROPERTIES_FOLDER; // The place where to search for properties.
