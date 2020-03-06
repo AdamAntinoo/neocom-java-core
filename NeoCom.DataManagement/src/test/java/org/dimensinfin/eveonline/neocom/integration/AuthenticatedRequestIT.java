@@ -26,6 +26,12 @@ import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_OAUTH_AUTHORIZATION_STATE;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_AGENT;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CALLBACK;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CLIENTID;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER;
 
 public class AuthenticatedRequestIT {
 	private static final String CURRENT_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkpXVC1TaWduYXR1cmUtS2V5IiwidHlwIjoiSldUIn0" +
@@ -42,29 +48,38 @@ public class AuthenticatedRequestIT {
 	private NeoComOauth2Flow flow;
 	private String STATE;
 
-	private void setupEnvironment() throws IOException {
-		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.optionalPropertiesDirectory( "/src/test/resources/properties.it" ).build();
+	private List<String> constructScopes( final String data ) {
+		final List<String> resultScopes = new ArrayList<>();
+//		resultScopes.add( "publicData" );
+		final String[] scopes = data.split( " " );
+		for (int i = 0; i < scopes.length; i++)
+			resultScopes.add( scopes[i] );
+		return resultScopes;
 	}
 
 	private void setupAuthentication( final String code ) {
-		STATE = this.configurationProvider.getResourceString( "P.esi.authorization.state" );
+		STATE = this.configurationProvider.getResourceString( ESI_OAUTH_AUTHORIZATION_STATE );
 		final String dataSource = "Tranquility".toLowerCase();
 		this.flow = new NeoComOauth2Flow.Builder().withConfigurationProvider( this.configurationProvider ).build();
 		this.flow.onStartFlow( code, STATE, dataSource );
 	}
 
-//	@Test
+	private void setupEnvironment() throws IOException {
+		this.configurationProvider = new SBConfigurationProvider.Builder()
+				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
+	}
+
+	//	@Test
 	void createAuthenticatedClient() throws IOException {
 		this.setupEnvironment();
 		this.setupAuthentication( "0Cw8DQXo_0C3OgPYQPMnHg" );
 		final TokenVerification tokenStore = this.flow.onTranslationStep();
 		final Long structureId = 1031243921503L;
 		final String esiDataServerLocation = "https://esi.evetech.net/latest/";
-		final String CLIENT_ID = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.clientid" );
-		final String SECRET_KEY = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.secretkey" );
-		final String CALLBACK = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.callback" );
-		final String AGENT = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.agent",
+		final String CLIENT_ID = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CLIENTID );
+		final String SECRET_KEY = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY );
+		final String CALLBACK = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CALLBACK );
+		final String AGENT = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_AGENT,
 				"Default agent" );
 		final NeoComOAuth20 neoComOAuth20 = new NeoComOAuth20.Builder()
 				.withClientId( CLIENT_ID )
@@ -72,11 +87,11 @@ public class AuthenticatedRequestIT {
 				.withCallback( CALLBACK )
 				.withAgent( AGENT )
 				.withStore( ESIStore.DEFAULT )
-				.withScopes( this.constructScopes( tokenStore.getScopes() ) )
+				.withScopes( tokenStore.getScopes() )
 				.withState( STATE )
-				.withBaseUrl( this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.server"
+				.withBaseUrl( this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER
 						, "https://login.eveonline.com/" ) )
-				.withAccessTokenEndpoint( "oauth/token" )
+				.withAccessTokenEndpoint( "oauth/token")
 				.withAuthorizationBaseUrl( "oauth/authorize" )
 				.build();
 
@@ -116,14 +131,5 @@ public class AuthenticatedRequestIT {
 			NeoComLogger.info( "data: " + dataResponse.body().toString() );
 		} else
 			NeoComLogger.info( "Exception: " + dataResponse.toString() );
-	}
-
-	private List<String> constructScopes( final String data ) {
-		final List<String> resultScopes = new ArrayList<>();
-//		resultScopes.add( "publicData" );
-		final String[] scopes = data.split( " " );
-		for (int i = 0; i < scopes.length; i++)
-			resultScopes.add( scopes[i] );
-		return resultScopes;
 	}
 }

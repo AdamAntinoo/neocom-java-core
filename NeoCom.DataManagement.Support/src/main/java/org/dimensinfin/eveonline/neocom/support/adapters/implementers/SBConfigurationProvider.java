@@ -16,7 +16,7 @@ import com.annimon.stream.Stream;
 import org.dimensinfin.eveonline.neocom.provider.AConfigurationService;
 
 public class SBConfigurationProvider extends AConfigurationService {
-	protected void readAllProperties() throws IOException {
+	public void readAllProperties() throws IOException {
 		logger.info( ">> [SBConfigurationProvider.readAllProperties]" );
 		// Read all .properties files under the predefined path on the /resources folder.
 		logger.info( "-- [SBConfigurationProvider.readAllProperties]> Read property files from: build/resources {}",

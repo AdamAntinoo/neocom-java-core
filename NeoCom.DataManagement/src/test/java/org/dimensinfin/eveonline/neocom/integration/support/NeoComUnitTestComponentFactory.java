@@ -1,6 +1,5 @@
 package org.dimensinfin.eveonline.neocom.integration.support;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -49,9 +48,11 @@ public class NeoComUnitTestComponentFactory {
 			try {
 				this.configurationProvider =
 						new SBConfigurationProvider.Builder()
-								.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
-			} catch (final IOException ioe) {
-				ioe.printStackTrace();
+								.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" )
+								.build();
+				this.configurationProvider.readAllProperties();
+			} catch (final RuntimeException rtex) {
+				rtex.printStackTrace();
 			}
 		return this.configurationProvider;
 	}

@@ -10,32 +10,35 @@ import java.util.Properties;
 
 import com.annimon.stream.Stream;
 
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.provider.AConfigurationService;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 public class SBConfigurationProvider extends AConfigurationService {
-	public void setProperty( final String propertyName, final String value ) {
-		this.configurationProperties.setProperty( propertyName, value );
-	}
-
-	protected void readAllProperties() throws IOException {
-		logger.info( ">> [SBConfigurationProvider.readAllProperties]" );
-		final List<String> propertyFiles = this.getResourceFiles( this.getResourceLocation() );
-		Stream.of( propertyFiles )
-				.sorted()
-				.forEach( ( fileName ) -> {
-					logger.info( "-- [SBConfigurationProvider.readAllProperties]> Processing file: {}", fileName );
-					try {
-						Properties properties = new Properties();
-						properties.load( new FileInputStream( fileName ) );
-						// Copy properties to globals.
-						configurationProperties.putAll( properties );
-					} catch (IOException ioe) {
-						logger.error( "E [SBConfigurationProvider.readAllProperties]> Exception reading properties file {}. {}",
-								fileName, ioe.getMessage() );
-						ioe.printStackTrace();
-					}
-				} );
-		logger.info( "<< [SBConfigurationProvider.readAllProperties]> Total properties number: {}", this.contentCount() );
+	public void readAllProperties() {
+		NeoComLogger.enter();
+		try {
+			final List<String> propertyFiles = this.getResourceFiles( this.getResourceLocation() );
+			Stream.of( propertyFiles )
+					.sorted()
+					.forEach( ( fileName ) -> {
+						NeoComLogger.info( "Processing file: {}", fileName );
+						try {
+							Properties properties = new Properties();
+							properties.load( new FileInputStream( fileName ) );
+							// Copy properties to globals.
+							configurationProperties.putAll( properties );
+						} catch (IOException ioe) {
+							NeoComLogger.error( "E [SBConfigurationProvider.readAllProperties]> Exception reading properties file " +
+									fileName, ioe );
+							ioe.printStackTrace();
+						}
+					} );
+		} catch (final IOException ioe) {
+			NeoComLogger.error( ioe );
+			throw new NeoComRuntimeException( ioe.getMessage() );
+		}
+		NeoComLogger.exit( "Total properties number: {}", this.contentCount() + "" );
 	}
 
 	/**
@@ -44,9 +47,12 @@ public class SBConfigurationProvider extends AConfigurationService {
 	 */
 	protected List<String> getResourceFiles( final String initialPath ) throws IOException {
 		final File rootFolder = new File( System.getProperty( "user.dir" ) + initialPath );
-		logger.info( "-- [SBConfigurationProvider.readAllProperties]> Root directory: {}",
-				rootFolder );
+		NeoComLogger.info( "Root directory: {}", rootFolder.toString() );
 		return listFilesForFolder( rootFolder );
+	}
+
+	public void setProperty( final String propertyName, final String value ) {
+		this.configurationProperties.setProperty( propertyName, value );
 	}
 
 	private List<String> listFilesForFolder( final File folder ) {
@@ -73,7 +79,7 @@ public class SBConfigurationProvider extends AConfigurationService {
 			return this;
 		}
 
-		public SBConfigurationProvider build() throws IOException {
+		public SBConfigurationProvider build() {
 			return (SBConfigurationProvider) super.build();
 		}
 	}

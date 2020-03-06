@@ -43,7 +43,7 @@ import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsCon
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_STATE;
-import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.NEOCOM_BACKEND_SERVER_BASE_URL;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.BACKEND_RETROFIT_SERVER_LOCATION;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_CACHE_NAME;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_CACHE_SIZE;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_SERVER_AGENT;
@@ -112,7 +112,7 @@ public class RetrofitFactory {
 		Retrofit hitConnector = this.connectors.get( BACKEND_CONNECTOR_IDENTIFIER );
 		try {
 			if (null == hitConnector) { // Create a new connector for the backend and cache it.
-				final String serverBaseUrl = this.configurationProvider.getResourceString( NEOCOM_BACKEND_SERVER_BASE_URL,
+				final String serverBaseUrl = this.configurationProvider.getResourceString( BACKEND_RETROFIT_SERVER_LOCATION,
 						HttpBackendClientFactory.DEFAULT_NEOCOM_BACKEND_HOST );
 				final String cacheFilePath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH )
 						+ this.configurationProvider.getResourceString( BACKEND_RETROFIT_CACHE_FILE_NAME );

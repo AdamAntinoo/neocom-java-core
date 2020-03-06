@@ -92,7 +92,7 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		Assertions.assertTrue( assetDownloadProcessorJob.call() );
 	}
 
-	@Test
+//	@Test
 	public void downloadCorporationAssets() {
 		final AssetDownloadProcessorJob assetDownloadProcessorJob = new AssetDownloadProcessorJob.Builder()
 				.withAssetRepository( this.itAssetRepository )

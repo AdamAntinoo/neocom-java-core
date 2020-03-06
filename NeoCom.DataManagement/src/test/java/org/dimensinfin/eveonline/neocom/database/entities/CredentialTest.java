@@ -79,7 +79,8 @@ public class CredentialTest {
 				.withRaceName("TEST RACE")
 				.build();
 		Assert.assertNotNull(credential);
-		final String expected = "{\"jsonClass\":\"Credential\",\"uniqueCredential\":\"tranquility\\/123456\",\"walletBalance\":876567.54,\"assetsCount\":98,\"miningResourcesEstimatedValue\":0.0,\"accountName\":\"TEST CREDENTIAL\",\"raceName\":\"TEST RACE\"}";
+		final String expected = "{\"jsonClass\":\"Credential\",\"uniqueCredential\":\"tranquility.123456\",\"walletBalance\":876567.54," +
+				"\"assetsCount\":98,\"miningResourcesEstimatedValue\":0.0,\"accountName\":\"TEST CREDENTIAL\",\"raceName\":\"TEST RACE\"}";
 		final String obtained = credential.toString();
 		Assert.assertEquals("The instance print result should match.", expected, obtained);
 	}

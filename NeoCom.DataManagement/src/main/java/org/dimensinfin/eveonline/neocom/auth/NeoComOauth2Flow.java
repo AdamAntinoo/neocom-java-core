@@ -13,6 +13,11 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_OAUTH_AUTHORIZATION_STATE;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CLIENTID;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CONTENT_TYPE;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER;
 
 public class NeoComOauth2Flow {
 	private static final String V1_OAUTH = "oauth/authorize/";
@@ -30,10 +35,8 @@ public class NeoComOauth2Flow {
 
 	public String generateLoginUrl( final String esiServer ) {
 		final String state = Base64.encodeBytes(
-				this.configurationProvider.getResourceString( "P.esi.authorization.state" ).getBytes() );
-		final String clientId = this.configurationProvider.getResourceString( "P.esi." +
-				esiServer.toLowerCase() +
-				".authorization.clientid" );
+				this.configurationProvider.getResourceString( ESI_OAUTH_AUTHORIZATION_STATE ).getBytes() );
+		final String clientId = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CLIENTID );
 		return LOGIN_URL + "&client_id=" + clientId + "&state=" + state;
 	}
 
@@ -59,7 +62,7 @@ public class NeoComOauth2Flow {
 	 */
 	public boolean verifyState( final String state ) {
 		final String testState = Base64.encodeBytes(
-				this.configurationProvider.getResourceString( "P.esi.authorization.state" ).getBytes()
+				this.configurationProvider.getResourceString( ESI_OAUTH_AUTHORIZATION_STATE ).getBytes()
 		).replaceAll( "\n", "" );
 		return state.equals( testState );
 	}
@@ -67,16 +70,12 @@ public class NeoComOauth2Flow {
 	private TokenTranslationResponse getTokenTranslationResponse( final TokenVerification store ) {
 		// Preload configuration variables.
 		final String esiServer = store.getDataSource();
-		final String authorizationServer = this.configurationProvider.getResourceString(
-				"P.esi." + esiServer + ".authorization.server" );
-		final String authorizationClientid = this.configurationProvider.getResourceString(
-				"P.esi." + esiServer + ".authorization.clientid" );
-		final String authorizationSecretKey = this.configurationProvider.getResourceString(
-				"P.esi." + esiServer + ".authorization.secretkey" );
-		final String authorizationContentType = this.configurationProvider.getResourceString(
-				"P.esi." + esiServer + ".authorization.content.type" );
+		final String authorizationServer = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER );
+		final String authorizationClientid = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CLIENTID );
+		final String authorizationSecretKey = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY );
+		final String authorizationContentType = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CONTENT_TYPE );
 		final String esiServerLoginUrl = this.configurationProvider.getResourceString(
-				"P.esi." + esiServer + ".authorization.server.url" );
+				ESI_TRANQUILITY_AUTHORIZATION_SERVER );
 		// Get the request.
 		final GetAccessToken serviceGetAccessToken = new Retrofit.Builder()
 				.baseUrl( authorizationServer )

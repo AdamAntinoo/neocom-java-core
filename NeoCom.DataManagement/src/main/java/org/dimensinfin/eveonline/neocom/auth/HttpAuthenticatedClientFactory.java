@@ -15,6 +15,7 @@ import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_LOGIN_HOST;
 
 public class HttpAuthenticatedClientFactory {
 
@@ -31,23 +32,6 @@ public class HttpAuthenticatedClientFactory {
 	private HttpAuthenticatedClientFactory() {}
 
 	private OkHttpClient clientBuilder() {
-//		final String esiDataServerLocation = this.configurationProvider.getResourceString(
-//				"P.esi.tranquility.authorization.server",
-//				"https://login.eveonline.com/" );
-//		final String AGENT = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.agent",
-//				"Dimensinfin Industries 2019 : NeoCom : Spring Boot 2.x backend client : Production" );
-//		final String authorizationClientid = this.configurationProvider.getResourceString(
-//				"P.esi.tranquility.authorization.clientid" );
-//		final String authorizationSecretKey = this.configurationProvider.getResourceString(
-//				"P.esi.tranquility.authorization.secretkey" );
-//		final String peckString = authorizationClientid + ":" + authorizationSecretKey;
-//		final String peck = Base64.encodeBytes( peckString.getBytes() )
-//				.replaceAll( "\n", "" );
-//		this.refreshRetrofit = new Retrofit.Builder()
-//				.baseUrl( esiDataServerLocation )
-//				.addConverterFactory( GSON_CONVERTER_FACTORY )
-//				.build();
-
 		final OkHttpClient.Builder authenticatedClientBuilder = new OkHttpClient.Builder()
 				.addInterceptor(chain -> {
 					Request.Builder builder = chain.request().newBuilder()
@@ -78,9 +62,9 @@ public class HttpAuthenticatedClientFactory {
 				.readTimeout( this.timeoutSeconds, TimeUnit.SECONDS )
 				.certificatePinner(
 						new CertificatePinner.Builder()
-								.add( "login.eveonline.com", "sha256/075pvb1KMqiPud6f347Lhzb0ALOY+dX5G7u+Yx+b8U4=" )
-								.add( "login.eveonline.com", "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=" )
-								.add( "login.eveonline.com", "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=" )
+								.add( ESI_LOGIN_HOST, "sha256/075pvb1KMqiPud6f347Lhzb0ALOY+dX5G7u+Yx+b8U4=" )
+								.add( ESI_LOGIN_HOST, "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=" )
+								.add( ESI_LOGIN_HOST, "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=" )
 								.build() );
 		// Additional characteristics
 		if (null != this.cacheStoreFile)

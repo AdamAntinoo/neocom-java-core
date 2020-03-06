@@ -40,6 +40,8 @@ import io.reactivex.Maybe;
 import io.reactivex.Single;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.CACHE_DIRECTORY_PATH;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.CACHE_STORE_ESI_ITEM_DATA;
 
 /**
  * This class will deal with external storage of cached data. For that I will use already known libraries.
@@ -93,8 +95,8 @@ public class StoreCacheManager {
 	private void createEsiItemStore() {
 		try {
 			final File cachedir = new File( this.fileSystemAdapter.accessResource4Path(
-					this.configurationProvider.getResourceString( "P.cache.directory.path" ) +
-							"/" + this.configurationProvider.getResourceString( "P.cache.directory.store.esiitem" ) ) );
+					this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH ) +
+							"/" + this.configurationProvider.getResourceString( CACHE_STORE_ESI_ITEM_DATA ) ) );
 			this.esiItemPersistentStore = DiskLruCache.open( cachedir, CACHE_VERSION, CACHE_COUNTER,
 					StorageUnits.GIGABYTES.toBytes( 2 ) );
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()

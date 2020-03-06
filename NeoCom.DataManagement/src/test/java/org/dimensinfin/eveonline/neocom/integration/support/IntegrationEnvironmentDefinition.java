@@ -27,6 +27,8 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_SERVER_LOCATION;
+
 public class IntegrationEnvironmentDefinition {
 	protected static final Logger logger = LoggerFactory.getLogger( IntegrationEnvironmentDefinition.class );
 	protected static final Integer TEST_CORPORATION_IDENTIFIER = 98384726;
@@ -86,14 +88,6 @@ public class IntegrationEnvironmentDefinition {
 		connectionSource = connectionSource1;
 	}
 
-//	@BeforeAll
-//	public static void beforeAllCredential() {
-//		credential4Test = Mockito.mock( Credential.class );
-//		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
-//		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
-//		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
-//	}
-
 	protected SBConfigurationProvider itConfigurationProvider;
 	protected IFileSystem itFileSystemAdapter;
 	protected IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
@@ -117,8 +111,8 @@ public class IntegrationEnvironmentDefinition {
 		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
 
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
-				.optionalPropertiesDirectory( "/src/test/resources/properties.it" ).build();
-		this.itConfigurationProvider.setProperty( "P.authenticated.retrofit.server.location",
+				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
+		this.itConfigurationProvider.setProperty( AUTHENTICATED_RETROFIT_SERVER_LOCATION,
 				"http://" +
 						esisimulator.getContainerIpAddress() +
 						":" + esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) +

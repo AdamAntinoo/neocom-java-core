@@ -39,6 +39,8 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 
 import retrofit2.Response;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.CACHE_DIRECTORY_PATH;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.LOCATIONS_CACHE_LOCATION;
 
 @NeoComAdapter
 public class LocationCatalogService {
@@ -307,8 +309,8 @@ public class LocationCatalogService {
 
 	synchronized void readLocationsDataCache() {
 		logger.info( ">> [LocationCatalogService.readLocationsDataCache]" );
-		final String directoryPath = this.configurationProvider.getResourceString( "P.cache.directory.path" );
-		final String fileName = this.configurationProvider.getResourceString( "P.cache.locationscache.filename" );
+		final String directoryPath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH );
+		final String fileName = this.configurationProvider.getResourceString( LOCATIONS_CACHE_LOCATION );
 		final String cacheFileName = directoryPath + fileName;
 		logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Opening cache file: {}", cacheFileName );
 		try (final BufferedInputStream buffer = new BufferedInputStream(
@@ -339,8 +341,8 @@ public class LocationCatalogService {
 	synchronized void writeLocationsDataCache() {
 		NeoComLogger.enter();
 		if (this.dirtyCache) {
-			final String cacheFileName = this.configurationProvider.getResourceString( "P.cache.directory.path" ) +
-					this.configurationProvider.getResourceString( "P.cache.locationscache.filename" );
+			final String cacheFileName = this.configurationProvider.getResourceString(CACHE_DIRECTORY_PATH ) +
+					this.configurationProvider.getResourceString( LOCATIONS_CACHE_LOCATION );
 			NeoComLogger.info( "Opening cache file: {}", cacheFileName );
 			try (final BufferedOutputStream buffer = new BufferedOutputStream(
 					this.fileSystemAdapter.openResource4Output( cacheFileName ) );
