@@ -1,19 +1,13 @@
 package org.dimensinfin.eveonline.neocom.provider;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.GsonBuilder;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -34,12 +28,27 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import static org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider.AUTHENTICATED_RETROFIT_SERVER_AGENT;
-import static org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider.AUTHENTICATED_RETROFIT_SERVER_LOCATION;
-import static org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider.BACKEND_RETROFIT_CACHE_FILE_NAME;
-import static org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider.CACHE_DIRECTORY_PATH;
-import static org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider.NEOCOM_BACKEND_SERVER_BASE_URL;
-import static org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider.UNIVERSE_RETROFIT_SERVER_AGENT;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_CACHE_NAME;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_CACHE_SIZE;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_SERVER_AGENT;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_SERVER_LOCATION;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_SERVER_TIMEOUT;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.BACKEND_RETROFIT_CACHE_FILE_NAME;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.CACHE_DIRECTORY_PATH;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_ACCESS_TOKEN;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_AGENT;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_AUTHORIZE;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CALLBACK;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CLIENTID;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_STATE;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.NEOCOM_BACKEND_SERVER_BASE_URL;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_CACHE_NAME;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_CACHE_SIZE;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_SERVER_AGENT;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_SERVER_LOCATION;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_SERVER_TIMEOUT;
 
 public class RetrofitFactory {
 	public static final String DEFAULT_CONTENT_TYPE = "application/json";
@@ -52,6 +61,10 @@ public class RetrofitFactory {
 	private static final String UNIVERSE_CONNECTOR_IDENTIFIER = "-UNIVERSE-CONNECTOR-";
 	private static final String BACKEND_CONNECTOR_IDENTIFIER = "-BACKEND-CONNECTOR-";
 	private static final String DEFAULT_RETROFIT_AGENT = "Default agent";
+	private static final String DEFAULT_ESI_OAUTH_LOGIN_SERVER = "https://login.eveonline.com/";
+	private static final String DEFAULT_ESI_DATA_SERVER = "https://esi.evetech.net/latest/";
+	private static final String DEFAULT_AUTHORIZATION_ACCESS_TOKEN = "oauth/token";
+	private static final String DEFAULT_AUTHORIZATION_AUTHORIZE = "oauth/authorize";
 
 	// - C O M P O N E N T S
 	protected IConfigurationProvider configurationProvider;
@@ -63,25 +76,24 @@ public class RetrofitFactory {
 
 	@LogEnterExit
 	public Retrofit accessAuthenticatedConnector( final Credential credential ) throws IOException {
-		Retrofit hitConnector = this.connectors.get( credential.getUniqueId() );
+		Retrofit hitConnector = this.connectors.get( credential.getUniqueCredential() );
 		if (null == hitConnector) { // Create a new connector for this credential.
 			final String esiDataServerLocation = this.configurationProvider.getResourceString(
 					AUTHENTICATED_RETROFIT_SERVER_LOCATION,
-					"https://esi.evetech.net/latest/" );
+					DEFAULT_ESI_DATA_SERVER );
 			final String agent = this.configurationProvider
 					.getResourceString( AUTHENTICATED_RETROFIT_SERVER_AGENT, DEFAULT_RETROFIT_AGENT );
 			final int timeout = (int) TimeUnit.SECONDS
-					.toSeconds( this.configurationProvider.getResourceInteger( "P.authenticated.retrofit.server.timeout" ) );
-			final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
-					+ this.configurationProvider.getResourceString( "P.authenticated.retrofit.cache.directory.name" );
+					.toSeconds( this.configurationProvider.getResourceInteger( AUTHENTICATED_RETROFIT_SERVER_TIMEOUT ) );
+			final String cacheFilePath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH )
+					+ this.configurationProvider.getResourceString( AUTHENTICATED_RETROFIT_CACHE_NAME );
 			final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-			final Integer cacheSize = this.configurationProvider.getResourceInteger(
-					"P.authenticated.retrofit.cache.size.gb" );
+			final Integer cacheSize = this.configurationProvider.getResourceInteger( AUTHENTICATED_RETROFIT_CACHE_SIZE );
 			hitConnector = new Retrofit.Builder()
 					.baseUrl( esiDataServerLocation )
 					.addConverterFactory( GSON_CONVERTER_FACTORY )
 					.client( new HttpAuthenticatedClientFactory.Builder()
-							.withNeoComOAuth20( this.getConfiguredOAuth( credential.getDataSource().toLowerCase() ) )
+							.withNeoComOAuth20( this.getConfiguredOAuth( credential ) )
 							.withConfigurationProvider( this.configurationProvider )
 							.withCredential( credential )
 							.withAgent( agent )
@@ -90,7 +102,7 @@ public class RetrofitFactory {
 							.withCacheSize( cacheSize, StorageUnits.GIGABYTES )
 							.generate() )
 					.build();
-			this.connectors.put( credential.getUniqueId(), hitConnector );
+			this.connectors.put( credential.getUniqueCredential(), hitConnector );
 		}
 		return hitConnector;
 	}
@@ -126,16 +138,15 @@ public class RetrofitFactory {
 		try {
 			if (null == hitConnector) { // Create a new connector for this credential.
 				final String esiDataServerLocation = this.configurationProvider.getResourceString(
-						"P.universe.retrofit.server.location",
-						"https://esi.evetech.net/latest/" );
+						UNIVERSE_RETROFIT_SERVER_LOCATION,
+						DEFAULT_ESI_DATA_SERVER );
 				final String agent = this.configurationProvider.getResourceString( UNIVERSE_RETROFIT_SERVER_AGENT, DEFAULT_RETROFIT_AGENT );
 				final int timeout = (int) TimeUnit.SECONDS
-						.toSeconds( this.configurationProvider.getResourceInteger( "P.universe.retrofit.server.timeout" ) );
-				final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
-						+ this.configurationProvider.getResourceString( "P.universe.retrofit.cache.directory.name" );
+						.toSeconds( this.configurationProvider.getResourceInteger( UNIVERSE_RETROFIT_SERVER_TIMEOUT ) );
+				final String cacheFilePath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH )
+						+ this.configurationProvider.getResourceString( UNIVERSE_RETROFIT_CACHE_NAME );
 				final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-				final Integer cacheSize = this.configurationProvider.getResourceInteger(
-						"P.universe.retrofit.cache.size.gb", 1 );
+				final Integer cacheSize = this.configurationProvider.getResourceInteger( UNIVERSE_RETROFIT_CACHE_SIZE, 1 );
 				hitConnector = new Retrofit.Builder()
 						.baseUrl( esiDataServerLocation )
 						.addConverterFactory( GSON_CONVERTER_FACTORY )
@@ -155,20 +166,16 @@ public class RetrofitFactory {
 		return hitConnector;
 	}
 
-	protected NeoComOAuth20 getConfiguredOAuth( final String selector ) {
-		Objects.requireNonNull( selector );
-		final List<String> scopes = this.constructScopes( this.configurationProvider.getResourceString( "P.esi."
-				+ selector.toLowerCase() + ".authorization.scopes.filename" ) );
-		NeoComOAuth20 auth;
-		final String SERVER_LOGIN_BASE = this.configurationProvider.getResourceString(
-				"P.esi.tranquility.authorization.server.login.base",
-				"https://login.eveonline.com/" );
-		final String CLIENT_ID = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.clientid" );
-		final String SECRET_KEY = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.secretkey" );
-		final String CALLBACK = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.callback" );
-		final String AGENT = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.agent",
-				DEFAULT_RETROFIT_AGENT );
-		final String STATE = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.state" );
+	protected NeoComOAuth20 getConfiguredOAuth( final Credential credential ) {
+		Objects.requireNonNull( credential );
+		final String scopes = credential.getScope();
+		final String SERVER_LOGIN_BASE = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER,
+				DEFAULT_ESI_OAUTH_LOGIN_SERVER );
+		final String CLIENT_ID = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CLIENTID );
+		final String SECRET_KEY = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY );
+		final String CALLBACK = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CALLBACK );
+		final String AGENT = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_AGENT, DEFAULT_RETROFIT_AGENT );
+		final String STATE = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_STATE );
 		// Verify that the constants have values. Otherwise launch exception.
 		if (CLIENT_ID.isEmpty())
 			throw new NeoComRuntimeException( ErrorInfoCatalog.MANDATORY_CONFIGURATION_PROPERTY_EMPTY.getErrorMessage() );
@@ -176,7 +183,7 @@ public class RetrofitFactory {
 			throw new NeoComRuntimeException( ErrorInfoCatalog.MANDATORY_CONFIGURATION_PROPERTY_EMPTY.getErrorMessage() );
 		if (CALLBACK.isEmpty())
 			throw new NeoComRuntimeException( ErrorInfoCatalog.MANDATORY_CONFIGURATION_PROPERTY_EMPTY.getErrorMessage() );
-		auth = new NeoComOAuth20.Builder()
+		final NeoComOAuth20 auth = new NeoComOAuth20.Builder()
 				.withClientId( CLIENT_ID )
 				.withClientKey( SECRET_KEY )
 				.withCallback( CALLBACK )
@@ -186,31 +193,14 @@ public class RetrofitFactory {
 				.withState( STATE )
 				.withBaseUrl( SERVER_LOGIN_BASE )
 				.withAccessTokenEndpoint( this.configurationProvider.getResourceString(
-						"P.esi.tranquility.authorization.accesstoken.url",
-						"oauth/token" ) )
+						ESI_TRANQUILITY_AUTHORIZATION_ACCESS_TOKEN,
+						DEFAULT_AUTHORIZATION_ACCESS_TOKEN ) )
 				.withAuthorizationBaseUrl( this.configurationProvider.getResourceString(
-						"P.esi.tranquility.authorization.authorize.url",
-						"oauth/authorize" ) )
+						ESI_TRANQUILITY_AUTHORIZATION_AUTHORIZE,
+						DEFAULT_AUTHORIZATION_AUTHORIZE ) )
 				.build();
 		Objects.requireNonNull( auth );
 		return auth;
-	}
-
-	private List<String> constructScopes( final String propertyFileName ) {
-		final List<String> scopes = new ArrayList<>();
-		scopes.add( "publicData" );
-		try (final InputStream istream = this.fileSystemAdapter.openAsset4Input( propertyFileName );
-		     final BufferedReader input = new BufferedReader( new InputStreamReader( istream ) )) {
-			String line = input.readLine();
-			while (StringUtils.isNotEmpty( line )) {
-				scopes.add( line );
-				line = input.readLine();
-			}
-		} catch (IOException ioe) {
-			NeoComLogger.error( ioe );
-			return scopes;
-		}
-		return scopes;
 	}
 
 	// - B U I L D E R

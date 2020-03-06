@@ -49,7 +49,7 @@ public class NeoComUnitTestComponentFactory {
 			try {
 				this.configurationProvider =
 						new SBConfigurationProvider.Builder()
-								.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
+								.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 			} catch (final IOException ioe) {
 				ioe.printStackTrace();
 			}

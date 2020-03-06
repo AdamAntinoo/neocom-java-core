@@ -92,7 +92,7 @@ public class MiningRepositoryIT {
 		this.miningDao = DaoManager.createDao( connectionSource, MiningExtraction.class );
 
 		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
+				.optionalPropertiesDirectory( "/src/test/resources/properties.it" ).build();
 		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
 				.build();

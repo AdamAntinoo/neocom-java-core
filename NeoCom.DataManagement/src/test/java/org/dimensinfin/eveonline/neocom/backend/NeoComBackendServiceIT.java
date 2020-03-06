@@ -11,8 +11,8 @@ import org.testcontainers.containers.GenericContainer;
 
 import org.dimensinfin.eveonline.neocom.backend.rest.v1.CredentialStoreResponse;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
+import org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
@@ -46,7 +46,7 @@ public class NeoComBackendServiceIT /*extends IntegrationEnvironmentDefinition*/
 //
 //		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
 //				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
-//		this.itConfigurationProvider.setProperty( AConfigurationProvider.NEOCOM_BACKEND_SERVER_BASE_URL,
+//		this.itConfigurationProvider.setProperty( AConfigurationService.NEOCOM_BACKEND_SERVER_BASE_URL,
 //				"http://" +
 //						esisimulator.getContainerIpAddress() +
 //						":" +
@@ -88,8 +88,8 @@ public class NeoComBackendServiceIT /*extends IntegrationEnvironmentDefinition*/
 	@Test
 	public void putCredential() throws IOException {
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
-		this.itConfigurationProvider.setProperty( AConfigurationProvider.NEOCOM_BACKEND_SERVER_BASE_URL,
+				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
+		this.itConfigurationProvider.setProperty( PropertiesDefinitionsConstants.NEOCOM_BACKEND_SERVER_BASE_URL,
 				"http://" +
 						backendSimulator.getContainerIpAddress() +
 						":" +

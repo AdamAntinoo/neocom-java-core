@@ -13,9 +13,9 @@ import java.util.Properties;
 
 import com.annimon.stream.Stream;
 
-import org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.AConfigurationService;
 
-public class SBConfigurationProvider extends AConfigurationProvider {
+public class SBConfigurationProvider extends AConfigurationService {
 	protected void readAllProperties() throws IOException {
 		logger.info( ">> [SBConfigurationProvider.readAllProperties]" );
 		// Read all .properties files under the predefined path on the /resources folder.
@@ -73,7 +73,7 @@ public class SBConfigurationProvider extends AConfigurationProvider {
 	}
 
 	// - B U I L D E R
-	public static class Builder extends AConfigurationProvider.Builder<SBConfigurationProvider, SBConfigurationProvider.Builder> {
+	public static class Builder extends AConfigurationService.Builder<SBConfigurationProvider, SBConfigurationProvider.Builder> {
 		private SBConfigurationProvider onConstruction;
 
 		@Override

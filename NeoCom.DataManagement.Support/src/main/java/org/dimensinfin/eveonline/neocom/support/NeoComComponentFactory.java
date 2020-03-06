@@ -118,7 +118,7 @@ public class NeoComComponentFactory {
 			try {
 				this.configurationProvider =
 						new SBConfigurationProvider.Builder(  )
-						.withPropertiesDirectory( "properties" )
+						.optionalPropertiesDirectory( "properties" )
 						.build();
 			} catch (IOException e) {
 				e.printStackTrace();

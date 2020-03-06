@@ -17,6 +17,16 @@ repositories {
     google()
 }
 
+// - B U I L D   T A S K S
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+artifacts {
+    archives jar
+    archives sourcesJar
+//    archives javadocJar
+}
 publishing {
     publications {
         jar(MavenPublication) {
@@ -24,6 +34,7 @@ publishing {
             version project.version
             artifactId project.archivesBaseName
             artifact("$buildDir/libs/${archivesBaseName}-${version}.jar")
+            artifact(sourcesJar)
         }
     }
     repositories {

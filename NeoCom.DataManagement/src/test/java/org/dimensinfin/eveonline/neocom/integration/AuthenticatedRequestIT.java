@@ -44,7 +44,7 @@ public class AuthenticatedRequestIT {
 
 	private void setupEnvironment() throws IOException {
 		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
+				.optionalPropertiesDirectory( "/src/test/resources/properties.it" ).build();
 	}
 
 	private void setupAuthentication( final String code ) {

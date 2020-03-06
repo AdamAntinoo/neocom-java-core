@@ -17,7 +17,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class HttpAuthenticatedClientFactory {
-	private static final String ESI_HOST = "login.eveonline.com";
 
 	private String agent = "NeoCom Data Management Library Agent.";
 	private Integer timeoutSeconds = 60;

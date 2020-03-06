@@ -117,7 +117,7 @@ public class IntegrationEnvironmentDefinition {
 		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
 
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
+				.optionalPropertiesDirectory( "/src/test/resources/properties.it" ).build();
 		this.itConfigurationProvider.setProperty( "P.authenticated.retrofit.server.location",
 				"http://" +
 						esisimulator.getContainerIpAddress() +

@@ -25,7 +25,7 @@ public class StoreCacheManagerTest {
 	@Before
 	public void setUp() throws Exception {
 		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.unittest" )
+				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" )
 				.build();
 		this.fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )

@@ -16,10 +16,11 @@ List<MyClass> myObjects = mapper.readValue(jsonInput, mapper.getTypeFactory().co
 Car car = objectMapper.readValue(new File("src/test/resources/json_car.json"), Car.class);
 
 [JUNIT5 THROW AN EXCEPTION]
-		NullPointerException thrown = Assertions.assertThrows( NullPointerException.class,
-				() -> new JobScheduler.Builder()
+Assertions.assertThrows( NullPointerException.class,() -> {
+new JobScheduler.Builder()
 						.withCronScheduleGenerator( null )
-						.build(),
+						.build();
+},
 				"Expected JobScheduler.Builder() to throw null verification, but it didn't." );
 
 [USE TESTCONTAINERS FOR TESTING]

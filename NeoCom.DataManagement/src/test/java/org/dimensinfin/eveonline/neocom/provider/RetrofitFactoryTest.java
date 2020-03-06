@@ -24,7 +24,7 @@ public class RetrofitFactoryTest {
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.build();
 		final Credential credential = Mockito.mock( Credential.class );
-		Mockito.when( credential.getUniqueId() ).thenReturn( "tranquility/98876543" );
+		Mockito.when( credential.getUniqueCredential() ).thenReturn( "tranquility/98876543" );
 		Mockito.when( credential.getDataSource() ).thenReturn( "tranquility" );
 
 		final Retrofit connector = retrofitFactory.accessAuthenticatedConnector( credential );

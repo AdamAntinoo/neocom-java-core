@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 
 /**
@@ -24,8 +21,7 @@ import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
  * @since 0.14.0
  */
 @NeoComAdapter
-public abstract class AConfigurationProvider implements IConfigurationProvider {
-	protected static final Logger logger = LoggerFactory.getLogger( AConfigurationProvider.class );
+public abstract class AConfigurationService implements IConfigurationProvider {
 	private static final String DEFAULT_PROPERTIES_FOLDER = "properties"; // The default initial location if not specified.
 	// - F I E L D - S E C T I O N
 	protected final Properties configurationProperties = new Properties(); // The list of defined properties
@@ -35,7 +31,7 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 		return this.configuredPropertiesDirectory;
 	}
 
-	public AConfigurationProvider setConfiguredPropertiesDirectory( final String configuredPropertiesDirectory ) {
+	public AConfigurationService setConfiguredPropertiesDirectory( final String configuredPropertiesDirectory ) {
 		this.configuredPropertiesDirectory = configuredPropertiesDirectory;
 		return this;
 	}
@@ -87,7 +83,7 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 	}
 
 	// - B U I L D E R
-	protected abstract static class Builder<T extends AConfigurationProvider, B extends AConfigurationProvider.Builder> {
+	protected abstract static class Builder<T extends AConfigurationService, B extends AConfigurationService.Builder> {
 		protected B actualClassBuilder;
 
 		public Builder() {
@@ -98,13 +94,12 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 
 		protected abstract B getActualBuilder();
 
-		public T build() throws IOException {
+		public T build() {
 			Objects.requireNonNull( this.getActual().configuredPropertiesDirectory );
-			this.getActual().readAllProperties(); // Initialize and read the properties.
 			return this.getActual();
 		}
 
-		public B withPropertiesDirectory( final String propertiesDirectory ) {
+		public B optionalPropertiesDirectory( final String propertiesDirectory ) {
 			if (null != propertiesDirectory) this.getActual().configuredPropertiesDirectory = propertiesDirectory;
 			return this.getActualBuilder();
 		}

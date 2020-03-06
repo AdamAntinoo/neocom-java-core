@@ -10,9 +10,9 @@ import java.util.Properties;
 
 import com.annimon.stream.Stream;
 
-import org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.AConfigurationService;
 
-public class SBConfigurationProvider extends AConfigurationProvider {
+public class SBConfigurationProvider extends AConfigurationService {
 	public void setProperty( final String propertyName, final String value ) {
 		this.configurationProperties.setProperty( propertyName, value );
 	}
@@ -59,7 +59,7 @@ public class SBConfigurationProvider extends AConfigurationProvider {
 	}
 
 	// - B U I L D E R
-	public static class Builder extends AConfigurationProvider.Builder<SBConfigurationProvider, SBConfigurationProvider.Builder> {
+	public static class Builder extends AConfigurationService.Builder<SBConfigurationProvider, SBConfigurationProvider.Builder> {
 		private SBConfigurationProvider onConstruction;
 
 		@Override

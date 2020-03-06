@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.AConfigurationService;
 
-public class SupportConfigurationProvider extends AConfigurationProvider {
+public class SupportConfigurationProvider extends AConfigurationService {
 //	protected static Logger logger = LoggerFactory.getLogger(GlobalConfigurationProvider.class);
 
 	// - C O N S T R U C T O R S
@@ -54,7 +54,7 @@ public class SupportConfigurationProvider extends AConfigurationProvider {
 	}
 
 	// - B U I L D E R
-	public static class Builder extends AConfigurationProvider.Builder<SupportConfigurationProvider,
+	public static class Builder extends AConfigurationService.Builder<SupportConfigurationProvider,
 			SupportConfigurationProvider.Builder> {
 		private SupportConfigurationProvider onConstruction;
 
