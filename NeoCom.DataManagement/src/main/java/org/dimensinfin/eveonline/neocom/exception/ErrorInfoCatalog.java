@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 
 import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.ASSETS_DOWNLOAD_PROCESS_ERRORCODE;
 import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.INVALID_LOCATION_TYPE_ERRORCODE;
+import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.MINING_REPOSITORY_EXTRACTION_SQL_ERRORCODE;
 import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.RETROFIT_CACHE_FILE_SYSTEM_ERRORCODE;
 
 public enum ErrorInfoCatalog {
@@ -14,7 +15,9 @@ public enum ErrorInfoCatalog {
 	MANDATORY_CONFIGURATION_PROPERTY_EMPTY( "data.management.retrofit.configuration.error",
 			"ESI configuration property is empty while configuring the OAuth parameters." ),
 	LOCATION_NOT_THE_CORRECT_TYPE( INVALID_LOCATION_TYPE_ERRORCODE,
-			"The expected location obtained is not of the type expected.");
+			"The expected location obtained is not of the type expected."),
+	MINING_EXTRACTION_BYID_SEARCH_FAILED(MINING_REPOSITORY_EXTRACTION_SQL_ERRORCODE,
+			"SQL exception while searching for extraction with id {0}.");
 	public final String errorCode;
 	public final String errorMessage;
 

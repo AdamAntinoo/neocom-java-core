@@ -36,7 +36,7 @@ import org.dimensinfin.eveonline.neocom.service.NeoItemFactory;
 //@Entity(name = "MiningExtractions")
 //@DatabaseTable(tableName = "MiningExtractions")
 @JsonIgnoreProperties
-public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggregableItem */{
+public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggregableItem */ {
 	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
 
 	/**
@@ -296,9 +296,9 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 //			return this;
 //		}
 
-		public Builder withExtractionDate( final LocalDate extractionDate ) {
+		public MiningExtraction.Builder withExtractionDate( final String extractionDate ) {
 			Objects.requireNonNull( extractionDate );
-			this.onConstruction.extractionDateName = extractionDate.toString( EXTRACTION_DATE_FORMAT );
+			this.onConstruction.extractionDateName = extractionDate;
 			return this;
 		}
 
@@ -313,8 +313,9 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 //			return this;
 //		}
 
-		public Builder withQuantity( final Integer quantity ) {
-			this.onConstruction.quantity = quantity;
+		public MiningExtraction.Builder withOwnerId( final Integer ownerId ) {
+			Objects.requireNonNull( ownerId );
+			this.onConstruction.ownerId = ownerId;
 			return this;
 		}
 
@@ -327,14 +328,19 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 //			return this;
 //		}
 
-		public Builder withSpaceSystem( final SpaceSystem solarSystemLocation ) {
+		public MiningExtraction.Builder withQuantity( final Integer quantity ) {
+			this.onConstruction.quantity = quantity;
+			return this;
+		}
+
+		public MiningExtraction.Builder withSpaceSystem( final SpaceSystem solarSystemLocation ) {
 			Objects.requireNonNull( solarSystemLocation );
 			this.onConstruction.solarSystemLocation = solarSystemLocation;
 			return this;
 		}
 
 		@RequiresNetwork
-		public Builder withTypeId( final Integer typeId ) {
+		public MiningExtraction.Builder withTypeId( final Integer typeId ) {
 			Objects.requireNonNull( typeId );
 			this.onConstruction.resourceItem = NeoItemFactory.getItemById( typeId );
 			return this;

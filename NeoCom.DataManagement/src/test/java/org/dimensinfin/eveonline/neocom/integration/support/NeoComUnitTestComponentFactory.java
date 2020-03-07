@@ -11,6 +11,7 @@ import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
+import org.dimensinfin.eveonline.neocom.support.IntegrationNeoComDBAdapter;
 import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 

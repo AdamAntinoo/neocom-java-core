@@ -21,6 +21,8 @@ import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
+import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.miningextraction.converter.MiningExtractionEntityToMiningExtraction;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
@@ -37,6 +39,7 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 public class MiningRepository {
 	// - C O M P O N E N T S
 	protected Dao<MiningExtractionEntity, String> miningExtractionDao;
+	protected Dao<MiningExtraction, String> miningExtractionDao2;
 	protected LocationCatalogService locationCatalogService;
 
 	/**
@@ -67,8 +70,13 @@ public class MiningRepository {
 		}
 	}
 
-	public MiningExtraction accessMiningExtractionFindById( final String recordIdentifier ) throws SQLException {
-		return this.miningExtractionDao.queryForId( recordIdentifier );
+	public MiningExtractionEntity accessMiningExtractionFindById( final String recordIdentifier ) {
+		try {
+			return this.miningExtractionDao.queryForId( recordIdentifier );
+		} catch (final SQLException sqle) {
+			NeoComLogger.error( ErrorInfoCatalog.MINING_EXTRACTION_BYID_SEARCH_FAILED.getErrorMessage( recordIdentifier ), sqle );
+			throw new NeoComRuntimeException( ErrorInfoCatalog.MINING_EXTRACTION_BYID_SEARCH_FAILED.getErrorMessage( recordIdentifier ) );
+		}
 	}
 
 	/**
@@ -83,13 +91,13 @@ public class MiningRepository {
 	 */
 	public List<MiningExtraction> accessMiningExtractions4Pilot( final Credential credential ) {
 		try {
-			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
+			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao2.queryBuilder();
 			final Where<MiningExtraction, String> where = builder.where();
 			where.eq( "ownerId", credential.getAccountId() );
 			builder.orderBy( "id", false );
 			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
 			NeoComLogger.info( "SELECT: {}", preparedQuery.getStatement() );
-			return this.miningExtractionDao.query( preparedQuery );
+			return this.miningExtractionDao2.query( preparedQuery );
 		} catch (SQLException sqle) {
 			NeoComLogger.error( sqle );
 			return new ArrayList<>();
@@ -98,7 +106,7 @@ public class MiningRepository {
 
 	public List<MiningExtraction> accessResources4Date( final Credential credential, final LocalDate filterDate ) {
 		try {
-			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
+			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao2.queryBuilder();
 			final Where<MiningExtraction, String> where = builder.where();
 			where.eq( "ownerId", credential.getAccountId() )
 					.and()
@@ -111,7 +119,7 @@ public class MiningRepository {
 					builder.prepareStatementString() );
 			List<MiningExtraction> results = new ArrayList<>();
 			for (String[] record : dataList.getResults()) {
-				results.add( this.miningExtractionDao.queryForId( record[0] ) );
+				results.add( this.miningExtractionDao2.queryForId( record[0] ) );
 			}
 			NeoComLogger.info( "Records read: {}", results.size() + "" );
 			return results;
@@ -125,15 +133,15 @@ public class MiningRepository {
 	public List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
 //		return this.accessDatedMiningExtractions4Pilot( credential, LocalDate.now() );
 		return Stream.of( this.accessDatedMiningExtractions4Pilot( credential ) )
-				.filter( ( extraction ) -> this.filterOutNotTodayRecords( extraction, LocalDate.now() ) )
-				.map( ( extraction ) -> new MiningExtractionEntityToMiningExtraction().convert( extraction ) )
+				.filter( ( extraction ) -> this.filterOutNotTodayRecords( extraction ) )
+				.map( ( extraction ) -> new MiningExtractionEntityToMiningExtraction( this.locationCatalogService ).convert( extraction ) )
 				.collect( Collectors.toList() );
 	}
 
 	public void persist( final MiningExtraction record ) throws SQLException {
 		if (null != record) {
-			record.timeStamp();
-			this.miningExtractionDao.createOrUpdate( record );
+//			record.timeStamp();
+			this.miningExtractionDao2.createOrUpdate( record );
 		}
 	}
 
@@ -156,7 +164,7 @@ public class MiningRepository {
 	 */
 	private MiningExtraction postProcessExtraction( final MiningExtraction extraction ) {
 		extraction.setResourceItem( new NeoItem( extraction.getTypeId() ) );
-		final SpaceLocation location = this.locationCatalogService.searchLocation4Id( extraction.getSolarSystemId().longValue() );
+		final SpaceLocation location = this.locationCatalogService.searchLocation4Id( extraction.getLocationId().longValue() );
 		if (null != location)
 			extraction.setSolarSystemLocation( (SpaceSystem) location );
 		return extraction;
@@ -187,9 +195,14 @@ public class MiningRepository {
 			return this;
 		}
 
-		public MiningRepository.Builder withMiningExtractionDao( final Dao<MiningExtraction, String> miningExtractionDao ) {
+		public MiningRepository.Builder withMiningExtractionDao( final Dao<MiningExtractionEntity, String> miningExtractionDao ) {
 			Objects.requireNonNull( miningExtractionDao );
 			this.onConstruction.miningExtractionDao = miningExtractionDao;
+			return this;
+		}
+		public MiningRepository.Builder withMiningExtractionDao2( final Dao<MiningExtraction, String> miningExtractionDao ) {
+			Objects.requireNonNull( miningExtractionDao );
+			this.onConstruction.miningExtractionDao2 = miningExtractionDao;
 			return this;
 		}
 	}

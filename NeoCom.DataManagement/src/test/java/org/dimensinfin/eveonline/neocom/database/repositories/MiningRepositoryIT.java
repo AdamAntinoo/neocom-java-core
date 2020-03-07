@@ -12,7 +12,6 @@ import com.j256.ormlite.table.TableUtils;
 import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -120,7 +119,7 @@ public class MiningRepositoryIT {
 				.withRetrofitFactory( this.retrofitFactory )
 				.build();
 		this.miningRepository = new MiningRepository.Builder()
-				.withMiningExtractionDao( this.miningDao )
+//				.withMiningExtractionDao( this.miningDao )
 				.withLocationCatalogService( this.locationCatalogService )
 				.build();
 	}
@@ -192,33 +191,33 @@ public class MiningRepositoryIT {
 	}
 
 //	@Test
-	public void accessMiningExtractionFindById() throws SQLException {
-		this.insertTodayMiningExtractions();
-
-		final Credential credential = Mockito.mock( Credential.class );
-		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
-		MiningExtraction miningRecord = this.miningRepository
-				.accessMiningExtractionFindById( this.expectedVerifiedId );
-
-		Assertions.assertNotNull( miningRecord );
-		Assertions.assertEquals( characterId.longValue(), miningRecord.getOwnerId() );
-
-		miningRecord = this.miningRepository
-				.accessMiningExtractionFindById( "2019-11-10:24-30002764-35-2113197400" );
-
-		Assertions.assertNotNull( miningRecord );
-	}
+//	public void accessMiningExtractionFindById() throws SQLException {
+//		this.insertTodayMiningExtractions();
+//
+//		final Credential credential = Mockito.mock( Credential.class );
+//		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
+//		MiningExtraction miningRecord = this.miningRepository
+//				.accessMiningExtractionFindById( this.expectedVerifiedId );
+//
+//		Assertions.assertNotNull( miningRecord );
+//		Assertions.assertEquals( characterId.longValue(), miningRecord.getOwnerId() );
+//
+//		miningRecord = this.miningRepository
+//				.accessMiningExtractionFindById( "2019-11-10:24-30002764-35-2113197400" );
+//
+//		Assertions.assertNotNull( miningRecord );
+//	}
 
 //	@Test(expected = SQLException.class)
-	public void accessMiningExtractionFindByIdException() throws SQLException {
-		final Dao dao = Mockito.mock( Dao.class );
-		Mockito.when( dao.queryForId( ArgumentMatchers.any( String.class ) ) ).thenThrow( SQLException.class );
-		final MiningRepository repository = new MiningRepository.Builder()
-				.withMiningExtractionDao( dao )
-				.withLocationCatalogService( this.locationCatalogService )
-				.build();
-		final MiningExtraction miningRecord = repository.accessMiningExtractionFindById( "TEST-LOCATOR" );
-	}
+//	public void accessMiningExtractionFindByIdException() throws SQLException {
+//		final Dao dao = Mockito.mock( Dao.class );
+//		Mockito.when( dao.queryForId( ArgumentMatchers.any( String.class ) ) ).thenThrow( SQLException.class );
+//		final MiningRepository repository = new MiningRepository.Builder()
+//				.withMiningExtractionDao( dao )
+//				.withLocationCatalogService( this.locationCatalogService )
+//				.build();
+//		final MiningExtraction miningRecord = repository.accessMiningExtractionFindById( "TEST-LOCATOR" );
+//	}
 
 	private void onCreate() throws SQLException {
 		TableUtils.dropTable( connectionSource, MiningExtraction.class, true );
@@ -241,7 +240,7 @@ public class MiningRepositoryIT {
 						.build() )
 				.withQuantity( 43215 )
 				.withOwnerId( characterId )
-				.withExtractionDate( new LocalDate() )
+				.withExtractionDate( "gg" )
 				.build();
 		final MiningExtraction miningExtractionB = new MiningExtraction.Builder()
 				.withTypeId( 34 )
@@ -252,7 +251,7 @@ public class MiningRepositoryIT {
 						.build() )
 				.withQuantity( 12345 )
 				.withOwnerId( characterId )
-				.withExtractionDate( new LocalDate() )
+				.withExtractionDate( "ff" )
 				.build();
 		this.miningRepository.persist( miningExtractionA );
 		NeoComLogger.info( "Extraction id: {}", miningExtractionA.getId() );

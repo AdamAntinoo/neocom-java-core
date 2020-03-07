@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.integration.support;
+package org.dimensinfin.eveonline.neocom.support;
 
 import java.sql.SQLException;
 import java.util.Objects;
@@ -12,6 +12,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
@@ -23,6 +24,7 @@ public class IntegrationNeoComDBAdapter {
 
 	private Dao<NeoAsset, UUID> assetDao;
 	private Dao<Credential, String> credentialDao;
+	private Dao<MiningExtractionEntity, String> miningExtractionEntityDao;
 
 	private IntegrationNeoComDBAdapter() {}
 
@@ -44,6 +46,13 @@ public class IntegrationNeoComDBAdapter {
 			this.credentialDao = DaoManager.createDao( this.getConnectionSource(), Credential.class );
 		}
 		return this.credentialDao;
+	}
+
+	public Dao<MiningExtractionEntity, String> getMiningExtractionDao() throws SQLException {
+		if (null == this.credentialDao) {
+			this.miningExtractionEntityDao = DaoManager.createDao( this.getConnectionSource(), MiningExtractionEntity.class );
+		}
+		return this.miningExtractionEntityDao;
 	}
 
 	public void onCreate( final ConnectionSource connectionSource ) {

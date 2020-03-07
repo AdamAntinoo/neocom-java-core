@@ -11,11 +11,13 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 import retrofit2.Converter;
 
-public class GetCharactersCharacterIdMiningToMiningExtraction implements Converter<GetCharactersCharacterIdMining200Ok, MiningExtraction> {
+public class GetCharactersCharacterIdMiningToMiningExtractionConverter implements Converter<GetCharactersCharacterIdMining200Ok, MiningExtraction> {
 	private LocationCatalogService locationCatalogService;
+	private Integer ownerId;
 
-	public GetCharactersCharacterIdMiningToMiningExtraction( final LocationCatalogService locationCatalogService ) {
+	public GetCharactersCharacterIdMiningToMiningExtractionConverter( final LocationCatalogService locationCatalogService, final Integer accountId ) {
 		this.locationCatalogService = locationCatalogService;
+		this.ownerId=ownerId;
 	}
 
 	@Override
@@ -23,8 +25,9 @@ public class GetCharactersCharacterIdMiningToMiningExtraction implements Convert
 		final SpaceLocation spaceLocation = this.locationCatalogService.searchLocation4Id( value.getSolarSystemId().longValue() );
 		if (spaceLocation instanceof SpaceSystemImplementation)
 			return new MiningExtraction.Builder()
-					.withExtractionDate( value.getDate() )
+					.withExtractionDate( value.getDate().toString( MiningExtraction.EXTRACTION_DATE_FORMAT ) )
 					.withTypeId( value.getTypeId() )
+					.withOwnerId( this.ownerId)
 					.withQuantity( value.getQuantity().intValue() )
 					.withSpaceSystem( (SpaceSystem) spaceLocation )
 					.build();

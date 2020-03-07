@@ -9,8 +9,10 @@ import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
+import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
-import org.dimensinfin.eveonline.neocom.miningextraction.converter.GetCharactersCharacterIdMiningToMiningExtraction;
+import org.dimensinfin.eveonline.neocom.miningextraction.converter.GetCharactersCharacterIdMiningToMiningExtractionConverter;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
@@ -18,6 +20,7 @@ public class MiningExtractionDownloader /*extends Job*/ {
 	private Credential credential;
 	private ESIDataProvider esiDataProvider;
 	private LocationCatalogService locationCatalogService;
+	private MiningRepository miningRepository;
 
 	private MiningExtractionDownloader() {}
 
@@ -44,14 +47,19 @@ public class MiningExtractionDownloader /*extends Job*/ {
 		final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = Objects.requireNonNull(
 				this.esiDataProvider.getCharactersCharacterIdMining( credential ) );
 		for (GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk) {
-			final MiningExtraction extraction = new GetCharactersCharacterIdMiningToMiningExtraction( this.locationCatalogService )
+			final MiningExtraction extraction = new GetCharactersCharacterIdMiningToMiningExtractionConverter(
+					this.locationCatalogService,
+					this.credential.getAccountId() )
 					.convert( extractionOk );
 			// Set the missing owner that is something not available at the esi record.
-			extraction.setOwnerId( this.credential.getAccountId() );
+//			extraction.setOwnerId( this.credential.getAccountId() );
 			// Before doing any store of the data, see if this is a delta. Search for an already existing record.
-			final String recordId = MiningExtraction.generateRecordId( extractionOk.getDate(), extractionOk.getTypeId()
-					, extractionOk.getSolarSystemId(), credential.getAccountId() );
+			final String recordId = extraction.getId();
 			NeoComLogger.info( "Generating record identifier: {}.", recordId );
+			final MiningExtractionEntity targetRecord = this.miningRepository.accessMiningExtractionFindById( recordId );
+			NeoComLogger.info( "Searching for record on database: {}.", targetRecord.getId() );
+
+
 		}
 
 //		List<MiningExtraction> oreExtractions = new ArrayList<>();
@@ -148,6 +156,12 @@ public class MiningExtractionDownloader /*extends Job*/ {
 		public MiningExtractionDownloader.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
 			Objects.requireNonNull( locationCatalogService );
 			this.onConstruction.locationCatalogService = locationCatalogService;
+			return this;
+		}
+
+		public MiningExtractionDownloader.Builder withMiningRepository( final MiningRepository miningRepository ) {
+			Objects.requireNonNull( miningRepository );
+			this.onConstruction.miningRepository = miningRepository;
 			return this;
 		}
 	}

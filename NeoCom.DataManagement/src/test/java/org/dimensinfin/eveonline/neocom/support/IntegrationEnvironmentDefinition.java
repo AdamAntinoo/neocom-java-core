@@ -16,7 +16,6 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationNeoComDBAdapter;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
