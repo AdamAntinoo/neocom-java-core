@@ -5,6 +5,7 @@ import org.joda.time.LocalDateTime;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
@@ -35,7 +36,7 @@ public class GetCharactersCharacterIdMiningToMiningExtractionConverter implement
 		final SpaceLocation spaceLocation = this.locationCatalogService.searchLocation4Id( value.getSolarSystemId().longValue() );
 		if (spaceLocation instanceof SpaceSystemImplementation)
 			return new MiningExtraction.Builder()
-					.withExtractionDate( value.getDate().toString( MiningExtraction.EXTRACTION_DATE_FORMAT ) )
+					.withExtractionDate( value.getDate().toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ) )
 					.withExtractionHour( extractionHour )
 					.withNeoItem( NeoItemFactory.getSingleton().getItemById( value.getTypeId() ) )
 					.withOwnerId( this.ownerId )

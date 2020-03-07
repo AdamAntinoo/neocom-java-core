@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceConstellationImplementation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
@@ -116,7 +117,7 @@ public class GetCharactersCharacterIdMiningToMiningExtractionConverterTest {
 		final MiningExtraction miningExtraction = new GetCharactersCharacterIdMiningToMiningExtractionConverter(
 				locationCatalogService, ownerId, processingDate )
 				.convert( mining200Ok );
-		final String calculatedId = LocalDate.now().toString( MiningExtraction.EXTRACTION_DATE_FORMAT ) +
+		final String calculatedId = LocalDate.now().toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ) +
 				":" +
 				LocalDateTime.now().getHourOfDay() +
 				"-30001669-17459-92223647";
@@ -126,7 +127,7 @@ public class GetCharactersCharacterIdMiningToMiningExtractionConverterTest {
 		Assertions.assertEquals( 17459, miningExtraction.getTypeId() );
 		Assertions.assertEquals( DEFAULT_MINING_OWNER_IDENTIFIER, miningExtraction.getOwnerId() );
 		Assertions.assertEquals( calculatedId, miningExtraction.getId() );
-		Assertions.assertEquals( LocalDate.now().toString( MiningExtraction.EXTRACTION_DATE_FORMAT ), miningExtraction.getExtractionDateName() );
+		Assertions.assertEquals( LocalDate.now().toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ), miningExtraction.getExtractionDateName() );
 		Assertions.assertEquals( LocalDateTime.now().getHourOfDay(), miningExtraction.getExtractionHour() );
 		Assertions.assertEquals( 30001669, miningExtraction.getLocationId() );
 		Assertions.assertEquals( "Piroxeres", miningExtraction.getResourceName() );

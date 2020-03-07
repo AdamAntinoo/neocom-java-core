@@ -18,9 +18,6 @@ import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
-import org.dimensinfin.eveonline.neocom.domain.NeoItem;
-import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
-import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.miningextraction.converter.MiningExtractionEntityToMiningExtraction;
@@ -152,23 +149,23 @@ public class MiningRepository {
 	 * @return true if the record should be kept because it has todays date.
 	 */
 	private boolean filterOutNotTodayRecords( final MiningExtractionEntity extraction ) {
-		final String filterDate = LocalDate.now().toString( MiningExtraction.EXTRACTION_DATE_FORMAT );
+		final String filterDate = LocalDate.now().toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT );
 		return extraction.getExtractionDateName().equalsIgnoreCase( filterDate );
 	}
 
-	/**
-	 * Because transient fields lost their contents when the record is stored on the database, when retrieving the record the
-	 * date should be set again by searching for the esi resources again.
-	 *
-	 * @param extraction the mining extraction to update.
-	 */
-	private MiningExtraction postProcessExtraction( final MiningExtraction extraction ) {
-		extraction.setResourceItem( new NeoItem( extraction.getTypeId() ) );
-		final SpaceLocation location = this.locationCatalogService.searchLocation4Id( extraction.getLocationId().longValue() );
-		if (null != location)
-			extraction.setSolarSystemLocation( (SpaceSystem) location );
-		return extraction;
-	}
+//	/**
+//	 * Because transient fields lost their contents when the record is stored on the database, when retrieving the record the
+//	 * date should be set again by searching for the esi resources again.
+//	 *
+//	 * @param extraction the mining extraction to update.
+//	 */
+//	private MiningExtraction postProcessExtraction( final MiningExtraction extraction ) {
+//		extraction.setResourceItem( new NeoItem( extraction.getTypeId() ) );
+//		final SpaceLocation location = this.locationCatalogService.searchLocation4Id( extraction.getLocationId().longValue() );
+//		if (null != location)
+//			extraction.setSolarSystemLocation( (SpaceSystem) location );
+//		return extraction;
+//	}
 
 	// - B U I L D E R
 	public static class Builder {

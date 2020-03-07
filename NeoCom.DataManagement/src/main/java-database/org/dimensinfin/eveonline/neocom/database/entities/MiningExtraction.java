@@ -1,10 +1,8 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
 import java.util.Objects;
-import javax.persistence.Column;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.j256.ormlite.field.DatabaseField;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -14,97 +12,18 @@ import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 
 /**
- * This class represents the database entity to store the ESI character's mining extractions. That data are records that are kept for 30 days and
- * contain the incremental values of what was mined on a data for a particular resource on a determinate solar system.
- * The records are stored on the database by creating an special unique identifier that is generated from the esi read data.
- *
- * The date is obtained from the esi record but the processing hour is set from the current creation time if the record is from today'ss date or
- * fixed to 24 if the record has a date different from today.
- *
- * Records can be read at any time and current date records values can increase if there is more mining done since the last esi data request. So
- * our system will record quantities by the hour and later calculate the deltas so the record will represent the estimated quantity mined on that
- * hour and not the aggregated quantity mined along the day.
+ * This class represents a mining extraction to be used for rendering of for other data management operations. It is constructed from the persisted
+ * esi record and has also access to location data and esi item information.
  *
  * @author Adam Antinoo (adamantinoo.git@gmail.com)
  * @since 0.14.0
  */
-//@Entity(name = "MiningExtractions")
-//@DatabaseTable(tableName = "MiningExtractions")
 @JsonIgnoreProperties
-public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggregableItem */ {
-	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
-
-//	/**
-//	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not the
-//	 * current date we should not change any data on the database since we understand that old data is not being modified. But it can happen that
-//	 * old data is the first time the it is added to the database. So we set the hour of day to the number 24.
-//	 */
-//	@Deprecated
-//	public static String generateRecordId( final LocalDate date, final int typeId, final long systemId, final long ownerId ) {
-//		// Check the date.
-//		final String todayDate = DateTime.now().toString( EXTRACTION_DATE_FORMAT );
-//		final String targetDate = date.toString( EXTRACTION_DATE_FORMAT );
-//		if (todayDate.equalsIgnoreCase( targetDate ))
-//			return new StringBuffer()
-//					.append( date.toString( EXTRACTION_DATE_FORMAT ) ).append( ":" )
-//					.append( DateTime.now().getHourOfDay() ).append( "-" )
-//					.append( systemId ).append( "-" )
-//					.append( typeId ).append( "-" )
-//					.append( ownerId )
-//					.toString();
-//		else
-//			return new StringBuffer()
-//					.append( date.toString( EXTRACTION_DATE_FORMAT ) ).append( ":" )
-//					.append( 24 ).append( "-" )
-//					.append( systemId ).append( "-" )
-//					.append( typeId ).append( "-" )
-//					.append( ownerId )
-//					.toString();
-//	}
-//
-//	@Deprecated
-//	public static String generateRecordId( final String date, final int hour, final int typeId, final long systemId, final long ownerId ) {
-//		return "".concat( date ).concat( ":" )
-//				.concat( Integer.toString( hour ) ).concat( "-" )
-//				.concat( Long.toString( systemId ) ).concat( "-" )
-//				.concat( Integer.toString( typeId ) ).concat( "-" )
-//				.concat( Long.toString( ownerId ) );
-//	}
-//
-//	public static String generateRecordId( final LocalDate date, final int hour, final int typeId,
-//	                                       final long systemId, final long ownerId ) {
-//		return "".concat( date.toString( EXTRACTION_DATE_FORMAT ) ).concat( ":" )
-//				.concat( Integer.toString( hour ) ).concat( "-" )
-//				.concat( Long.toString( systemId ) ).concat( "-" )
-//				.concat( Integer.toString( typeId ) ).concat( "-" )
-//				.concat( Long.toString( ownerId ) );
-//	}
-
-	// - F I E L D - S E C T I O N
-//	@Id
-//	@DatabaseField(id = true)
-//	@Column(name = "id", updatable = false, nullable = false)
-//	private String id = "YYYY-MM-DD:HH-SYSTEMID-TYPEID-OWNERID";
-	//	@DatabaseField
-//	@Column(name = "typeId")
-//	private Integer typeId; // The eve type identifier for the resource being extracted
-//	@DatabaseField
-//	@Column(name = "solarSystemId")
-//	private Integer solarSystemId; // The solar system where the extraction is recorded.
-//	@DatabaseField
-//	@Column(name = "quantity")
+public class MiningExtraction  {
 	private Long quantity = 0L;
-	@DatabaseField
-	@Column(name = "delta")
 	private long delta = 0;
-	@DatabaseField(index = true)
-	@Column(name = "extractionDateName")
 	private String extractionDateName;
-	@DatabaseField
-	@Column(name = "extractionHour")
 	private int extractionHour = 24; // The hour of the day for this extraction delta or 24 if this is the date aggregated value.
-	@DatabaseField(index = true)
-	@Column(name = "ownerId")
 	private Integer ownerId; // The credential identifier of the pilot's extraction.
 	private transient NeoItem resourceItem;
 	private transient SpaceSystem solarSystemLocation;
@@ -131,10 +50,6 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 		return this.resourceItem.getName();
 	}
 
-//	public LocalDate getExtractionDate() {
-//		return new LocalDate( this.extractionDateName );
-//	}
-
 	public String getExtractionDateName() {
 		return this.extractionDateName;
 	}
@@ -159,12 +74,6 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 	public long getOwnerId() {
 		return this.ownerId;
 	}
-
-//	public MiningExtraction setOwnerId( final Integer ownerId ) {
-//		this.ownerId = ownerId;
-//		return this;
-//	}
-
 	public String getURLForItem() {
 		return this.resourceItem.getURLForItem();
 	}
@@ -172,12 +81,6 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 	public Long getQuantity() {
 		return this.quantity;
 	}
-
-//	public MiningExtraction setQuantity( final int quantity ) {
-//		this.quantity = quantity;
-//		return this;
-//	}
-
 	public double getVolume() {
 		return this.resourceItem.getVolume();
 	}
@@ -186,36 +89,12 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 		return this.resourceItem.getPrice();
 	}
 
-	public MiningExtraction setResourceItem( final NeoItem resourceItem ) {
-		this.resourceItem = resourceItem;
-		return this;
-	}
-
-	public MiningExtraction setSolarSystemLocation( final SpaceSystem solarSystemLocation ) {
-		Objects.requireNonNull( solarSystemLocation );
-		this.solarSystemLocation = solarSystemLocation;
-		return this;
-	}
-
-//	// - I C O L L A B O R A T I O N
-//	@Override
-//	public List<ICollaboration> collaborate2Model( final String s ) {
-//		return new ArrayList<>(  );
-//	}
-//
-//	@Override
-//	public int compareTo( @NotNull final Object o ) {
-//		return this.equals( o )
-//	}
-
 	// - C O R E
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder( 17, 37 )
 				.appendSuper( super.hashCode() )
 				.append( this.getId() )
-//				.append( this.typeId )
-//				.append( this.solarSystemId )
 				.append( this.quantity )
 				.append( this.delta )
 				.append( this.extractionDateName )
@@ -231,13 +110,10 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 		final MiningExtraction that = (MiningExtraction) o;
 		return new EqualsBuilder()
 				.appendSuper( super.equals( o ) )
-//				.append( this.typeId, that.typeId )
-//				.append( this.solarSystemId, that.solarSystemId )
 				.append( this.quantity, that.quantity )
 				.append( this.delta, that.delta )
 				.append( this.extractionHour, that.extractionHour )
 				.append( this.ownerId, that.ownerId )
-//				.append( this.id, that.id )
 				.append( this.extractionDateName, that.extractionDateName )
 				.isEquals();
 	}
@@ -245,14 +121,21 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 	@Override
 	public String toString() {
 		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "id", this.getLocationId() )
-				.append( "typeId", this.getTypeId() )
-				.append( "solarSystemId", this.getLocationId() )
-				.append( "quantity", this.quantity )
-				.append( "delta", this.delta )
-				.append( "extractionDateName", this.extractionDateName )
-				.append( "extractionHour", this.extractionHour )
-				.append( "ownerId", this.ownerId )
+				.append( "quantity", quantity )
+				.append( "delta", delta )
+				.append( "extractionDateName", extractionDateName )
+				.append( "extractionHour", extractionHour )
+				.append( "ownerId", ownerId )
+				.append( "resourceItem", resourceItem )
+				.append( "solarSystemLocation", solarSystemLocation )
+				.append( "id", getId() )
+				.append( "typeId", getTypeId() )
+				.append( "locationId", getLocationId() )
+				.append( "resourceName", getResourceName() )
+				.append( "systemName", getSystemName() )
+				.append( "URLForItem", getURLForItem() )
+				.append( "volume", getVolume() )
+				.append( "price", getPrice() )
 				.toString();
 	}
 

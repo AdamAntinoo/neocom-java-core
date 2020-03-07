@@ -20,12 +20,25 @@ import com.j256.ormlite.table.DatabaseTable;
  * new aggregated extraction for a mineral per system so the difference with the first result will give the delta extractions between the two
  * record times.
  *
+ * This class represents the database entity to store the ESI character's mining extractions. That data are records that are kept for 30 days and
+ * contain the incremental values of what was mined on a data for a particular resource on a determinate solar system.
+ * The records are stored on the database by creating an special unique identifier that is generated from the esi read data.
+ *
+ * The date is obtained from the esi record but the processing hour is set from the current creation time if the record is from today'ss date or
+ * fixed to 24 if the record has a date different from today.
+ *
+ * Records can be read at any time and current date records values can increase if there is more mining done since the last esi data request. So
+ * our system will record quantities by the hour and later calculate the deltas so the record will represent the estimated quantity mined on that
+ * hour and not the aggregated quantity mined along the day.
+ *
  * @author Adam Antinoo (adamantinoo.git@gmail.com)
  * @since 0.19.0
  */
 @Entity(name = "MiningExtractions")
 @DatabaseTable(tableName = "MiningExtractions")
 public class MiningExtractionEntity extends UpdatableEntity {
+	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
+	private static final long serialVersionUID = -3786687847087826269L;
 	// - F I E L D - S E C T I O N
 	@Id
 	@DatabaseField(id = true)
