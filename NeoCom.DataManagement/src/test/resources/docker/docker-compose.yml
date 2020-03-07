@@ -15,11 +15,8 @@ services:
     image: apimastery/apisimulator
     ports:
       - "6090:6090"
-    environment:
-      - APISIMULATOR_JAVA=/java-11
     volumes:
-      - /usr/lib/jvm/java-11-oracle:/java-11
-      - /home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esioauth-simulation:/esioauth-simulation
+      - ./NeoCom.DataManagement/src/test/resources/esioauth-simulation:/esioauth-simulation
     command: "bin/apisimulator start /esioauth-simulation -p 6090"
 
   esi-unittesting:
@@ -27,11 +24,8 @@ services:
     image: apimastery/apisimulator
     ports:
       - "6091:6090"
-    environment:
-      - APISIMULATOR_JAVA=/java-11
     volumes:
-      - /usr/lib/jvm/java-11-oracle:/java-11
-      - /home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting:/esi-unittesting
+      - ./NeoCom.DataManagement/src/test/resources/esi-unittesting:/esi-unittesting
     command: "bin/apisimulator start /esi-unittesting -p 6090"
 
   backend-unittesting:
@@ -39,9 +33,6 @@ services:
     image: apimastery/apisimulator
     ports:
       - "6092:6090"
-    environment:
-      - APISIMULATOR_JAVA=/java-11
     volumes:
-      - /usr/lib/jvm/java-11-oracle:/java-11
-      - /home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/backend-unittesting:/backend-unittesting
+      - ./NeoCom.DataManagement/src/test/resources/backend-unittesting:/backend-unittesting
     command: "bin/apisimulator start /backend-unittesting -p 6090"

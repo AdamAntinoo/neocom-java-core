@@ -24,10 +24,8 @@ definitions:
           - sonar
         script:
           - export TESTCONTAINERS_RYUK_DISABLED=true
-          - ./NeoCom.DataManagement/docker-service.sh start
+          - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml &
           - ./gradlew clean build test
-          - ./NeoCom.DataManagement/docker-service.sh stop
-          - apt install docker-compose
         services:
           - docker
         artifacts:
