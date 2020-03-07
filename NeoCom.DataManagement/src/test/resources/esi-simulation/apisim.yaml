@@ -1,0 +1,512 @@
+simlet: market-prices
+
+request:
+  - method: GET
+  - uriPath: /markets/prices/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    [
+      {
+        "adjusted_price": 885055.23,
+        "average_price": 1724228.15,
+        "type_id": 34
+      },
+      {
+        "adjusted_price": 34900.12,
+        "average_price": 31620.46,
+        "type_id": 35
+      },
+      {
+        "adjusted_price": 2045243.94,
+        "average_price": 1925895.31,
+        "type_id": 36
+      }
+    ]
+
+---
+
+simlet: universe-races
+
+request:
+  - method: GET
+  - uriPath: /universe/races/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    [
+      {
+        "alliance_id": 500001,
+        "description": "Founded on the tenets of patriotism and hard work that carried its ancestors through hardships on an inhospitable homeworld, the Caldari State is today a corporate dictatorship, led by rulers who are determined to see it return to the meritocratic ideals of old. Ruthless and efficient in the boardroom as well as on the battlefield, the Caldari are living emblems of strength, persistence, and dignity.",
+        "name": "Caldari",
+        "race_id": 1
+      },
+      {
+        "alliance_id": 500002,
+        "description": "Once a thriving tribal civilization, the Minmatar were enslaved by the Amarr Empire for more than 700 years until a massive rebellion freed most, but not all, of those held in servitude. The Minmatar people today are resilient, ingenious, and hard-working. Many of them believe that democracy, though it has served them well for a long time, can never restore what was taken from them so long ago. For this reason they have formed a government truly reflective of their tribal roots. They will forever resent the Amarrians, and yearn for the days before the Empire's accursed ships ever reached their home skies.",
+        "name": "Minmatar",
+        "race_id": 2
+      },
+      {
+        "alliance_id": 500003,
+        "description": "The Amarr Empire is the largest and oldest of the four empires. Ruled by a mighty Empress, this vast theocratic society is supported by a broad foundation of slave labor. Amarr citizens tend to be highly educated and fervent individuals, and as a culture Amarr adheres to the basic tenet that what others call slavery is in fact one step on a indentured person's spiritual path toward fully embracing their faith. Despite several setbacks in recent history, the Empire remains arguably the most stable and militarily powerful nation-state in New Eden.",
+        "name": "Amarr",
+        "race_id": 4
+      },
+      {
+        "alliance_id": 500004,
+        "description": "Champions of liberty and defenders of the downtrodden, the Gallente play host to the only true democracy in New Eden. Some of the most progressive leaders, scientists, and businessmen of the era have emerged from its diverse peoples. A pioneer of artificial intelligence, the Federation relies heavily on drones and other automated systems. This is not to detract from the skill of their pilots, though: the Gallente Federation is known for producing some of the best and bravest the universe has to offer.",
+        "name": "Gallente",
+        "race_id": 8
+      }
+    ]
+
+---
+
+simlet: universe-ancestries
+
+request:
+  - method: GET
+  - uriPath: /universe/ancestries/
+
+response:
+  from: stub
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/ancestries.json"
+
+---
+
+simlet: universe-bloodlines
+
+request:
+  - method: GET
+  - uriPath: /universe/bloodlines/
+
+response:
+  from: stub
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/bloodlines.json"
+
+---
+
+simlet: universe-groups-10
+
+request:
+  - method: GET
+  - uriPath: /universe/groups/10/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    {
+      "category_id": 2,
+      "group_id": 10,
+      "name": "Stargate",
+      "published": false,
+      "types": [
+        16,
+        17,
+        3873,
+        3874,
+        3875,
+        3876,
+        3877,
+        12292,
+        29624,
+        29625,
+        29626,
+        29627,
+        29628,
+        29629,
+        29630,
+        29631,
+        29632,
+        29633,
+        29634,
+        29635
+      ]
+    }
+
+---
+
+simlet: universe-categories-20
+
+request:
+  - method: GET
+  - uriPath: /universe/categories/20/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    {
+      "category_id": 20,
+      "groups": [
+        300,
+        303,
+        304,
+        721,
+        738,
+        739,
+        740,
+        741,
+        742,
+        743,
+        744,
+        745,
+        746,
+        747,
+        748,
+        749,
+        750,
+        751,
+        783,
+        1228,
+        1229,
+        1230,
+        1231,
+        1730
+      ],
+      "name": "Implant",
+      "published": true
+    }
+
+---
+
+simlet: status
+
+request:
+  - method: GET
+  - uriPath: /status/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    {
+      "players": 25003,
+      "server_version": "1589237",
+      "start_time": "2019-10-22T11:04:50Z"
+    }
+
+---
+
+simlet: universe-types-34
+
+request:
+  - method: GET
+  - uriPath: /universe/types/34/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    {
+      "capacity": 0,
+      "description": "The main building block in space structures. A very hard, yet bendable metal. Cannot be used in human habitats due to its instability at atmospheric temperatures. Very common throughout the universe.\r\n\r\nMay be obtained by reprocessing the following ores:\r\n\r\n<color='0xFFFF0000'>0.0</color> security status solar system or lower:\r\n<a href=showinfo:22>Arkonor</a>, <a href=showinfo:17425>Crimson Arkonor</a>, <a href=showinfo:17426>Prime Arkonor</a>\r\n<a href=showinfo:1225>Crokite</a>, <a href=showinfo:17432>Sharp Crokite</a>, <a href=showinfo:17433>Crystalline Crokite</a>\r\n<a href=showinfo:1232>Dark Ochre</a>, <a href=showinfo:17436>Onyx Ochre</a>, <a href=showinfo:17437>Obsidian Ochre</a>\r\n<a href=showinfo:19>Spodumain</a>, <a href=showinfo:17466>Bright Spodumain</a>, <a href=showinfo:17467>Gleaming Spodumain</a>\r\n\r\n<color='0xFFFF4D00'>0.2</color> security status solar system or lower:\r\n<a href=showinfo:1231>Hemorphite</a>, <a href=showinfo:17444>Vivid Hemorphite</a>, <a href=showinfo:17445>Radiant Hemorphite</a>\r\n\r\n<color='0xFF00FF00'>0.7</color> security status solar system or lower:\r\n<a href=showinfo:20>Kernite</a>, <a href=showinfo:17452>Luminous Kernite</a>, <a href=showinfo:17453>Fiery Kernite</a>\r\n<a href=showinfo:1227>Omber</a>, <a href=showinfo:17867>Silvery Omber</a>, <a href=showinfo:17868>Golden Omber</a>\r\n\r\n<color='0xFF4DFFCC'>0.9</color> security status solar system or lower:\r\n<a href=showinfo:18>Plagioclase</a>, <a href=showinfo:17455>Azure Plagioclase</a>, <a href=showinfo:17456>Rich Plagioclase</a>\r\n<a href=showinfo:1224>Pyroxeres</a>, <a href=showinfo:17459>Solid Pyroxeres</a>, <a href=showinfo:17460>Viscous Pyroxeres</a>\r\n\r\n<color='0xFF33FFFF'>1.0</color> security status solar system or lower:\r\n<a href=showinfo:1228>Scordite</a>, <a href=showinfo:17463>Condensed Scordite</a>, <a href=showinfo:17464>Massive Scordite</a>\r\n<a href=showinfo:1230>Veldspar</a>, <a href=showinfo:17470>Concentrated Veldspar</a>, <a href=showinfo:17471>Dense Veldspar</a>",
+      "group_id": 18,
+      "icon_id": 22,
+      "market_group_id": 1857,
+      "mass": 0,
+      "name": "Tritanium",
+      "packaged_volume": 0.01,
+      "portion_size": 1,
+      "published": true,
+      "radius": 1,
+      "type_id": 34,
+      "volume": 0.01
+    }
+
+---
+
+simlet: universe-types-34
+
+request:
+  - method: GET
+  - uriPath: /universe/types/34/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    {
+      "capacity": 0,
+      "description": "The main building block in space structures. A very hard, yet bendable metal. Cannot be used in human habitats due to its instability at atmospheric temperatures. Very common throughout the universe.\r\n\r\nMay be obtained by reprocessing the following ores:\r\n\r\n<color='0xFFFF0000'>0.0</color> security status solar system or lower:\r\n<a href=showinfo:22>Arkonor</a>, <a href=showinfo:17425>Crimson Arkonor</a>, <a href=showinfo:17426>Prime Arkonor</a>\r\n<a href=showinfo:1225>Crokite</a>, <a href=showinfo:17432>Sharp Crokite</a>, <a href=showinfo:17433>Crystalline Crokite</a>\r\n<a href=showinfo:1232>Dark Ochre</a>, <a href=showinfo:17436>Onyx Ochre</a>, <a href=showinfo:17437>Obsidian Ochre</a>\r\n<a href=showinfo:19>Spodumain</a>, <a href=showinfo:17466>Bright Spodumain</a>, <a href=showinfo:17467>Gleaming Spodumain</a>\r\n\r\n<color='0xFFFF4D00'>0.2</color> security status solar system or lower:\r\n<a href=showinfo:1231>Hemorphite</a>, <a href=showinfo:17444>Vivid Hemorphite</a>, <a href=showinfo:17445>Radiant Hemorphite</a>\r\n\r\n<color='0xFF00FF00'>0.7</color> security status solar system or lower:\r\n<a href=showinfo:20>Kernite</a>, <a href=showinfo:17452>Luminous Kernite</a>, <a href=showinfo:17453>Fiery Kernite</a>\r\n<a href=showinfo:1227>Omber</a>, <a href=showinfo:17867>Silvery Omber</a>, <a href=showinfo:17868>Golden Omber</a>\r\n\r\n<color='0xFF4DFFCC'>0.9</color> security status solar system or lower:\r\n<a href=showinfo:18>Plagioclase</a>, <a href=showinfo:17455>Azure Plagioclase</a>, <a href=showinfo:17456>Rich Plagioclase</a>\r\n<a href=showinfo:1224>Pyroxeres</a>, <a href=showinfo:17459>Solid Pyroxeres</a>, <a href=showinfo:17460>Viscous Pyroxeres</a>\r\n\r\n<color='0xFF33FFFF'>1.0</color> security status solar system or lower:\r\n<a href=showinfo:1228>Scordite</a>, <a href=showinfo:17463>Condensed Scordite</a>, <a href=showinfo:17464>Massive Scordite</a>\r\n<a href=showinfo:1230>Veldspar</a>, <a href=showinfo:17470>Concentrated Veldspar</a>, <a href=showinfo:17471>Dense Veldspar</a>",
+      "group_id": 18,
+      "icon_id": 22,
+      "market_group_id": 1857,
+      "mass": 0,
+      "name": "Tritanium",
+      "packaged_volume": 0.01,
+      "portion_size": 1,
+      "published": true,
+      "radius": 1,
+      "type_id": 34,
+      "volume": 0.01
+    }
+
+---
+
+simlet: character-publicdata
+
+request:
+  - method: GET
+  - uriPathPattern: "/characters/{character_id}/"
+
+response:
+  from: stub
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    {
+      "ancestry_id": 22,
+      "birthday": "2012-07-05T21:53:15Z",
+      "bloodline_id": 4,
+      "corporation_id": 98384726,
+      "description": "",
+      "gender": "female",
+      "name": "Beth Ripley",
+      "race_id": 2,
+      "security_status": 0
+    }
+
+---
+
+simlet: character-assets
+
+request:
+  - method: GET
+  - uriPathPattern: "/characters/{character_id}/assets/"
+
+response:
+  from: stub
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/assets.json"
+
+---
+
+simlet: character-wallet
+
+request:
+  - method: GET
+  - uriPathPattern: "/characters/{character_id}/wallet/"
+
+response:
+  from: stub
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: "2765866375.96"
+
+---
+
+simlet: corporations-machaque
+
+request:
+  - method: GET
+  - uriPathPattern: "/corporations/{corporation_id}/"
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporations.json"
+
+---
+
+simlet: character-ripley
+
+request:
+  - method: GET
+  - uriPathPattern: "/characters/{character_id}/"
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/characters.json"
+
+---
+
+simlet: alliances-silent-infinity
+
+request:
+  - method: GET
+  - uriPathPattern: "/alliances/{alliance_id}/"
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/alliances.json"
+
+---
+
+simlet: character-fittings
+
+request:
+  - method: GET
+  - uriPathPattern: "/characters/{characterId}/fittings/"
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/fittings.json"
+
+---
+
+simlet: universe-schematics
+
+request:
+  - method: GET
+  - uriPathPattern: /universe/schematics/{schematic_id}/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    {
+      "cycle_time": 1800,
+      "schematic_name": "Precious Metals"
+    }
+
+---
+
+simlet: universe-structure
+
+request:
+  - method: GET
+  - uriPathPattern: /universe/structures/{structure_id}/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/universe.structure.json"
+
+---
+
+simlet: corporation-asset-names
+
+request:
+  - method: POST
+  - uriPathPattern: /corporations/{corporation_id}/assets/names/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporation.assets.names.json"
+
+---
+
+simlet: corporation-assets-page1-98384726
+
+request:
+  - method: GET
+  - uriPathPattern: "/corporations/98384726/assets/"
+  - where: uriQueryParameter
+    named: "page"
+    equals: 1
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporation.assets.page1.json"
+
+---
+
+simlet: corporation-assets-page1-98300000
+
+request:
+  - method: GET
+  - uriPathPattern: "/corporations/98300000/assets/"
+  - where: uriQueryParameter
+    named: "page"
+    equals: 1
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/04.minimal.corporation.assets.json"
+
+---
+
+simlet: corporation-assets-page2
+
+request:
+  - method: GET
+  - uriPathPattern: "/corporations/{corporationId}/assets/"
+  - where: uriQueryParameter
+    named: "page"
+    equals: 2
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    []
+

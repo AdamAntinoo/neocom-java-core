@@ -7,18 +7,18 @@ definitions:
   caches:
     sonar: ~/.sonar/cache  # Caching SonarCloud artifacts will speed up your build
   steps:
-    - step: &build
-        name: Build the code to check there are no compilation errors
+    - step: &compile
+        name: Compile the code to check there are no compilation errors
         caches:
           - gradle
           - sonar
         script:
           - export TESTCONTAINERS_RYUK_DISABLED=true
-          - ./gradlew clean build
+          - ./gradlew clean classes
         artifacts:
           - build/libs/**
     - step: &build-test
-        name: Build the code to check there are no compilation errors
+        name: Build the code to check there are no compilation errors and that tests run
         caches:
           - gradle
           - sonar
@@ -49,9 +49,9 @@ pipelines:                 # More info here: https://confluence.atlassian.com/bi
     master:
       - step: *build-test-coverage-sonarcloud
     development:
-      - step: *build
+      - step: *compile
     ci:
       - step: *build-test
   pull-requests:
     '**':
-      - step: *build
+      - step: *compile
