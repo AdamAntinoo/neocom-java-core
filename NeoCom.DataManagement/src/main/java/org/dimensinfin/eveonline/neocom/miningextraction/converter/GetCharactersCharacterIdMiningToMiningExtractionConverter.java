@@ -11,6 +11,7 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.service.NeoItemFactory;
 
 import retrofit2.Converter;
 
@@ -36,7 +37,7 @@ public class GetCharactersCharacterIdMiningToMiningExtractionConverter implement
 			return new MiningExtraction.Builder()
 					.withExtractionDate( value.getDate().toString( MiningExtraction.EXTRACTION_DATE_FORMAT ) )
 					.withExtractionHour( extractionHour )
-					.withTypeId( value.getTypeId() )
+					.withNeoItem( NeoItemFactory.getSingleton().getItemById( value.getTypeId() ) )
 					.withOwnerId( this.ownerId )
 					.withQuantity( value.getQuantity().intValue() )
 					.withSpaceSystem( (SpaceSystem) spaceLocation )

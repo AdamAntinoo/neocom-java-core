@@ -12,10 +12,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import org.dimensinfin.eveonline.neocom.annotation.RequiresNetwork;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
-import org.dimensinfin.eveonline.neocom.service.NeoItemFactory;
 
 /**
  * This class represents the database entity to store the ESI character's mining extractions. That data are records that are kept for 30 days and
@@ -135,9 +133,9 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 		return this.resourceItem.getName();
 	}
 
-	public LocalDate getExtractionDate() {
-		return new LocalDate( this.extractionDateName );
-	}
+//	public LocalDate getExtractionDate() {
+//		return new LocalDate( this.extractionDateName );
+//	}
 
 	public String getExtractionDateName() {
 		return this.extractionDateName;
@@ -164,10 +162,10 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 		return this.ownerId;
 	}
 
-	public MiningExtraction setOwnerId( final Integer ownerId ) {
-		this.ownerId = ownerId;
-		return this;
-	}
+//	public MiningExtraction setOwnerId( final Integer ownerId ) {
+//		this.ownerId = ownerId;
+//		return this;
+//	}
 
 	public String getURLForItem() {
 		return this.resourceItem.getURLForItem();
@@ -338,12 +336,17 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 			this.onConstruction.solarSystemLocation = solarSystemLocation;
 			return this;
 		}
-
-		@RequiresNetwork
-		public MiningExtraction.Builder withTypeId( final Integer typeId ) {
-			Objects.requireNonNull( typeId );
-			this.onConstruction.resourceItem = NeoItemFactory.getItemById( typeId );
+		public MiningExtraction.Builder withNeoItem( final NeoItem resourceItem ) {
+			Objects.requireNonNull( resourceItem );
+			this.onConstruction.resourceItem = resourceItem;
 			return this;
 		}
+
+//		@RequiresNetwork
+//		public MiningExtraction.Builder withTypeId( final Integer typeId ) {
+//			Objects.requireNonNull( typeId );
+//			this.onConstruction.resourceItem = NeoItemFactory.getItemById( typeId );
+//			return this;
+//		}
 	}
 }

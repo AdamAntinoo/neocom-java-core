@@ -8,6 +8,7 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
 import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.service.NeoItemFactory;
 
 import retrofit2.Converter;
 
@@ -23,7 +24,7 @@ public class MiningExtractionEntityToMiningExtraction implements Converter<Minin
 		final SpaceLocation spaceLocation = this.locationCatalogService.searchLocation4Id( value.getSolarSystemId().longValue() );
 		if (spaceLocation instanceof SpaceSystemImplementation)
 			return new MiningExtraction.Builder()
-					.withTypeId( value.getTypeId() )
+					.withNeoItem( NeoItemFactory.getSingleton().getItemById( value.getTypeId() ) )
 					.withSpaceSystem( (SpaceSystem) spaceLocation )
 					.withQuantity( value.getQuantity() )
 					.withExtractionDate( value.getExtractionDateName() )
