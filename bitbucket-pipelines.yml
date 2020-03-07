@@ -27,7 +27,7 @@ definitions:
           - gradle
           - sonar
         script:
-          - ./NeoCom.DataManagement/ci/dependencies.sh
+          - sh ./NeoCom.DataManagement/ci/dependencies.sh
           - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml
           - docker-compose down
         services:
