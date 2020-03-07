@@ -9,8 +9,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
@@ -36,51 +34,51 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggregableItem */ {
 	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
 
-	/**
-	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not the
-	 * current date we should not change any data on the database since we understand that old data is not being modified. But it can happen that
-	 * old data is the first time the it is added to the database. So we set the hour of day to the number 24.
-	 */
-	@Deprecated
-	public static String generateRecordId( final LocalDate date, final int typeId, final long systemId, final long ownerId ) {
-		// Check the date.
-		final String todayDate = DateTime.now().toString( EXTRACTION_DATE_FORMAT );
-		final String targetDate = date.toString( EXTRACTION_DATE_FORMAT );
-		if (todayDate.equalsIgnoreCase( targetDate ))
-			return new StringBuffer()
-					.append( date.toString( EXTRACTION_DATE_FORMAT ) ).append( ":" )
-					.append( DateTime.now().getHourOfDay() ).append( "-" )
-					.append( systemId ).append( "-" )
-					.append( typeId ).append( "-" )
-					.append( ownerId )
-					.toString();
-		else
-			return new StringBuffer()
-					.append( date.toString( EXTRACTION_DATE_FORMAT ) ).append( ":" )
-					.append( 24 ).append( "-" )
-					.append( systemId ).append( "-" )
-					.append( typeId ).append( "-" )
-					.append( ownerId )
-					.toString();
-	}
-
-	@Deprecated
-	public static String generateRecordId( final String date, final int hour, final int typeId, final long systemId, final long ownerId ) {
-		return "".concat( date ).concat( ":" )
-				.concat( Integer.toString( hour ) ).concat( "-" )
-				.concat( Long.toString( systemId ) ).concat( "-" )
-				.concat( Integer.toString( typeId ) ).concat( "-" )
-				.concat( Long.toString( ownerId ) );
-	}
-
-	public static String generateRecordId( final LocalDate date, final int hour, final int typeId,
-	                                       final long systemId, final long ownerId ) {
-		return "".concat( date.toString( EXTRACTION_DATE_FORMAT ) ).concat( ":" )
-				.concat( Integer.toString( hour ) ).concat( "-" )
-				.concat( Long.toString( systemId ) ).concat( "-" )
-				.concat( Integer.toString( typeId ) ).concat( "-" )
-				.concat( Long.toString( ownerId ) );
-	}
+//	/**
+//	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not the
+//	 * current date we should not change any data on the database since we understand that old data is not being modified. But it can happen that
+//	 * old data is the first time the it is added to the database. So we set the hour of day to the number 24.
+//	 */
+//	@Deprecated
+//	public static String generateRecordId( final LocalDate date, final int typeId, final long systemId, final long ownerId ) {
+//		// Check the date.
+//		final String todayDate = DateTime.now().toString( EXTRACTION_DATE_FORMAT );
+//		final String targetDate = date.toString( EXTRACTION_DATE_FORMAT );
+//		if (todayDate.equalsIgnoreCase( targetDate ))
+//			return new StringBuffer()
+//					.append( date.toString( EXTRACTION_DATE_FORMAT ) ).append( ":" )
+//					.append( DateTime.now().getHourOfDay() ).append( "-" )
+//					.append( systemId ).append( "-" )
+//					.append( typeId ).append( "-" )
+//					.append( ownerId )
+//					.toString();
+//		else
+//			return new StringBuffer()
+//					.append( date.toString( EXTRACTION_DATE_FORMAT ) ).append( ":" )
+//					.append( 24 ).append( "-" )
+//					.append( systemId ).append( "-" )
+//					.append( typeId ).append( "-" )
+//					.append( ownerId )
+//					.toString();
+//	}
+//
+//	@Deprecated
+//	public static String generateRecordId( final String date, final int hour, final int typeId, final long systemId, final long ownerId ) {
+//		return "".concat( date ).concat( ":" )
+//				.concat( Integer.toString( hour ) ).concat( "-" )
+//				.concat( Long.toString( systemId ) ).concat( "-" )
+//				.concat( Integer.toString( typeId ) ).concat( "-" )
+//				.concat( Long.toString( ownerId ) );
+//	}
+//
+//	public static String generateRecordId( final LocalDate date, final int hour, final int typeId,
+//	                                       final long systemId, final long ownerId ) {
+//		return "".concat( date.toString( EXTRACTION_DATE_FORMAT ) ).concat( ":" )
+//				.concat( Integer.toString( hour ) ).concat( "-" )
+//				.concat( Long.toString( systemId ) ).concat( "-" )
+//				.concat( Integer.toString( typeId ) ).concat( "-" )
+//				.concat( Long.toString( ownerId ) );
+//	}
 
 	// - F I E L D - S E C T I O N
 //	@Id
@@ -93,9 +91,9 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 //	@DatabaseField
 //	@Column(name = "solarSystemId")
 //	private Integer solarSystemId; // The solar system where the extraction is recorded.
-	@DatabaseField
-	@Column(name = "quantity")
-	private int quantity = 0;
+//	@DatabaseField
+//	@Column(name = "quantity")
+	private Long quantity = 0L;
 	@DatabaseField
 	@Column(name = "delta")
 	private long delta = 0;
@@ -171,15 +169,14 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 		return this.resourceItem.getURLForItem();
 	}
 
-	// - I A G G R E G A B L E I T E M
-	public int getQuantity() {
+	public Long getQuantity() {
 		return this.quantity;
 	}
 
-	public MiningExtraction setQuantity( final int quantity ) {
-		this.quantity = quantity;
-		return this;
-	}
+//	public MiningExtraction setQuantity( final int quantity ) {
+//		this.quantity = quantity;
+//		return this;
+//	}
 
 	public double getVolume() {
 		return this.resourceItem.getVolume();
@@ -325,8 +322,8 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 //			return this;
 //		}
 
-		public MiningExtraction.Builder withQuantity( final Integer quantity ) {
-			if (null == quantity) this.onConstruction.quantity = 0;
+		public MiningExtraction.Builder withQuantity( final Long quantity ) {
+			if (null == quantity) this.onConstruction.quantity = 0L;
 			this.onConstruction.quantity = quantity;
 			return this;
 		}

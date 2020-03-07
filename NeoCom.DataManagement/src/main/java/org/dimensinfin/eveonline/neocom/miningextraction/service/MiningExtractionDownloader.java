@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import org.joda.time.LocalDate;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
@@ -13,7 +15,8 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
+import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.miningextraction.converter.GetCharactersCharacterIdMiningToMiningExtractionConverter;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
@@ -46,27 +49,36 @@ public class MiningExtractionDownloader /*extends Job*/ {
 	public List<MiningExtraction> downloadMiningExtractions() {
 		// Get to the Network and download the data from the ESI api.
 		NeoComLogger.info( "Starting download of credential {} mining extractions...", this.credential.getAccountId() + "" );
-		final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = Objects.requireNonNull(
-				this.esiDataProvider.getCharactersCharacterIdMining( credential ) );
-		for (GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk) {
-			final MiningExtraction extraction = new GetCharactersCharacterIdMiningToMiningExtractionConverter(
-					this.locationCatalogService,
-					this.credential.getAccountId(),
-					LocalDate.now() )
-					.convert( extractionOk );
-			// Set the missing owner that is something not available at the esi record.
-//			extraction.setOwnerId( this.credential.getAccountId() );
-			// Before doing any store of the data, see if this is a delta. Search for an already existing record.
-			final String recordId = extraction.getId();
-			NeoComLogger.info( "Generating record identifier: {}.", recordId );
-			final MiningExtractionEntity targetRecord = this.miningRepository.accessMiningExtractionFindById( recordId );
-			NeoComLogger.info( "Searching for record on database: {}.", targetRecord.getId() );
-
-
-		}
-
-//		List<MiningExtraction> oreExtractions = new ArrayList<>();
-		return null;
+		return Stream.of( Objects.requireNonNull( this.esiDataProvider.getCharactersCharacterIdMining( credential ) ) )
+				.map( ( extractionOk ) -> {
+					final MiningExtraction extraction = new GetCharactersCharacterIdMiningToMiningExtractionConverter(
+							this.locationCatalogService,
+							this.credential.getAccountId(),
+							LocalDate.now() )
+							.convert( extractionOk );
+					// Before mapping this record see if this is a delta. Search for an already existing record.
+					final String recordId = extraction.getId();
+					NeoComLogger.info( "Generating record identifier: {}.", recordId );
+					final MiningExtractionEntity targetRecord = this.miningRepository.accessMiningExtractionFindById( recordId );
+					if (null != targetRecord) {
+						NeoComLogger.info( "Found previous record on database: {}.", targetRecord.getId() );
+						// There was a previous record so calculate the delta for this hour.
+						final long currentQty = targetRecord.getQuantity();
+						try {
+							this.miningRepository.persist( targetRecord.setQuantity( extractionOk.getQuantity() ) );
+						} catch (final SQLException sqle) {
+							NeoComLogger.error( sqle );
+							throw new NeoComRuntimeException(
+									ErrorInfoCatalog.MINING_EXTRACTION_PERSISTENCE_FAILED.getErrorMessage(
+											targetRecord.getId(),
+											sqle.getCause().toString() ) );
+						}
+						NeoComLogger.info( "Updating mining extraction: {} > Quantity: {}/{}",
+								recordId + "", extractionOk.getQuantity() + "", currentQty + "" );
+					}
+					return extraction;
+				} )
+				.collect( Collectors.toList() );
 	}
 
 	/**

@@ -530,9 +530,9 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		}
 	}
 
+	@TimeElapsed
 	private List<GetUniverseAncestries200Ok> getUniverseAncestries( final String datasource ) {
-		logger.info( ">> [ESIDataProvider.getUniverseAncestries]" );
-//		final Chrono accessFullTime = new Chrono();
+//		NeoComLogger.enter();
 		try {
 			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = this.retrofitFactory
 					.accessUniverseConnector()
@@ -546,15 +546,14 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-//			logger.info("<< [ESIDataProvider.getUniverseAncestries]> [TIMING] Full elapsed: {}",
-//			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+//			NeoComLogger.exit();
 		}
 		return new ArrayList<>();
 	}
 
+	@TimeElapsed
 	private List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String datasource ) {
-		logger.info( ">> [ESIDataProvider.getUniverseBloodlines]" );
-//		final Chrono accessFullTime = new Chrono();
+//		NeoComLogger.enter();
 		try {
 			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = this.retrofitFactory
 					.accessUniverseConnector()
@@ -569,12 +568,12 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-//			logger.info("<< [ESIDataProvider.getUniverseBloodlines]> [TIMING] Full elapsed: {}",
-//			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+//			NeoComLogger.exit();
 		}
 		return new ArrayList<>();
 	}
 
+	@TimeElapsed
 	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
 //		NeoComLogger.enter();
 		try {

@@ -138,10 +138,10 @@ public class MiningRepository {
 				.collect( Collectors.toList() );
 	}
 
-	public void persist( final MiningExtraction record ) throws SQLException {
+	public void persist( final MiningExtractionEntity record ) throws SQLException {
 		if (null != record) {
-//			record.timeStamp();
-			this.miningExtractionDao2.createOrUpdate( record );
+			record.timeStamp();
+			this.miningExtractionDao.createOrUpdate( record );
 		}
 	}
 

@@ -264,8 +264,8 @@ public class LocationCatalogService extends Job {
 		int access = locationsCacheStatistics.accountAccess( true );
 		this.lastLocationAccess = LocationCacheAccessType.MEMORY_ACCESS;
 		int hits = locationsCacheStatistics.getHits();
-		logger.info( ">< [LocationCatalogService.searchOnMemoryCache]> [HIT-{}/{} ] Location {}  found at cache.",
-				hits, access, locationId );
+		NeoComLogger.info( "[HIT-{}/{} ] Location {}  found at cache.",
+				hits + "", access + "", locationId + "" );
 		return locationCache.get( locationId );
 	}
 
@@ -331,33 +331,23 @@ public class LocationCatalogService extends Job {
 	}
 
 	synchronized void readLocationsDataCache() {
-		logger.info( ">> [LocationCatalogService.readLocationsDataCache]" );
+		NeoComLogger.enter();
 		final String directoryPath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH );
 		final String fileName = this.configurationProvider.getResourceString( LOCATIONS_CACHE_LOCATION );
 		final String cacheFileName = directoryPath + fileName;
-		logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Opening cache file: {}", cacheFileName );
+		NeoComLogger.info( "Opening cache file: {}", cacheFileName );
 		try (final BufferedInputStream buffer = new BufferedInputStream(
 				this.fileSystemAdapter.openResource4Input( cacheFileName ) );
 		     final ObjectInputStream input = new ObjectInputStream( buffer )
 		) {
 			locationCache = (Map<Long, SpaceLocation>) input.readObject();
-			logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Restored cache Locations: {} entries.",
-					locationCache.size() );
-		} catch (final ClassNotFoundException ex) {
-			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> ClassNotFoundException. {}",
-					ex.getMessage() );
-		} catch (final FileNotFoundException fnfe) {
-			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> FileNotFoundException. {}",
-					fnfe.getMessage() );
-		} catch (final IOException ioe) {
-			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> IOException. {}", ioe.getMessage() );
-		} catch (final IllegalArgumentException iae) {
-			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> IllegalArgumentException. {}",
-					iae.getMessage() );
+			NeoComLogger.info( "Restored cache Locations: {} entries.", locationCache.size() + "" );
+		} catch (final ClassNotFoundException | IOException | IllegalArgumentException cnfe) {
+			NeoComLogger.error( cnfe );
 		} catch (final RuntimeException rex) {
 			NeoComLogger.error( rex );
 		} finally {
-			logger.info( "<< [LocationCatalogService.readLocationsDataCache]" );
+			NeoComLogger.exit();
 		}
 	}
 

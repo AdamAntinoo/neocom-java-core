@@ -39,7 +39,7 @@ public class GetCharactersCharacterIdMiningToMiningExtractionConverter implement
 					.withExtractionHour( extractionHour )
 					.withNeoItem( NeoItemFactory.getSingleton().getItemById( value.getTypeId() ) )
 					.withOwnerId( this.ownerId )
-					.withQuantity( value.getQuantity().intValue() )
+					.withQuantity( value.getQuantity() )
 					.withSpaceSystem( (SpaceSystem) spaceLocation )
 					.build();
 		else throw new NeoComRuntimeException( ErrorInfoCatalog.LOCATION_NOT_THE_CORRECT_TYPE.getErrorMessage() );

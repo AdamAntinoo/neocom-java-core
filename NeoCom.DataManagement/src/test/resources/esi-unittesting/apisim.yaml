@@ -349,7 +349,7 @@ simlet: character-mining-extractions-page1
 
 request:
   - method: GET
-  - uriPathPattern: "/characters/{characterId}/mining/"
+  - uriPathPattern: "/characters/92223647/mining/"
   - where: uriQueryParameter
     named: "page"
     equals: 1
@@ -362,6 +362,26 @@ response:
   body:
     type: text
     file: "${sim.path}/esiresponses/characters.miningextractions.page1.json"
+
+---
+
+simlet: character-mining-extractions-today-page1
+
+request:
+  - method: GET
+  - uriPathPattern: "/characters/93813310/mining/"
+  - where: uriQueryParameter
+    named: "page"
+    equals: 1
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/characters.miningextractions.today.page1.json"
 
 ---
 

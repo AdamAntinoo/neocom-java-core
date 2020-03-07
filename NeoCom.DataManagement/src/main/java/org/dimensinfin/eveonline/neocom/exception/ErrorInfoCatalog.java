@@ -15,9 +15,11 @@ public enum ErrorInfoCatalog {
 	MANDATORY_CONFIGURATION_PROPERTY_EMPTY( "data.management.retrofit.configuration.error",
 			"ESI configuration property is empty while configuring the OAuth parameters." ),
 	LOCATION_NOT_THE_CORRECT_TYPE( INVALID_LOCATION_TYPE_ERRORCODE,
-			"The expected location obtained is not of the type expected."),
-	MINING_EXTRACTION_BYID_SEARCH_FAILED(MINING_REPOSITORY_EXTRACTION_SQL_ERRORCODE,
-			"SQL exception while searching for extraction with id {0}.");
+			"The expected location obtained is not of the type expected." ),
+	MINING_EXTRACTION_BYID_SEARCH_FAILED( MINING_REPOSITORY_EXTRACTION_SQL_ERRORCODE,
+			"SQL exception while searching for extraction with id {0}." ),
+	MINING_EXTRACTION_PERSISTENCE_FAILED( MINING_REPOSITORY_EXTRACTION_SQL_ERRORCODE,
+			"SQL exception while persisting mining extraction {0} - {1}" );
 	public final String errorCode;
 	public final String errorMessage;
 

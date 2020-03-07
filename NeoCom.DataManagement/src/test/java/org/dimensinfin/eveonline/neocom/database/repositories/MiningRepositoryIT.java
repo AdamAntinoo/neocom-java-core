@@ -232,31 +232,31 @@ public class MiningRepositoryIT {
 		final GetUniverseRegionsRegionIdOk regionData = this.esiUniverseDataProvider
 				.getUniverseRegionById( 10000033 );
 		final MiningExtraction miningExtractionA = new MiningExtraction.Builder()
-				.withTypeId( 35 )
+//				.withTypeId( 35 )
 				.withSpaceSystem( new SpaceSystemImplementation.Builder()
 						.withSolarSystem( solarSystemData )
 						.withConstellation( constellationData )
 						.withRegion( regionData )
 						.build() )
-				.withQuantity( 43215 )
+				.withQuantity( 43215L )
 				.withOwnerId( characterId )
 				.withExtractionDate( "gg" )
 				.build();
 		final MiningExtraction miningExtractionB = new MiningExtraction.Builder()
-				.withTypeId( 34 )
+//				.withTypeId( 34 )
 				.withSpaceSystem( new SpaceSystemImplementation.Builder()
 						.withSolarSystem( solarSystemData )
 						.withConstellation( constellationData )
 						.withRegion( regionData )
 						.build() )
-				.withQuantity( 12345 )
+				.withQuantity( 12345L )
 				.withOwnerId( characterId )
 				.withExtractionDate( "ff" )
 				.build();
-		this.miningRepository.persist( miningExtractionA );
+//		this.miningRepository.persist( miningExtractionA );
 		NeoComLogger.info( "Extraction id: {}", miningExtractionA.getId() );
 		this.expectedVerifiedId = miningExtractionA.getId();
-		this.miningRepository.persist( miningExtractionB );
+//		this.miningRepository.persist( miningExtractionB );
 		NeoComLogger.info( "Extraction id: {}", miningExtractionB.getId() );
 		final List<MiningExtraction> result = this.miningDao.queryForAll();
 		Assert.assertEquals( 2, result.size() );

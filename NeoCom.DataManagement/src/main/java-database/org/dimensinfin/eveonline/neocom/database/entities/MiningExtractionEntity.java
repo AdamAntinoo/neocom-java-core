@@ -36,7 +36,7 @@ public class MiningExtractionEntity extends UpdatableEntity {
 	@DatabaseField
 	private int solarSystemId; // The solar system where the extraction is recorded.
 	@DatabaseField
-	private int quantity = 0;
+	private long quantity = 0;
 	@DatabaseField
 	private long delta = 0L;
 	@DatabaseField(dataType = DataType.STRING, canBeNull = false, index = true)
@@ -51,35 +51,40 @@ public class MiningExtractionEntity extends UpdatableEntity {
 
 	// - G E T T E R S   &   S E T T E R S
 	public String getId() {
-		return id;
+		return this.id;
 	}
 
 	public Integer getTypeId() {
-		return typeId;
+		return this.typeId;
 	}
 
 	public Integer getSolarSystemId() {
-		return solarSystemId;
+		return this.solarSystemId;
 	}
 
-	public Integer getQuantity() {
-		return quantity;
+	public Long getQuantity() {
+		return this.quantity;
+	}
+
+	public MiningExtractionEntity setQuantity( final long quantity ) {
+		this.quantity = quantity;
+		return this;
 	}
 
 	public Long getDelta() {
-		return delta;
+		return this.delta;
 	}
 
 	public String getExtractionDateName() {
-		return extractionDateName;
+		return this.extractionDateName;
 	}
 
 	public Integer getExtractionHour() {
-		return extractionHour;
+		return this.extractionHour;
 	}
 
 	public Integer getOwnerId() {
-		return ownerId;
+		return this.ownerId;
 	}
 
 	// - B U I L D E R

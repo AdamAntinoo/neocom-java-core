@@ -58,6 +58,8 @@ public class IntegrationNeoComDBAdapter {
 	public void onCreate( final ConnectionSource connectionSource ) {
 		try {
 			TableUtils.createTableIfNotExists( connectionSource, NeoAsset.class );
+			TableUtils.createTableIfNotExists( connectionSource, Credential.class );
+			TableUtils.createTableIfNotExists( connectionSource, MiningExtractionEntity.class );
 		} catch (SQLException sqle) {
 			NeoComLogger.error( "SQL NeoComDatabase: ", sqle );
 		}
