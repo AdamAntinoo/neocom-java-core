@@ -86,10 +86,10 @@ public class LocationCatalogService extends Job {
 				.toHashCode();
 	}
 
-	@Override
-	public String getName() {
-		return this.getClass().getSimpleName();
-	}
+//	@Override
+//	public String getName() {
+//		return this.getClass().getSimpleName();
+//	}
 
 	@Override
 	public Boolean call()  {

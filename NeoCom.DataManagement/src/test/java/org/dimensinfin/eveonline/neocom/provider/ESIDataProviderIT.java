@@ -23,69 +23,9 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinitionTCLocal;
 
-public class ESIDataProviderIT extends IntegrationEnvironmentDefinition {
-//	private static final int ESI_UNITTESTING_PORT = 6090;
-//	private static final int DEFAULT_CHARACTER_IDENTIFIER = 92223647;
-//	private static final int DEFAULT_PLANET_IDENTIFIER = 40208304;
-//	private static final int DEFAULT_SCHEMATIC = 127;
-//	private static final Logger logger = LoggerFactory.getLogger( ESIDataProviderIT.class );
-//	private static final GenericContainer<?> esisimulator;
-//	private static Credential credential4Test;
-//
-//	static {
-//		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
-//				.withExposedPorts( ESI_UNITTESTING_PORT )
-//				.withFileSystemBind( "/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting",
-//						"/esi-unittesting",
-//						BindMode.READ_WRITE )
-//				.withCommand( "bin/apisimulator start /esi-unittesting" );
-//		esisimulator.start();
-//		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer( logger );
-//		esisimulator.followOutput( logConsumer );
-//	}
-//
-//	@BeforeAll
-//	public static void beforeAll() {
-//		credential4Test = Mockito.mock( Credential.class );
-//		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
-//		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
-//	}
-
-	// -  C O M P O N E N T S
-//	private SBConfigurationProvider configurationProvider;
-//	private IFileSystem fileSystemAdapter;
-//	private RetrofitFactory retrofitFactory;
-//	private ESIDataProvider esiDataProvider;
-
-//	@BeforeEach
-//	public void beforeEach() throws IOException {
-//		this.configurationProvider = new SBConfigurationProvider.Builder()
-//				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
-//		this.configurationProvider.setProperty( "P.authenticated.retrofit.server.location",
-//				"http://" +
-//						esisimulator.getContainerIpAddress() +
-//						":" + esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) +
-//						"/latest/" );
-//		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
-//				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest/" )
-//				.build();
-//		this.retrofitFactory = new RetrofitFactory.Builder()
-//				.withConfigurationProvider( this.configurationProvider )
-//				.withFileSystemAdapter( this.fileSystemAdapter )
-//				.build();
-//		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
-//		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
-//		this.esiDataProvider = new ESIDataProvider.Builder()
-//				.withConfigurationProvider( this.configurationProvider )
-//				.withFileSystemAdapter( this.fileSystemAdapter )
-//				.withLocationCatalogService( locationCatalogService )
-//				.withStoreCacheManager( storeCacheManager )
-//				.withRetrofitFactory( this.retrofitFactory )
-//				.build();
-//	}
-
+public class ESIDataProviderIT extends IntegrationEnvironmentDefinitionTCLocal {
 	@Test
 	public void buildComplete() {
 		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
@@ -146,7 +86,7 @@ public class ESIDataProviderIT extends IntegrationEnvironmentDefinition {
 		Assertions.assertEquals( 26, assets.size() );
 	}
 
-	@Test
+//	@Test
 	public void getCharactersCharacterIdBlueprints() {
 		final Credential credential = Mockito.mock( Credential.class );
 		Mockito.when( credential.getAccountId() ).thenReturn( 92223647 );

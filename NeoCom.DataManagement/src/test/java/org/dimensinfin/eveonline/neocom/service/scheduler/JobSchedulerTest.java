@@ -34,6 +34,101 @@ class JobSchedulerTest {
 //		Assertions.assertNotNull( scheduler );
 //	}
 
+	private static class Job4TestRegistration extends Job {
+		private String registration;
+
+		@Override
+		public int getUniqueIdentifier() {
+			return new HashCodeBuilder( 17, 37 )
+					.appendSuper( super.hashCode() )
+					.append( registration )
+					.toHashCode();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder( 17, 37 )
+					.appendSuper( super.hashCode() )
+					.append( this.registration )
+					.toHashCode();
+		}
+
+		@Override
+		public boolean equals( final Object o ) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			final Job4TestRegistration that = (Job4TestRegistration) o;
+			return new EqualsBuilder()
+					.appendSuper( super.equals( o ) )
+					.append( this.registration, that.registration )
+					.isEquals();
+		}
+
+		@Override
+		public String toString() {
+			return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+					.append( "registration", registration )
+					.toString();
+		}
+
+		@Override
+		public Boolean call() throws Exception {
+			return true;
+		}
+
+		// - B U I L D E R
+		public static class Builder extends Job.Builder<Job4TestRegistration, Job4TestRegistration.Builder> {
+			private Job4TestRegistration onConstruction;
+
+			@Override
+			protected Job4TestRegistration getActual() {
+				if (null == this.onConstruction) this.onConstruction = new Job4TestRegistration();
+				return this.onConstruction;
+			}
+
+			@Override
+			protected Job4TestRegistration.Builder getActualBuilder() {
+				return this;
+			}
+
+			public Job4TestRegistration.Builder withRegistrationTest( final String registration ) {
+				this.onConstruction.registration = registration;
+				return this;
+			}
+		}
+	}
+
+	private static class Job4TestException extends Job {
+		@Override
+		public int getUniqueIdentifier() {
+			return new HashCodeBuilder( 17, 37 )
+					.appendSuper( super.hashCode() )
+					.append( this.getClass().getSimpleName() )
+					.toHashCode();
+		}
+
+		@Override
+		public Boolean call() throws Exception {
+			throw new NeoComRuntimeException( "This is the test exception expected." );
+		}
+
+		// - B U I L D E R
+		public static class Builder extends Job.Builder<Job4TestException, Job4TestException.Builder> {
+			private Job4TestException onConstruction;
+
+			@Override
+			protected Job4TestException getActual() {
+				if (null == this.onConstruction) this.onConstruction = new Job4TestException();
+				return this.onConstruction;
+			}
+
+			@Override
+			protected Job4TestException.Builder getActualBuilder() {
+				return this;
+			}
+		}
+	}
+
 	/**
 	 * JobScheduler now is a global singleton so different calls to the same instance really modify the global singleton. This
 	 * is why the second test will not fire an exception because it does test an already set field. Once set a schedule
@@ -122,7 +217,7 @@ class JobSchedulerTest {
 		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().registerJob( jobB ) );
 		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().registerJob( jobC ) );
 		JobScheduler.getJobScheduler().removeJob( jobB );
-		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount());
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
 	}
 
 	@Test
@@ -133,84 +228,5 @@ class JobSchedulerTest {
 				return true;
 			}
 		} );
-	}
-
-	private static class Job4TestRegistration extends Job {
-		private String registration;
-
-		@Override
-		public Boolean call() throws Exception {
-			return true;
-		}
-
-		@Override
-		public String toString() {
-			return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-					.append( "registration", registration )
-					.toString();
-		}
-
-		@Override
-		public boolean equals( final Object o ) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			final Job4TestRegistration that = (Job4TestRegistration) o;
-			return new EqualsBuilder()
-					.appendSuper( super.equals( o ) )
-					.append( this.registration, that.registration )
-					.isEquals();
-		}
-
-		@Override
-		public int hashCode() {
-			return new HashCodeBuilder( 17, 37 )
-					.appendSuper( super.hashCode() )
-					.append( this.registration )
-					.toHashCode();
-		}
-
-		// - B U I L D E R
-		public static class Builder extends Job.Builder<Job4TestRegistration, Job4TestRegistration.Builder> {
-			private Job4TestRegistration onConstruction;
-
-			@Override
-			protected Job4TestRegistration getActual() {
-				if (null == this.onConstruction) this.onConstruction = new Job4TestRegistration();
-				return this.onConstruction;
-			}
-
-			@Override
-			protected Job4TestRegistration.Builder getActualBuilder() {
-				return this;
-			}
-
-			public Job4TestRegistration.Builder withRegistrationTest( final String registration ) {
-				this.onConstruction.registration = registration;
-				return this;
-			}
-		}
-	}
-
-	private static class Job4TestException extends Job {
-		@Override
-		public Boolean call() throws Exception {
-			throw new NeoComRuntimeException( "This is the test exception expected." );
-		}
-
-		// - B U I L D E R
-		public static class Builder extends Job.Builder<Job4TestException, Job4TestException.Builder> {
-			private Job4TestException onConstruction;
-
-			@Override
-			protected Job4TestException getActual() {
-				if (null == this.onConstruction) this.onConstruction = new Job4TestException();
-				return this.onConstruction;
-			}
-
-			@Override
-			protected Job4TestException.Builder getActualBuilder() {
-				return this;
-			}
-		}
 	}
 }

@@ -73,10 +73,10 @@ public class AssetDownloadProcessorJob extends Job {
 				.toHashCode();
 	}
 
-	@Override
-	public String getName() {
-		return this.getClass().getSimpleName();
-	}
+//	@Override
+//	public String getName() {
+//		return this.getClass().getSimpleName();
+//	}
 
 	/**
 	 * Download the list of assets that belong to a character or corporation and process their location references while

@@ -35,7 +35,7 @@ public abstract class Job implements Callable<Boolean> {
 
 	public abstract int getUniqueIdentifier();
 
-	public abstract String getName();
+//	public abstract String getName();
 
 	public JobStatus getStatus() {
 		return this.status;
