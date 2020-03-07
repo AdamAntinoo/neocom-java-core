@@ -2,7 +2,6 @@ package org.dimensinfin.eveonline.neocom.asset.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,17 +36,18 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @NeoComComponent
 public class AssetDownloadProcessorJob extends Job {
-	private static final Map<EsiAssets200Ok.LocationFlagEnum, Integer> officeContainerLocationFlags = new EnumMap<>( EsiAssets200Ok.LocationFlagEnum.class );
-
-	static {
-		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG1, 1 );
-		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG2, 2 );
-		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG3, 3 );
-		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG4, 4 );
-		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG5, 5 );
-		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG6, 6 );
-		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG7, 7 );
-	}
+//	private static final Map<EsiAssets200Ok.LocationFlagEnum, Integer> officeContainerLocationFlags = new EnumMap<>(
+//			EsiAssets200Ok.LocationFlagEnum.class );
+//
+//	static {
+//		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG1, 1 );
+//		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG2, 2 );
+//		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG3, 3 );
+//		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG4, 4 );
+//		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG5, 5 );
+//		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG6, 6 );
+//		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG7, 7 );
+//	}
 
 	private final Map<Long, NeoAsset> convertedAssetList = new HashMap<>();
 	// - I N T E R N A L   W O R K   F I E L D S
@@ -63,6 +63,21 @@ public class AssetDownloadProcessorJob extends Job {
 
 	private AssetDownloadProcessorJob() {super();}
 
+	// - J O B
+	@Override
+	public int getUniqueIdentifier() {
+		return new HashCodeBuilder( 97, 137 )
+				.append( this.credential.getUniqueCredential() )
+				.append( this.credential.getAccountName() )
+				.append( this.getClass().getSimpleName() )
+				.toHashCode();
+	}
+
+	@Override
+	public String getName() {
+		return this.getClass().getSimpleName();
+	}
+
 	/**
 	 * Download the list of assets that belong to a character or corporation and process their location references while
 	 * converting to the application data version.
@@ -74,6 +89,15 @@ public class AssetDownloadProcessorJob extends Job {
 		return this.processCharacterAssets();
 	}
 
+	// - C O R E
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( credential )
+				.toHashCode();
+	}
+
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;
@@ -83,14 +107,6 @@ public class AssetDownloadProcessorJob extends Job {
 				.appendSuper( super.equals( o ) )
 				.append( this.credential, that.credential )
 				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder( 17, 37 )
-				.appendSuper( super.hashCode() )
-				.append( credential )
-				.toHashCode();
 	}
 
 	@LogEnterExit
@@ -229,7 +245,7 @@ public class AssetDownloadProcessorJob extends Job {
 		}
 	}
 
-	private Boolean processCharacterAssets()  {
+	private Boolean processCharacterAssets() {
 		this.downloadPilotAssets();
 		return true;
 	}

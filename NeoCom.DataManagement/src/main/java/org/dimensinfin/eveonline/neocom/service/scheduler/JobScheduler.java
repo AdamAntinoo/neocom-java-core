@@ -1,8 +1,7 @@
 package org.dimensinfin.eveonline.neocom.service.scheduler;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -15,8 +14,8 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 
 /**
- * The JobScheduler is a singleton instance. It should have a single instance on the while system where the jobs are registered
- * and checked for the right time to be executed. The scheduler depends on an external time basde so each platform can
+ * The JobScheduler is a singleton instance. It should have a single instance on the whole system where the jobs are registered
+ * and checked for the right time to be executed. The scheduler depends on an external time base so each platform can
  * implement its own timing base.
  *
  * It is expected that each minute the scheduler <code>runSchedule()</code> method is called to check from the list of
@@ -24,8 +23,12 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
  *
  * Being a singleton I should expect a default instance and the use of static calls to initiate the connection with the singleton.
  *
- * Registered jobs should avoid to record duplicates. Because of this I use Sets so a job with the same identifier is detected
- * as already registered and the new registration should replace the old registration.
+ * Registered jobs should avoid to record duplicates. Because of this I use Sets on the unique job identifier so jobs of the same class will use
+ * their contents to identify possible different instances so a job with the same identifier is detected as already registered and the new
+ * registration should replace the old registration. This allows to change job schedule parameters without removing old job first.
+ *
+ * @author Adam Antinoo (adamantinoo.git@gmail.com)
+ * @since 0.19.0
  */
 @Singleton
 public class JobScheduler {
@@ -37,23 +40,21 @@ public class JobScheduler {
 		return singleton;
 	}
 
-	private Set<Job> jobsRegistered = new LinkedHashSet<>();
-	// - C O M P O N E N T S
+	private Map<Integer, Job> jobsRegistered = new IdentityHashMap<>();
 	private CronScheduleGenerator cronScheduleGenerator = new HourlyCronScheduleGenerator.Builder().build();
 
 	private JobScheduler() {}
 
-	public JobScheduler setCronScheduleGenerator( final CronScheduleGenerator cronScheduleGenerator ) {
+	public int getJobCount() {
+		return this.jobsRegistered.size();
+	}
+
+	public void setCronScheduleGenerator( final CronScheduleGenerator cronScheduleGenerator ) {
 		this.cronScheduleGenerator = cronScheduleGenerator;
-		return this;
 	}
 
 	public void clear() {
 		this.jobsRegistered.clear();
-	}
-
-	public int getJobCount() {
-		return this.jobsRegistered.size();
 	}
 
 	public boolean needsNetwork() {
@@ -65,21 +66,19 @@ public class JobScheduler {
 	}
 
 	public int registerJob( final Job job2Register ) {
-		this.jobsRegistered.add( job2Register );
+		this.jobsRegistered.put( job2Register.getUniqueIdentifier(), job2Register );
 		return this.jobsRegistered.size();
 	}
 
 	public void removeJob( final Job jobInstance ) {
-		this.jobsRegistered.remove( jobInstance );
+		this.jobsRegistered.remove( jobInstance.getUniqueIdentifier() );
 	}
 
 	/**
 	 * Check each of the registered jobs to see if they should be launched on this HOUR:MINUTE.
 	 */
 	public void runSchedule() {
-		final Iterator<Job> it = this.jobsRegistered.iterator();
-		while (it.hasNext()) {
-			final Job job = it.next();
+		for (final Job job : this.jobsRegistered.values()) {
 			if (this.cronScheduleGenerator.match( job.getSchedule() ))
 				this.scheduleJob( job );
 		}

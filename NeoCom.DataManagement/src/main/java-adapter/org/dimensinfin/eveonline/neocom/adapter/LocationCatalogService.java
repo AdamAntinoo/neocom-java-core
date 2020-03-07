@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,17 @@ import retrofit2.Response;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.CACHE_DIRECTORY_PATH;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.LOCATIONS_CACHE_LOCATION;
 
+/**
+ * The location catalog service will be used to define game locations. It is able to understand their different contents depending on the type of
+ * location.
+ * Locations should be cached and have a simple Object dump process registered on the scheduler that saves the current location list every minute.
+ * Locations already defined are read back from the storage at creation time.
+ *
+ * @author Adam Antinoo (adamantinoo.git@gmail.com)
+ * @since 0.19.0
+ */
 @NeoComAdapter
-public class LocationCatalogService {
+public class LocationCatalogService extends Job {
 	public enum LocationCacheAccessType {
 		NOT_FOUND, GENERATED, DATABASE_ACCESS, MEMORY_ACCESS
 	}
@@ -65,6 +75,26 @@ public class LocationCatalogService {
 
 	public Map<String, Integer> getLocationTypeCounters() {
 		return this.locationTypeCounters;
+	}
+
+	// - J O B
+	@Override
+	public int getUniqueIdentifier() {
+		return new HashCodeBuilder( 97, 137 )
+				.append( this.getSchedule() )
+				.append( this.getClass().getSimpleName() )
+				.toHashCode();
+	}
+
+	@Override
+	public String getName() {
+		return this.getClass().getSimpleName();
+	}
+
+	@Override
+	public Boolean call()  {
+		this.writeLocationsDataCache();
+		return true;
 	}
 
 	// - S T O R A G E
@@ -209,13 +239,7 @@ public class LocationCatalogService {
 	}
 
 	private void registerOnScheduler() {
-		JobScheduler.getJobScheduler().registerJob( new Job() {
-			@Override
-			public Boolean call() throws Exception {
-				writeLocationsDataCache();
-				return true;
-			}
-		} );
+		JobScheduler.getJobScheduler().registerJob( this );
 	}
 
 	private GetUniverseStructuresStructureIdOk search200OkStructureById( final Long structureId, final Credential credential ) {
@@ -341,7 +365,7 @@ public class LocationCatalogService {
 	synchronized void writeLocationsDataCache() {
 		NeoComLogger.enter();
 		if (this.dirtyCache) {
-			final String cacheFileName = this.configurationProvider.getResourceString(CACHE_DIRECTORY_PATH ) +
+			final String cacheFileName = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH ) +
 					this.configurationProvider.getResourceString( LOCATIONS_CACHE_LOCATION );
 			NeoComLogger.info( "Opening cache file: {}", cacheFileName );
 			try (final BufferedOutputStream buffer = new BufferedOutputStream(

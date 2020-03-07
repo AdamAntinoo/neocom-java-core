@@ -5,9 +5,21 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
+/**
+ * Defines the skeleton of a schedule job. The main points is that it have to be able to be called, and that should have a unique identifier that will
+ * be used to do not launch multiple times the same task.
+ * Implementors should use a hash generator (may be the default instance hashCode()) to generate a unique identifier that should depend on each job
+ * particular parameters and contents.
+ * The name is some information that will help to identify a job or set of jobs by human operators.
+ *
+ * @author Adam Antinoo (adamantinoo.git@gmail.com)
+ * @since 0.19.0
+ */
 public abstract class Job implements Callable<Boolean> {
-	private String schedule= "* - *";
+	private String schedule = "* - *";
 	private JobStatus status = JobStatus.READY;
 
 	protected Job() {}
@@ -15,6 +27,15 @@ public abstract class Job implements Callable<Boolean> {
 	public String getSchedule() {
 		return this.schedule;
 	}
+
+	protected Job setSchedule( final String schedule ) {
+		this.schedule = schedule;
+		return this;
+	}
+
+	public abstract int getUniqueIdentifier();
+
+	public abstract String getName();
 
 	public JobStatus getStatus() {
 		return this.status;
@@ -24,9 +45,13 @@ public abstract class Job implements Callable<Boolean> {
 		this.status = status;
 		return this;
 	}
-	protected Job setSchedule( final String schedule ) {
-		this.schedule = schedule;
-		return this;
+
+	// - C O R E
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.append( this.schedule )
+				.toHashCode();
 	}
 
 	@Override
@@ -40,18 +65,19 @@ public abstract class Job implements Callable<Boolean> {
 	}
 
 	@Override
-	public int hashCode() {
-		return new HashCodeBuilder( 17, 37 )
-				.append( this.schedule )
-				.toHashCode();
+	public String toString() {
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "schedule", this.schedule )
+				.append( "status", this.status )
+				.toString();
 	}
 
 	// - B U I L D E R
-	public abstract static class Builder<T extends Job, B extends Job.Builder> {
+	public abstract static class Builder<T extends Job, B extends Job.Builder<T, B>> {
 		protected B actualClassBuilder;
 
 		public Builder() {
-			this.actualClassBuilder = getActualBuilder();
+			this.actualClassBuilder = this.getActualBuilder();
 		}
 
 		protected abstract T getActual();
@@ -60,7 +86,7 @@ public abstract class Job implements Callable<Boolean> {
 
 		public B addCronSchedule( final String cronPattern ) {
 			Objects.requireNonNull( cronPattern );
-			this.getActual().setSchedule( cronPattern );
+			final Job r = this.getActual().setSchedule( cronPattern );
 			return this.actualClassBuilder;
 		}
 
