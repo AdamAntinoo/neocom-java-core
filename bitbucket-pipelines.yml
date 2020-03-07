@@ -18,7 +18,6 @@ definitions:
         script:
           - export TESTCONTAINERS_RYUK_DISABLED=true
           - ./gradlew clean classes
-          - ./gradlew clean build test
         artifacts:
           - build/libs/**
     - step: &build-test
@@ -28,7 +27,8 @@ definitions:
           - sonar
         script:
           - sh ./NeoCom.DataManagement/ci/dependencies.sh
-          - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml
+          - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml up
+          - ./gradlew clean build test
           - docker-compose down
         services:
           - docker
