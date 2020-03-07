@@ -1,6 +1,0 @@
-# - Ignore compilation and generated files
-build/
-coverage/
-
-# - Ignore runtime cache files.
-AcceptanceTests/
