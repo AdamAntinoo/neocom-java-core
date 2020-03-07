@@ -63,7 +63,7 @@ dependencies {
     testImplementation files('libs/ESI.SwaggerApi-4.18.0.jar')
     testImplementation files('libs/NeoCom.Annotations-0.19.0.jar')
     // T E S T   F R A M E W O R K
-    testImplementation "org.testcontainers:testcontainers:1.12.3"
+    testImplementation "org.testcontainers:testcontainers:1.13.0"
     testImplementation "org.testcontainers:postgresql:1.9.1"
     testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'com.openpojo:openpojo:0.8.12'

@@ -32,7 +32,7 @@ import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironme
  * The operative environment initialization is delegated to a superclass.
  */
 public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinition {
-	private static final int ESI_UNITTESTING_PORT = 6090;
+//	private static final int ESI_UNITTESTING_PORT = 6090;
 	private static final int TEST_CORPORATION_ID = 98384726;
 
 	@BeforeAll

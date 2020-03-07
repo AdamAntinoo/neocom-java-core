@@ -28,12 +28,13 @@ import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_SERVER_LOCATION;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.BACKEND_RETROFIT_SERVER_LOCATION;
 
 public class IntegrationEnvironmentDefinition {
 	protected static final Logger logger = LoggerFactory.getLogger( IntegrationEnvironmentDefinition.class );
 	protected static final Integer TEST_CORPORATION_IDENTIFIER = 98384726;
 	protected static final Integer TEST_ITEM_IDENTIFIER = 34;
-	protected static final String TEST_ITEM_NAME="Tritanium";
+	protected static final String TEST_ITEM_NAME = "Tritanium";
 	protected static final int DEFAULT_CHARACTER_IDENTIFIER = 92223647;
 	protected static final int DEFAULT_PLANET_IDENTIFIER = 40208304;
 	protected static final int DEFAULT_SCHEMATIC = 127;
@@ -53,7 +54,7 @@ public class IntegrationEnvironmentDefinition {
 				.withFileSystemBind( "/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting",
 						"/esi-unittesting",
 						BindMode.READ_WRITE )
-				.withCommand( "bin/apisimulator start /esi-unittesting" );
+				.withCommand( "bin/apisimulator start /esi-unittesting -p " + ESI_UNITTESTING_PORT );
 		esisimulator.start();
 		backendSimulator = new GenericContainer<>( "apimastery/apisimulator" )
 				.withExposedPorts( BACKEND_UNITTESTING_PORT )
@@ -61,7 +62,7 @@ public class IntegrationEnvironmentDefinition {
 						"/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/backend-unittesting",
 						"/backend-unittesting",
 						BindMode.READ_WRITE )
-				.withCommand( "bin/apisimulator start /backend-unittesting -p 6092" );
+				.withCommand( "bin/apisimulator start /backend-unittesting -p " + BACKEND_UNITTESTING_PORT );
 		backendSimulator.start();
 	}
 
@@ -115,8 +116,13 @@ public class IntegrationEnvironmentDefinition {
 		this.itConfigurationProvider.setProperty( AUTHENTICATED_RETROFIT_SERVER_LOCATION,
 				"http://" +
 						esisimulator.getContainerIpAddress() +
-						":" + esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) +
-						"/latest/" );
+						":" +
+						esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) + "/latest/" );
+		this.itConfigurationProvider.setProperty( BACKEND_RETROFIT_SERVER_LOCATION,
+				"http://" +
+						backendSimulator.getContainerIpAddress() +
+						":" +
+						backendSimulator.getMappedPort( ESI_UNITTESTING_PORT ) );
 		final String databaseHostName = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasehost" );
 		final String databasePath = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepath" );
 		final String databaseUser = this.itConfigurationProvider.getResourceString( "P.database.neocom.databaseuser" );

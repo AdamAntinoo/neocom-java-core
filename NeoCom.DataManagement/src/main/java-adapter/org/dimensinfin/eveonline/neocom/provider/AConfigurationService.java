@@ -23,7 +23,7 @@ import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 @NeoComAdapter
 public abstract class AConfigurationService implements IConfigurationProvider {
 	private static final String DEFAULT_PROPERTIES_FOLDER = "properties"; // The default initial location if not specified.
-	// - F I E L D - S E C T I O N
+
 	protected final Properties configurationProperties = new Properties(); // The list of defined properties
 	protected String configuredPropertiesDirectory = DEFAULT_PROPERTIES_FOLDER; // The place where to search for properties.
 
@@ -31,8 +31,17 @@ public abstract class AConfigurationService implements IConfigurationProvider {
 		return this.configuredPropertiesDirectory;
 	}
 
+	/**
+	 * This way to configure the properties directory is not allowed anymore.
+	 *
+	 * @param configuredPropertiesDirectory the directory to use for the properties.
+	 * @return this same instance
+	 * @deprecated
+	 */
+	@Deprecated
 	public AConfigurationService setConfiguredPropertiesDirectory( final String configuredPropertiesDirectory ) {
 		this.configuredPropertiesDirectory = configuredPropertiesDirectory;
+		this.configurationProperties.clear(); // Clear the properties once changed the source.
 		return this;
 	}
 
@@ -76,7 +85,7 @@ public abstract class AConfigurationService implements IConfigurationProvider {
 	protected abstract List<String> getResourceFiles( String path ) throws IOException;
 
 	// - P L A T F O R M   S P E C I F I C   S E C T I O N
-	protected abstract void readAllProperties() throws IOException;
+	public abstract void readAllProperties();
 
 	private String generateMissing( final String key ) {
 		return '!' + key + '!';
@@ -96,6 +105,7 @@ public abstract class AConfigurationService implements IConfigurationProvider {
 
 		public T build() {
 			Objects.requireNonNull( this.getActual().configuredPropertiesDirectory );
+			this.getActual().readAllProperties();
 			return this.getActual();
 		}
 

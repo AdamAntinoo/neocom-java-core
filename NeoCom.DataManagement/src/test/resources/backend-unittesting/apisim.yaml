@@ -1,8 +1,8 @@
 simlet: credential-store
 
 request:
-  - method: POST
-  - uriPathPattern: /api/v1/neocom/credentials/{credentialId}
+  - method: PUT
+  - uriPathPattern: "/api/v1/neocom/credentials/{credentialId}"
 
 response:
   from: template
