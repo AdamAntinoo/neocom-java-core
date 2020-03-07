@@ -92,7 +92,7 @@ public class LocationCatalogService extends Job {
 //	}
 
 	@Override
-	public Boolean call()  {
+	public Boolean call() {
 		this.writeLocationsDataCache();
 		return true;
 	}
@@ -125,8 +125,7 @@ public class LocationCatalogService extends Job {
 		if (null != hit) {
 			this.lastLocationAccess = LocationCacheAccessType.GENERATED;
 			this.storeOnCacheLocation( hit );
-			logger.info( ">< [LocationCatalogService.searchLocation4Id]> [HIT-{}/{} ] Location {} generated from ESI data.",
-					hits, access, locationId );
+			NeoComLogger.info( "[HIT-{}/{} ] Location {} generated from ESI data.", hits + "", access + "", locationId + "" );
 			return hit;
 		} else return null;
 	}

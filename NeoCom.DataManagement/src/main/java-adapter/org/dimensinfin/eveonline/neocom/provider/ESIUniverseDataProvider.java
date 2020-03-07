@@ -255,25 +255,25 @@ public class ESIUniverseDataProvider {
 
 	@TimeElapsed
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
-		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", categoryId );
+		NeoComLogger.info( "CategoryId: {}", categoryId + "" );
 		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
 	}
 
 	public GetUniverseGroupsGroupIdOk searchItemGroup4Id( final int groupId ) {
-		logger.info( "-- [ESIUniverseDataProvider.searchItemGroup4Id]> targetGroupId: {}", groupId );
+		NeoComLogger.info( "GroupId: {}", groupId + "" );
 		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
 	}
 
 	// - S D E   I N T E R N A L   D A T A
 	public double searchSDEMarketPrice( final int typeId ) {
-		logger.info( "-- [ESIDataProvider.searchSDEMarketPrice]> price for: {}", typeId );
+		NeoComLogger.info( "Price for: {}", typeId + "" );
 		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
 		else return -1.0;
 	}
 
 	@TimeElapsed
 	public GetUniverseSystemsSystemIdOk searchSolarSystem4Id( final int solarSystemId ) {
-		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", solarSystemId );
+		NeoComLogger.info( "SolarSystem: {}", solarSystemId + "" );
 		return this.storeCacheManager.accessSolarSystem( solarSystemId ).blockingGet();
 	}
 

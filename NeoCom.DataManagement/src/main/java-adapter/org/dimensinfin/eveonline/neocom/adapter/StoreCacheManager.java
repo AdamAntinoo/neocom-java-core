@@ -35,6 +35,7 @@ import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -83,12 +84,21 @@ public class StoreCacheManager {
 	// - C O N S T R U C T O R S
 	protected StoreCacheManager() { }
 
-	private void createStores() {
-		this.createEsiItemStore();
-		this.createItemGroupStore();
-		this.createItemCategoryStore();
+	public Single<GetUniverseCategoriesCategoryIdOk> accessCategory( final Integer categoryId ) {
+		return this.categoryStore.get( categoryId );
+	}
 
-		this.createSystemsStore();
+	public Single<GetUniverseGroupsGroupIdOk> accessGroup( final Integer groupId ) {
+		return this.itemGroupStore.get( groupId );
+	}
+
+	// - C A C H E   E X P O R T E D   A P I
+	public Single<GetUniverseTypesTypeIdOk> accessItem( final Integer itemId ) {
+		return this.esiItemStore.get( itemId );
+	}
+
+	public Single<GetUniverseSystemsSystemIdOk> accessSolarSystem( final Integer solarSystemId ) {
+		return this.systemsStoreCache.get( solarSystemId );
 	}
 
 	// - S T O R E S   C R E A T I O N
@@ -110,39 +120,30 @@ public class StoreCacheManager {
 		}
 	}
 
-	private void createItemGroupStore() {
-		this.itemGroupStore = StoreBuilder.<Integer, GetUniverseGroupsGroupIdOk>key()
-				.fetcher( new UniverseItemGroupFetcher( this.retrofitFactory.accessUniverseConnector() ) )
-				.open();
-	}
-
 	private void createItemCategoryStore() {
 		this.categoryStore = StoreBuilder.<Integer, GetUniverseCategoriesCategoryIdOk>key()
 				.fetcher( new UniverseItemCategoryFetcher( this.retrofitFactory.accessUniverseConnector() ) )
 				.open();
 	}
 
+	private void createItemGroupStore() {
+		this.itemGroupStore = StoreBuilder.<Integer, GetUniverseGroupsGroupIdOk>key()
+				.fetcher( new UniverseItemGroupFetcher( this.retrofitFactory.accessUniverseConnector() ) )
+				.open();
+	}
+
+	private void createStores() {
+		this.createEsiItemStore();
+		this.createItemGroupStore();
+		this.createItemCategoryStore();
+
+		this.createSystemsStore();
+	}
+
 	private void createSystemsStore() {
 		this.systemsStoreCache = StoreBuilder.<Integer, GetUniverseSystemsSystemIdOk>key()
 				.fetcher( new UniverseSystemFetcher( this.retrofitFactory.accessUniverseConnector() ) )
 				.open();
-	}
-
-	// - C A C H E   E X P O R T E D   A P I
-	public Single<GetUniverseTypesTypeIdOk> accessItem( final Integer itemId ) {
-		return this.esiItemStore.get( itemId );
-	}
-
-	public Single<GetUniverseGroupsGroupIdOk> accessGroup( final Integer groupId ) {
-		return this.itemGroupStore.get( groupId );
-	}
-
-	public Single<GetUniverseCategoriesCategoryIdOk> accessCategory( final Integer categoryId ) {
-		return this.categoryStore.get( categoryId );
-	}
-
-	public Single<GetUniverseSystemsSystemIdOk> accessSolarSystem( final Integer solarSystemId ) {
-		return this.systemsStoreCache.get( solarSystemId );
 	}
 
 	// - E S I   D A T A   A C C E S S
@@ -163,6 +164,14 @@ public class StoreCacheManager {
 			else this.onConstruction = new StoreCacheManager();
 		}
 
+		public StoreCacheManager build() {
+			Objects.requireNonNull( this.onConstruction.configurationProvider );
+			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
+			Objects.requireNonNull( this.onConstruction.retrofitFactory );
+			this.onConstruction.createStores(); // Run the initialisation code.
+			return this.onConstruction;
+		}
+
 		public StoreCacheManager.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
@@ -177,14 +186,6 @@ public class StoreCacheManager {
 			Objects.requireNonNull( retrofitFactory );
 			this.onConstruction.retrofitFactory = retrofitFactory;
 			return this;
-		}
-
-		public StoreCacheManager build() {
-			Objects.requireNonNull( this.onConstruction.configurationProvider );
-			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
-			Objects.requireNonNull( this.onConstruction.retrofitFactory );
-			this.onConstruction.createStores(); // Run the initialisation code.
-			return this.onConstruction;
 		}
 	}
 
@@ -216,8 +217,8 @@ public class StoreCacheManager {
 							ESIDataProvider.DEFAULT_ESI_SERVER, null, null )
 					.execute();
 			if (itemListResponse.isSuccessful()) {
-				logger.info( "-- [StoreCacheManager.getUniverseTypeById]> Downloading: {}-{}"
-						, itemListResponse.body().getTypeId()
+				NeoComLogger.info( "Downloading: {}-{}"
+						, itemListResponse.body().getTypeId() + ""
 						, itemListResponse.body().getName() );
 				return itemListResponse.body();
 			}

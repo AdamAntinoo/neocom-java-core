@@ -67,7 +67,7 @@ import retrofit2.Response;
 public class ESIDataProvider extends ESIUniverseDataProvider {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
-//	public static final String DEFAULT_CONTENT_TYPE = "application/json";
+	//	public static final String DEFAULT_CONTENT_TYPE = "application/json";
 	//	private static final List<Long> id4Names = new ArrayList<>();
 	// - C A C H E S
 	private static final Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
@@ -188,7 +188,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	 */
 	@TimeElapsed
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
-		NeoComLogger.enter( "Credential:",  credential.toString() );
+		NeoComLogger.enter( "Credential: {}", credential.toString() );
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -514,17 +514,17 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	private synchronized void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
 		final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces( DEFAULT_ESI_SERVER );
-		logger.info( "-- [ESIDataProvider.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
+		NeoComLogger.info( "Download race: {} items", racesList.size() + "" );
 		for (GetUniverseRaces200Ok race : racesList) {
 			racesCache.put( race.getRaceId(), race );
 		}
 		final List<GetUniverseAncestries200Ok> ancestriesList = this.getUniverseAncestries( DEFAULT_ESI_SERVER );
-		logger.info( "-- [ESIDataProvider.downloadPilotFamilyData]> Download ancestries: {} items", ancestriesList.size() );
+		NeoComLogger.info( "Download ancestries: {} items", ancestriesList.size() + "" );
 		for (GetUniverseAncestries200Ok ancestry : ancestriesList) {
 			ancestriesCache.put( ancestry.getId(), ancestry );
 		}
 		final List<GetUniverseBloodlines200Ok> bloodLineList = this.getUniverseBloodlines( DEFAULT_ESI_SERVER );
-		logger.info( "-- [ESIDataProvider.downloadPilotFamilyData]> Download blood lines: {} items", bloodLineList.size() );
+		NeoComLogger.info( "-Download blood lines: {} items", bloodLineList.size() + "" );
 		for (GetUniverseBloodlines200Ok bloodLine : bloodLineList) {
 			bloodLinesCache.put( bloodLine.getBloodlineId(), bloodLine );
 		}
@@ -576,7 +576,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	}
 
 	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
-		NeoComLogger.enter();
+//		NeoComLogger.enter();
 		try {
 			final Response<List<GetUniverseRaces200Ok>> racesList = this.retrofitFactory
 					.accessUniverseConnector()
@@ -588,7 +588,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		} catch (final IOException ioe) {
 			ioe.printStackTrace();
 		} finally {
-			NeoComLogger.exit();
+//			NeoComLogger.exit();
 		}
 		return new ArrayList<>();
 	}
