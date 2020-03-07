@@ -10,8 +10,8 @@ services:
       - POSTGRES_USER=neocom
       - POSTGRES_PASSWORD=01.Alpha
 
-  apisimulator-esioauth:
-    container_name: apisimulator-esioauth
+  esioauth-simulation:
+    container_name: esioauth-simulation
     image: apimastery/apisimulator
     ports:
       - "6090:6090"
@@ -19,12 +19,11 @@ services:
       - APISIMULATOR_JAVA=/java-11
     volumes:
       - /usr/lib/jvm/java-11-oracle:/java-11
-#      - /home/adam/Development/NeoCom/neocom-infinity-backend/backend.App/src/test/apisimulator-http-1.4:/apisimulator-http
-      - /home/adam/Development/NeoCom/neocom-infinity-backend/backend.App/src/test/resources/esioauth-simulation:/esioauth-development
-    command: "bin/apisimulator start /esioauth-development -p 6090"
+      - /home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esioauth-simulation
+    command: "bin/apisimulator start /esioauth-simulation -p 6090"
 
-  apisimulator-esi:
-    container_name: apisimulator-esi
+  esi-unittesting:
+    container_name: esi-unittesting
     image: apimastery/apisimulator
     ports:
       - "6091:6090"
@@ -32,6 +31,17 @@ services:
       - APISIMULATOR_JAVA=/java-11
     volumes:
       - /usr/lib/jvm/java-11-oracle:/java-11
-#      - /home/adam/Development/NeoCom/neocom-infinity-backend/backend.App/src/test/apisimulator-http-1.4:/apisimulator-http
-      - /home/adam/Development/NeoCom/neocom-infinity-backend/backend.App/src/test/resources/esi-simulation:/esi-development
-    command: "bin/apisimulator start /esi-development -p 6090"
+      - /home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting
+    command: "bin/apisimulator start /esi-unittesting -p 6090"
+
+  backend-unittesting:
+    container_name: backend-unittesting
+    image: apimastery/apisimulator
+    ports:
+      - "6092:6090"
+    environment:
+      - APISIMULATOR_JAVA=/java-11
+    volumes:
+      - /usr/lib/jvm/java-11-oracle:/java-11
+      - /home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/backend-unittesting
+    command: "bin/apisimulator start /backend-unittesting -p 6090"

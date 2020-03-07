@@ -1,3 +1,76 @@
+simlet: market-prices
+
+request:
+  - method: GET
+  - uriPath: /markets/prices/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/markets.prices.json"
+
+---
+
+simlet: universe-races
+
+request:
+  - method: GET
+  - uriPath: /universe/races/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/universe.races.json"
+
+---
+
+simlet: universe-ancestries
+
+request:
+  - method: GET
+  - uriPath: /universe/ancestries/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/universe.ancestries.json"
+
+---
+
+simlet: universe-bloodlines
+
+request:
+  - method: GET
+  - uriPath: /universe/bloodlines/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/universe.bloodlines.json"
+
+---
+
+
+
+
+
+
 simlet: character-assets-page1
 
 request:
