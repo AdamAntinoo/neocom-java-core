@@ -23,7 +23,13 @@ definitions:
           - gradle
           - sonar
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
+          - ./NeoCom.DataManagement/docker-service.sh start
           - ./gradlew clean build test
+          - ./NeoCom.DataManagement/docker-service.sh stop
+          - apt install docker-compose
+        services:
+          - docker
         artifacts:
           - build/libs/**
     - step: &build-test-coverage-sonarcloud
