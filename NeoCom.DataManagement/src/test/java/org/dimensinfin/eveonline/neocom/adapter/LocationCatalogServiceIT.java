@@ -9,11 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;

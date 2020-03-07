@@ -26,7 +26,7 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocationImplementation
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 import org.dimensinfin.eveonline.neocom.domain.space.StationImplementation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 public class AssetProviderIT extends IntegrationEnvironmentDefinition {

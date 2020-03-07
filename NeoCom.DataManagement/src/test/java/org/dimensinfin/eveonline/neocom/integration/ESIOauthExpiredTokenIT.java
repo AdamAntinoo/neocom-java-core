@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
 
 public class ESIOauthExpiredTokenIT extends IntegrationEnvironmentDefinition {
 //	private ESIDataProvider esiDataProvider;

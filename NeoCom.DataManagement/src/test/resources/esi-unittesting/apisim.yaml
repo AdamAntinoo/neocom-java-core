@@ -505,7 +505,7 @@ simlet: corporation-assets-page1-98384726
 
 request:
   - method: GET
-  - uriPathPattern: "/latest/corporations/98384726/assets/"
+  - uriPathPattern: /corporations/98384726/assets/
   - where: uriQueryParameter
     named: "page"
     equals: 1
@@ -525,7 +525,7 @@ simlet: corporation-assets-page1-98300000
 
 request:
   - method: GET
-  - uriPathPattern: "/latest/corporations/98300000/assets/"
+  - uriPathPattern: /corporations/98300000/assets/
   - where: uriQueryParameter
     named: "page"
     equals: 1
@@ -545,7 +545,7 @@ simlet: corporation-assets-page1-98310000
 
 request:
   - method: GET
-  - uriPathPattern: "/latest/corporations/98310000/assets/"
+  - uriPathPattern: /corporations/98310000/assets/
   - where: uriQueryParameter
     named: "page"
     equals: 1
@@ -565,7 +565,7 @@ simlet: corporation-assets-page2
 
 request:
   - method: GET
-  - uriPathPattern: /latest/corporations/{corporationId}/assets/
+  - uriPathPattern: /corporations/{corporationId}/assets/
   - where: uriQueryParameter
     named: "page"
     equals: 2
@@ -584,7 +584,7 @@ simlet: corporations-machaque
 
 request:
   - method: GET
-  - uriPathPattern: "/corporations/{corporation_id}/"
+  - uriPathPattern: /corporations/{corporation_id}/
 
 response:
   from: template
@@ -601,7 +601,7 @@ simlet: character-ripley
 
 request:
   - method: GET
-  - uriPathPattern: "/characters/{character_id}/"
+  - uriPathPattern: /characters/{character_id}/
 
 response:
   from: template

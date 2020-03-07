@@ -23,9 +23,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
-import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
 
 public class ESIDataProviderIT extends IntegrationEnvironmentDefinition {
 //	private static final int ESI_UNITTESTING_PORT = 6090;
@@ -279,7 +277,7 @@ public class ESIDataProviderIT extends IntegrationEnvironmentDefinition {
 		final List<GetCorporationsCorporationIdAssets200Ok> assets = this.esiDataProvider.getCorporationsCorporationIdAssets( credential
 				, corporationId );
 		Assertions.assertNotNull( assets );
-		Assertions.assertEquals( 26, assets.size() );
+		Assertions.assertEquals( 6, assets.size() );
 	}
 //	@Test
 //	public void searchItemGroup4Id() {

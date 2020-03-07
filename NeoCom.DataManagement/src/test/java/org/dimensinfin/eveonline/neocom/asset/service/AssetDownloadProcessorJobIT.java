@@ -17,7 +17,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.integration.support.GroupCount;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
 
 /**
  * This test unit should do an integration testing because asset management requires ESI universe data to download most of the asset information
