@@ -189,7 +189,7 @@ simlet: universe-schematics
 
 request:
   - method: GET
-  - uriPathPattern: /universe/schematics/{schematic_id}/
+  - uriPathPattern: "/universe/schematics/{schematic_id}/"
 
 response:
   from: template
@@ -208,7 +208,7 @@ simlet: universe-structure
 
 request:
   - method: GET
-  - uriPathPattern: /universe/structures/{structure_id}/
+  - uriPathPattern: "/universe/structures/{structure_id}/"
 
 response:
   from: template
@@ -245,7 +245,7 @@ simlet: character-publicdata
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{character_id}/
+  - uriPathPattern: "/characters/{character_id}/"
 
 response:
   from: stub
@@ -271,7 +271,7 @@ simlet: character-assets-page1
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{characterId}/assets/
+  - uriPathPattern: "/characters/{characterId}/assets/"
   - where: uriQueryParameter
     named: "page"
     equals: 1
@@ -291,7 +291,7 @@ simlet: character-assets-page2
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{characterId}/assets/
+  - uriPathPattern: "/characters/{characterId}/assets/"
   - where: uriQueryParameter
     named: "page"
     equals: 2
@@ -310,7 +310,7 @@ simlet: character-blueprints-page1
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{characterId}/blueprints/
+  - uriPathPattern: "/characters/{characterId}/blueprints/"
   - where: uriQueryParameter
     named: "page"
     equals: 1
@@ -330,7 +330,7 @@ simlet: character-blueprints-page2
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{characterId}/blueprints/
+  - uriPathPattern: "/characters/{characterId}/blueprints/"
   - where: uriQueryParameter
     named: "page"
     equals: 2
@@ -349,7 +349,7 @@ simlet: character-mining-extractions-page1
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{characterId}/mining/
+  - uriPathPattern: "/characters/{characterId}/mining/"
   - where: uriQueryParameter
     named: "page"
     equals: 1
@@ -369,7 +369,7 @@ simlet: character-mining-extractions-page2
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{characterId}/mining/
+  - uriPathPattern: "/characters/{characterId}/mining/"
   - where: uriQueryParameter
     named: "page"
     equals: 2
@@ -388,7 +388,7 @@ simlet: character-planets
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{characterId}/planets/
+  - uriPathPattern: "/characters/{characterId}/planets/"
 
 response:
   from: template
@@ -405,7 +405,7 @@ simlet: character-fittings
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{characterId}/fittings/
+  - uriPathPattern: "/characters/{characterId}/fittings/"
 
 response:
   from: template
@@ -422,7 +422,7 @@ simlet: character-wallet
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{character_id}/wallet/
+  - uriPathPattern: "/characters/{character_id}/wallet/"
 
 response:
   from: stub
@@ -454,7 +454,7 @@ simlet: character-planet-data
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{character_id}/planets/{planet_id}/
+  - uriPathPattern: "/characters/{character_id}/planets/{planet_id}/"
 
 response:
   from: stub
@@ -471,7 +471,7 @@ simlet: corporation-asset-names
 
 request:
   - method: POST
-  - uriPathPattern: /corporations/{corporation_id}/assets/names/
+  - uriPathPattern: "/corporations/{corporation_id}/assets/names/"
 
 response:
   from: template
@@ -488,7 +488,7 @@ simlet: corporation-divisions
 
 request:
   - method: GET
-  - uriPathPattern: /corporations/{corporation_id}/divisions/
+  - uriPathPattern: "/corporations/{corporation_id}/divisions/"
 
 response:
   from: template
@@ -565,7 +565,7 @@ simlet: corporation-assets-page2
 
 request:
   - method: GET
-  - uriPathPattern: /corporations/{corporationId}/assets/
+  - uriPathPattern: "/corporations/{corporationId}/assets/"
   - where: uriQueryParameter
     named: "page"
     equals: 2
@@ -584,7 +584,7 @@ simlet: corporations-machaque
 
 request:
   - method: GET
-  - uriPathPattern: /corporations/{corporation_id}/
+  - uriPathPattern: "/corporations/{corporation_id}/"
 
 response:
   from: template
@@ -601,7 +601,7 @@ simlet: character-ripley
 
 request:
   - method: GET
-  - uriPathPattern: /characters/{character_id}/
+  - uriPathPattern: "/characters/{character_id}/"
 
 response:
   from: template

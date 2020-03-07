@@ -234,7 +234,7 @@ public class MiningRepositoryIT {
 				.getUniverseRegionById( 10000033 );
 		final MiningExtraction miningExtractionA = new MiningExtraction.Builder()
 				.withTypeId( 35 )
-				.withSolarSystemLocation( new SpaceSystemImplementation.Builder()
+				.withSpaceSystem( new SpaceSystemImplementation.Builder()
 						.withSolarSystem( solarSystemData )
 						.withConstellation( constellationData )
 						.withRegion( regionData )
@@ -245,7 +245,7 @@ public class MiningRepositoryIT {
 				.build();
 		final MiningExtraction miningExtractionB = new MiningExtraction.Builder()
 				.withTypeId( 34 )
-				.withSolarSystemLocation( new SpaceSystemImplementation.Builder()
+				.withSpaceSystem( new SpaceSystemImplementation.Builder()
 						.withSolarSystem( solarSystemData )
 						.withConstellation( constellationData )
 						.withRegion( regionData )

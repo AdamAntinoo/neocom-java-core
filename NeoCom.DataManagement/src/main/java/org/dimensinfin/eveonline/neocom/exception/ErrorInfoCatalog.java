@@ -2,13 +2,19 @@ package org.dimensinfin.eveonline.neocom.exception;
 
 import java.text.MessageFormat;
 
+import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.ASSETS_DOWNLOAD_PROCESS_ERRORCODE;
+import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.INVALID_LOCATION_TYPE_ERRORCODE;
+import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.RETROFIT_CACHE_FILE_SYSTEM_ERRORCODE;
+
 public enum ErrorInfoCatalog {
-	FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED( "data.management.retrofit.cache.file.system.error",
+	FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED( RETROFIT_CACHE_FILE_SYSTEM_ERRORCODE,
 			"File System exception error during retrofit cache configuration." ),
-	RUNTIME_PROCESSING_ASSET( "data.management.assets.download.process.runtime.exception",
+	RUNTIME_PROCESSING_ASSET( ASSETS_DOWNLOAD_PROCESS_ERRORCODE,
 			"Runtime while processing asset; {0}" ),
 	MANDATORY_CONFIGURATION_PROPERTY_EMPTY( "data.management.retrofit.configuration.error",
-			"ESI configuration property is empty while configuring the OAuth parameters." );
+			"ESI configuration property is empty while configuring the OAuth parameters." ),
+	LOCATION_NOT_THE_CORRECT_TYPE( INVALID_LOCATION_TYPE_ERRORCODE,
+			"The expected location obtained is not of the type expected.");
 	public final String errorCode;
 	public final String errorMessage;
 

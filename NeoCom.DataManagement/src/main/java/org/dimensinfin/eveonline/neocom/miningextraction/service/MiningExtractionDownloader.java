@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -16,6 +17,7 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 public class MiningExtractionDownloader /*extends Job*/ {
 	private Credential credential;
 	private ESIDataProvider esiDataProvider;
+	private LocationCatalogService locationCatalogService;
 
 	private MiningExtractionDownloader() {}
 
@@ -42,7 +44,8 @@ public class MiningExtractionDownloader /*extends Job*/ {
 		final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = Objects.requireNonNull(
 				this.esiDataProvider.getCharactersCharacterIdMining( credential ) );
 		for (GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk) {
-			final MiningExtraction extraction = new GetCharactersCharacterIdMiningToMiningExtraction().convert( extractionOk );
+			final MiningExtraction extraction = new GetCharactersCharacterIdMiningToMiningExtraction( this.locationCatalogService )
+					.convert( extractionOk );
 			// Set the missing owner that is something not available at the esi record.
 			extraction.setOwnerId( this.credential.getAccountId() );
 			// Before doing any store of the data, see if this is a delta. Search for an already existing record.
@@ -139,6 +142,12 @@ public class MiningExtractionDownloader /*extends Job*/ {
 		public MiningExtractionDownloader.Builder withEsiDataProvider( final ESIDataProvider esiDataProvider ) {
 			Objects.requireNonNull( esiDataProvider );
 			this.onConstruction.esiDataProvider = esiDataProvider;
+			return this;
+		}
+
+		public MiningExtractionDownloader.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+			Objects.requireNonNull( locationCatalogService );
+			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
 	}

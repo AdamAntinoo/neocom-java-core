@@ -9,6 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
@@ -21,6 +24,10 @@ import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_SERVER_LOCATION;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.BACKEND_RETROFIT_SERVER_LOCATION;
 
 public class IntegrationEnvironmentDefinitionTCLocal {
 	protected static final Logger logger = LoggerFactory.getLogger( IntegrationEnvironmentDefinitionTCLocal.class );
@@ -31,55 +38,55 @@ public class IntegrationEnvironmentDefinitionTCLocal {
 	protected static final int DEFAULT_PLANET_IDENTIFIER = 40208304;
 	protected static final int DEFAULT_SCHEMATIC = 127;
 
-	protected JdbcConnectionSource connectionSource;
-//	protected static final int ESI_UNITTESTING_PORT = 6090;
-//	protected static final int BACKEND_UNITTESTING_PORT = 6092;
-//	protected static final GenericContainer<?> esisimulator;
-//	protected static final GenericContainer<?> backendSimulator;
-//	private static final PostgreSQLContainer postgres;
-	//	private static final String connectionUrl;
+	protected static JdbcConnectionSource connectionSource;
+	protected static final int ESI_UNITTESTING_PORT = 6090;
+	protected static final int BACKEND_UNITTESTING_PORT = 6092;
+	protected static final GenericContainer<?> esisimulator;
+	protected static final GenericContainer<?> backendSimulator;
+	private static final PostgreSQLContainer postgres;
+	private static final String connectionUrl;
 	protected static Credential credential4Test;
 
-//	static {
-//		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
-//				.withExposedPorts( ESI_UNITTESTING_PORT )
-//				.withFileSystemBind( "/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting",
-//						"/esi-unittesting",
-//						BindMode.READ_WRITE )
-//				.withCommand( "bin/apisimulator start /esi-unittesting -p " + ESI_UNITTESTING_PORT );
-//		esisimulator.start();
-//		backendSimulator = new GenericContainer<>( "apimastery/apisimulator" )
-//				.withExposedPorts( BACKEND_UNITTESTING_PORT )
-//				.withFileSystemBind(
-//						"/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/backend-unittesting",
-//						"/backend-unittesting",
-//						BindMode.READ_WRITE )
-//				.withCommand( "bin/apisimulator start /backend-unittesting -p " + BACKEND_UNITTESTING_PORT );
-//		backendSimulator.start();
-//	}
-//
-//	static {
-//		JdbcConnectionSource connectionSource1;
-//		postgres = new PostgreSQLContainer( "postgres:9.6.8" )
-//				.withDatabaseName( "postgres" )
-//				.withUsername( "neocom" )
-//				.withPassword( "01.Alpha" );
-//		postgres.start();
-//		connectionUrl = "jdbc:postgresql://"
-//				+ postgres.getContainerIpAddress()
-//				+ ":" + postgres.getMappedPort( PostgreSQLContainer.POSTGRESQL_PORT )
-//				+ "/" + "postgres" +
-//				"?user=" + "neocom" +
-//				"&password=" + "01.Alpha";
-//		NeoComLogger.info( "Postgres SQL URL: {}", connectionUrl );
-//		try {
-//			connectionSource1 = new JdbcConnectionSource( connectionUrl, new PostgresDatabaseType() );
-//		} catch (final SQLException sqle) {
-//			sqle.printStackTrace();
-//			connectionSource1 = null;
-//		}
-//		connectionSource = connectionSource1;
-//	}
+	static {
+		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
+				.withExposedPorts( ESI_UNITTESTING_PORT )
+				.withFileSystemBind( "/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting",
+						"/esi-unittesting",
+						BindMode.READ_WRITE )
+				.withCommand( "bin/apisimulator start /esi-unittesting -p " + ESI_UNITTESTING_PORT );
+		esisimulator.start();
+		backendSimulator = new GenericContainer<>( "apimastery/apisimulator" )
+				.withExposedPorts( BACKEND_UNITTESTING_PORT )
+				.withFileSystemBind(
+						"/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/backend-unittesting",
+						"/backend-unittesting",
+						BindMode.READ_WRITE )
+				.withCommand( "bin/apisimulator start /backend-unittesting -p " + BACKEND_UNITTESTING_PORT );
+		backendSimulator.start();
+	}
+
+	static {
+		JdbcConnectionSource connectionSource1;
+		postgres = new PostgreSQLContainer( "postgres:9.6.8" )
+				.withDatabaseName( "postgres" )
+				.withUsername( "neocom" )
+				.withPassword( "01.Alpha" );
+		postgres.start();
+		connectionUrl = "jdbc:postgresql://"
+				+ postgres.getContainerIpAddress()
+				+ ":" + postgres.getMappedPort( PostgreSQLContainer.POSTGRESQL_PORT )
+				+ "/" + "postgres" +
+				"?user=" + "neocom" +
+				"&password=" + "01.Alpha";
+		NeoComLogger.info( "Postgres SQL URL: {}", connectionUrl );
+		try {
+			connectionSource1 = new JdbcConnectionSource( connectionUrl, new PostgresDatabaseType() );
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+			connectionSource1 = null;
+		}
+		connectionSource = connectionSource1;
+	}
 
 	protected SBConfigurationProvider itConfigurationProvider;
 	protected IFileSystem itFileSystemAdapter;
@@ -105,24 +112,24 @@ public class IntegrationEnvironmentDefinitionTCLocal {
 
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
 				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
-//		this.itConfigurationProvider.setProperty( AUTHENTICATED_RETROFIT_SERVER_LOCATION,
-//				"http://" +
-//						esisimulator.getContainerIpAddress() +
-//						":" +
-//						esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) + "/latest/" );
-//		this.itConfigurationProvider.setProperty( BACKEND_RETROFIT_SERVER_LOCATION,
-//				"http://" +
-//						backendSimulator.getContainerIpAddress() +
-//						":" +
-//						backendSimulator.getMappedPort( ESI_UNITTESTING_PORT ) );
+		this.itConfigurationProvider.setProperty( AUTHENTICATED_RETROFIT_SERVER_LOCATION,
+				"http://" +
+						esisimulator.getContainerIpAddress() +
+						":" +
+						esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) /*+ "/latest/"*/ );
+		this.itConfigurationProvider.setProperty( BACKEND_RETROFIT_SERVER_LOCATION,
+				"http://" +
+						backendSimulator.getContainerIpAddress() +
+						":" +
+						backendSimulator.getMappedPort( ESI_UNITTESTING_PORT ) );
 		final String databaseHostName = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasehost" );
 		final String databasePath = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepath" );
 		final String databaseUser = this.itConfigurationProvider.getResourceString( "P.database.neocom.databaseuser" );
 		final String databasePassword = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepassword" );
-		final String connectionUrl = databaseHostName +
-				"/" + databasePath +
-				"?user=" + databaseUser +
-				"&password=" + databasePassword;
+//		final String connectionUrl = databaseHostName +
+//				"/" + databasePath +
+//				"?user=" + databaseUser +
+//				"&password=" + databasePassword;
 		this.itNeoComIntegrationDBAdapter = new IntegrationNeoComDBAdapter.Builder()
 				.withDatabaseURLConnection( connectionUrl )
 				.build();
