@@ -20,6 +20,13 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
+/**
+ * The mining repository isolates the repository fro mining data from the details related to the search and access to the records. Current
+ * implementation expects the records persisted on a database repository.
+ *
+ * @author Adam Antinoo (adamantinoo.git@gmail.com)
+ * @since 0.19.0
+ */
 public class MiningRepository {
 	// - C O M P O N E N T S
 	protected Dao<MiningExtraction, String> miningExtractionDao;

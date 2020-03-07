@@ -188,7 +188,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	 */
 	@TimeElapsed
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
-//		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+		NeoComLogger.enter( "Credential:",  credential.toString() );
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
