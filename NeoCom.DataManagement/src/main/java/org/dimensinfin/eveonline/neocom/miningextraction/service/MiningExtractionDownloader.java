@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+import org.joda.time.LocalDate;
+
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
@@ -49,7 +51,8 @@ public class MiningExtractionDownloader /*extends Job*/ {
 		for (GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk) {
 			final MiningExtraction extraction = new GetCharactersCharacterIdMiningToMiningExtractionConverter(
 					this.locationCatalogService,
-					this.credential.getAccountId() )
+					this.credential.getAccountId(),
+					LocalDate.now() )
 					.convert( extractionOk );
 			// Set the missing owner that is something not available at the esi record.
 //			extraction.setOwnerId( this.credential.getAccountId() );

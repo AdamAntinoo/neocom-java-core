@@ -19,7 +19,7 @@ public class MiningExtractionDownloaderIT extends IntegrationEnvironmentDefiniti
 
 	@BeforeEach
 	public void beforeEach() throws SQLException {
-		final MiningRepository miningRepository = new MiningRepository.Builder(  )
+		this.miningRepository = new MiningRepository.Builder(  )
 				.withLocationCatalogService( this.itLocationCatalogService )
 				.withMiningExtractionDao( this.itNeoComIntegrationDBAdapter.getMiningExtractionDao() )
 				.build();
@@ -34,8 +34,8 @@ public class MiningExtractionDownloaderIT extends IntegrationEnvironmentDefiniti
 		final Credential credential = Mockito.mock( Credential.class );
 		final ESIDataProvider esiDataProvider = Mockito.mock( ESIDataProvider.class );
 		final MiningExtractionDownloader miningExtractionDownloader = new MiningExtractionDownloader.Builder()
-				.withCredential( credential )
-				.withEsiDataProvider( esiDataProvider )
+				.withCredential( credential4Test )
+				.withEsiDataProvider( this.esiDataProvider )
 				.withLocationCatalogService( this.itLocationCatalogService )
 				.withMiningRepository( this.miningRepository )
 				.build();

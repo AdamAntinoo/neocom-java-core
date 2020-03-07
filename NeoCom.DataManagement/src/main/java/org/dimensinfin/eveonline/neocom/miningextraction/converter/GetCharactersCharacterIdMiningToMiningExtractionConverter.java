@@ -1,5 +1,8 @@
 package org.dimensinfin.eveonline.neocom.miningextraction.converter;
 
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
@@ -14,20 +17,27 @@ import retrofit2.Converter;
 public class GetCharactersCharacterIdMiningToMiningExtractionConverter implements Converter<GetCharactersCharacterIdMining200Ok, MiningExtraction> {
 	private LocationCatalogService locationCatalogService;
 	private Integer ownerId;
+	private LocalDate processingDate;
 
-	public GetCharactersCharacterIdMiningToMiningExtractionConverter( final LocationCatalogService locationCatalogService, final Integer accountId ) {
+	public GetCharactersCharacterIdMiningToMiningExtractionConverter( final LocationCatalogService locationCatalogService,
+	                                                                  final Integer ownerId,
+	                                                                  final LocalDate processingDate ) {
 		this.locationCatalogService = locationCatalogService;
-		this.ownerId=ownerId;
+		this.ownerId = ownerId;
+		this.processingDate = processingDate;
 	}
 
 	@Override
 	public MiningExtraction convert( final GetCharactersCharacterIdMining200Ok value ) {
+		int extractionHour = 24;
+		if (value.getDate().equals( this.processingDate )) extractionHour = LocalDateTime.now().getHourOfDay();
 		final SpaceLocation spaceLocation = this.locationCatalogService.searchLocation4Id( value.getSolarSystemId().longValue() );
 		if (spaceLocation instanceof SpaceSystemImplementation)
 			return new MiningExtraction.Builder()
 					.withExtractionDate( value.getDate().toString( MiningExtraction.EXTRACTION_DATE_FORMAT ) )
+					.withExtractionHour( extractionHour )
 					.withTypeId( value.getTypeId() )
-					.withOwnerId( this.ownerId)
+					.withOwnerId( this.ownerId )
 					.withQuantity( value.getQuantity().intValue() )
 					.withSpaceSystem( (SpaceSystem) spaceLocation )
 					.build();

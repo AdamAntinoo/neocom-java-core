@@ -2,7 +2,6 @@ package org.dimensinfin.eveonline.neocom.database.entities;
 
 import java.util.Objects;
 import javax.persistence.Column;
-import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.j256.ormlite.field.DatabaseField;
@@ -86,10 +85,10 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 	}
 
 	// - F I E L D - S E C T I O N
-	@Id
-	@DatabaseField(id = true)
-	@Column(name = "id", updatable = false, nullable = false)
-	private String id = "YYYY-MM-DD:HH-SYSTEMID-TYPEID-OWNERID";
+//	@Id
+//	@DatabaseField(id = true)
+//	@Column(name = "id", updatable = false, nullable = false)
+//	private String id = "YYYY-MM-DD:HH-SYSTEMID-TYPEID-OWNERID";
 	//	@DatabaseField
 //	@Column(name = "typeId")
 //	private Integer typeId; // The eve type identifier for the resource being extracted
@@ -219,7 +218,7 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 	public int hashCode() {
 		return new HashCodeBuilder( 17, 37 )
 				.appendSuper( super.hashCode() )
-				.append( this.id )
+				.append( this.getId() )
 //				.append( this.typeId )
 //				.append( this.solarSystemId )
 				.append( this.quantity )
@@ -243,7 +242,7 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 				.append( this.delta, that.delta )
 				.append( this.extractionHour, that.extractionHour )
 				.append( this.ownerId, that.ownerId )
-				.append( this.id, that.id )
+//				.append( this.id, that.id )
 				.append( this.extractionDateName, that.extractionDateName )
 				.isEquals();
 	}
@@ -251,7 +250,7 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 	@Override
 	public String toString() {
 		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "id", this.id )
+				.append( "id", this.getLocationId() )
 				.append( "typeId", this.getTypeId() )
 				.append( "solarSystemId", this.getLocationId() )
 				.append( "quantity", this.quantity )
@@ -302,11 +301,11 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 			return this;
 		}
 
-//		public Builder withExtractionHour( final Integer extractionHour ) {
-//			Objects.requireNonNull( extractionHour );
-//			this.onConstruction.extractionHour = extractionHour;
-//			return this;
-//		}
+		public Builder withExtractionHour( final Integer extractionHour ) {
+			Objects.requireNonNull( extractionHour );
+			this.onConstruction.extractionHour = extractionHour;
+			return this;
+		}
 
 //		public Builder withOwnerId( final Integer ownerId ) {
 //			this.onConstruction.ownerId = ownerId;
@@ -329,6 +328,7 @@ public class MiningExtraction /*extends UpdatableEntity */ /*implements IAggrega
 //		}
 
 		public MiningExtraction.Builder withQuantity( final Integer quantity ) {
+			if (null == quantity) this.onConstruction.quantity = 0;
 			this.onConstruction.quantity = quantity;
 			return this;
 		}
