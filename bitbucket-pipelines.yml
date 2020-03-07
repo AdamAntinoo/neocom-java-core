@@ -27,7 +27,8 @@ definitions:
           - sonar
         script:
           - sh ./NeoCom.DataManagement/ci/dependencies.sh
-          - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml up
+          - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml up &
+          - sleep 10
           - ./gradlew clean build test
           - docker-compose down
         services:
