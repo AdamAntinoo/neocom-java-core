@@ -1,4 +1,4 @@
-image: openjdk:11
+image: frekele/gradle
 
 clone:
   depth: full              # SonarCloud scanner needs the full history to assign issues properly
@@ -13,6 +13,7 @@ definitions:
           - gradle
           - sonar
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - ./gradlew clean build
         artifacts:
           - build/libs/**
@@ -31,11 +32,17 @@ definitions:
           - gradle
           - sonar
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - ./gradlew clean build test
           - ./gradlew jacocoTestReport
           - ./gradlew sonarqube
+        services:
+          - docker
         artifacts:
           - build/libs/**
+  services:
+    docker:
+      memory: 2048
 
 pipelines:                 # More info here: https://confluence.atlassian.com/bitbucket/configure-bitbucket-pipelines-yml-792298910.html
   branches:
