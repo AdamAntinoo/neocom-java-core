@@ -32,20 +32,20 @@ public class MiningExtractionEntity extends UpdatableEntity {
 	@Column(name = "id", updatable = false, nullable = false)
 	private String id = "YYYY-MM-DD:HH-SYSTEMID-TYPEID-OWNERID";
 	@DatabaseField(dataType = DataType.INTEGER, canBeNull = false)
-	private Integer typeId; // The eve type identifier for the resource being extracted
+	private int typeId; // The eve type identifier for the resource being extracted
 	@DatabaseField
-	private Integer solarSystemId; // The solar system where the extraction is recorded.
+	private int solarSystemId; // The solar system where the extraction is recorded.
 	@DatabaseField
-	private Integer quantity = 0;
+	private int quantity = 0;
 	@DatabaseField
-	private Long delta = 0L;
+	private long delta = 0L;
 	@DatabaseField(dataType = DataType.STRING, canBeNull = false, index = true)
 	private String extractionDateName;
 	@DatabaseField
-	private Integer extractionHour = 24; // The hour of the day for this extraction delta or 24 if this is the date aggregated value.
+	private int extractionHour = 24; // The hour of the day for this extraction delta or 24 if this is the date aggregated value.
 	@DatabaseField(dataType = DataType.INTEGER, canBeNull = false, index = true)
 	@Column(name = "ownerId")
-	private Integer ownerId; // The credential identifier of the pilot's extraction.
+	private int ownerId; // The credential identifier of the pilot's extraction.
 
 	private MiningExtractionEntity() {}
 
