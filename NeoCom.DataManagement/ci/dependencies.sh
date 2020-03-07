@@ -3,8 +3,8 @@
 set -eu
 
 # Add python pip and bash
-apk add --no-cache py-pip bash gcc
+apk add --no-cache py-pip bash gcc docker-compose
 
 # Install docker-compose via pip
-pip install --no-cache-dir docker-compose
+#pip install --no-cache-dir docker-compose
 docker-compose -v
