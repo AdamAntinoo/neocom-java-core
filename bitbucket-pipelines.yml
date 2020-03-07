@@ -1,4 +1,7 @@
-image: maven:3.6.1
+image: docker:stable
+
+options:
+  docker: true
 
 clone:
   depth: full              # SonarCloud scanner needs the full history to assign issues properly
@@ -23,9 +26,10 @@ definitions:
           - gradle
           - sonar
         script:
-          - export TESTCONTAINERS_RYUK_DISABLED=true
-          - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml &
+          - ci/dependencies.sh
+          - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml
           - ./gradlew clean build test
+          - docker-compose down
         services:
           - docker
         artifacts:
