@@ -1,0 +1,17 @@
+// - J A C O C O
+jacoco {
+    reportsDir = file("$buildDir/../coverage")
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+test {
+    jacoco {
+        excludes = ['org.dimensinfin.eveonline.neocom.utility.*']
+    }
+}
+plugins.withType(JacocoPlugin) {
+    tasks["test"].finalizedBy 'jacocoTestReport'
+}

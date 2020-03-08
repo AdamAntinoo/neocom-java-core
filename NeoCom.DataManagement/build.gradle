@@ -58,16 +58,6 @@ sourceSets {
         srcDirs += 'src/test/java-support'
     }
 }
-
-// - J A C O C O
-jacocoTestReport {
-    reports {
-        xml.enabled true
-    }
-}
-plugins.withType(JacocoPlugin) {
-    tasks["test"].finalizedBy 'jacocoTestReport'
-}
 // - S O N A R Q U B E
 sonarqube {
     properties {
