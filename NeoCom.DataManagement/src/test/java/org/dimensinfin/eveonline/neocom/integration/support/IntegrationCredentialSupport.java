@@ -14,7 +14,7 @@ public class IntegrationCredentialSupport {
 	@BeforeEach
 	void setUp() {
 		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
+				.optionalApplicationDirectory( "./out/test/NeoCom.IntegrationTest/" )
 				.build();
 		this.integrationCredentialStore = new IntegrationCredentialStore.Builder()
 				.withFileSystemAdapter( this.fileSystemAdapter )

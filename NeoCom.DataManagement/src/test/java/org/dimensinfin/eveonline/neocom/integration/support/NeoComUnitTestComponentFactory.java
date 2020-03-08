@@ -61,7 +61,7 @@ public class NeoComUnitTestComponentFactory {
 	public IFileSystem getFileSystemAdapter() {
 		if (null == this.fileSystemAdapter)
 			this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
-					.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest/" )
+					.optionalApplicationDirectory( "./out/test/NeoCom.UnitTest/" )
 					.build();
 		return this.fileSystemAdapter;
 	}

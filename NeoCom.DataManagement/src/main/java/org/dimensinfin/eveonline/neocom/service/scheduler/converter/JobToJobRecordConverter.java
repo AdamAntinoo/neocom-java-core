@@ -1,18 +1,19 @@
 package org.dimensinfin.eveonline.neocom.service.scheduler.converter;
 
-public class JobToJobRecordConverter {
-	private JobToJobRecordConverter() {}
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobRecord;
 
-	// - B U I L D E R
-	public static class Builder {
-		private JobToJobRecordConverter onConstruction;
+import retrofit2.Converter;
 
-		public Builder() {
-			this.onConstruction = new JobToJobRecordConverter();
-		}
+public class JobToJobRecordConverter implements Converter<Job, JobRecord> {
+	public JobToJobRecordConverter() {}
 
-		public JobToJobRecordConverter build() {
-			return this.onConstruction;
-		}
+	@Override
+	public JobRecord convert( final Job value ) {
+		return new JobRecord.Builder()
+				.withJobName( value.getClass().getSimpleName() )
+				.withStatus( value.getStatus() )
+				.withSchedule( value.getSchedule() )
+				.build();
 	}
 }

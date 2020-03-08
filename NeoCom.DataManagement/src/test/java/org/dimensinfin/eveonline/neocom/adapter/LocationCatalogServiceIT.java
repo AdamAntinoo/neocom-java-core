@@ -100,14 +100,4 @@ public class LocationCatalogServiceIT extends IntegrationEnvironmentDefinitionTC
 		final SpaceLocation location = locationCatalogService.searchStructure4Id( LOCATION_ID_STRUCTURE_4TEST, credential4Test );
 		Assertions.assertNotNull( location );
 	}
-
-//	@Test
-//	public void stopService() {
-//		final LocationCatalogService locationServiceSpy = Mockito.spy( LocationCatalogService.class );
-//
-//		locationServiceSpy.stopService();
-//
-//		Mockito.verify( locationServiceSpy, Mockito.times( 1 ) ).writeLocationsDataCache();
-//		Mockito.verify( locationServiceSpy, Mockito.times( 1 ) ).cleanLocationsCache();
-//	}
 }

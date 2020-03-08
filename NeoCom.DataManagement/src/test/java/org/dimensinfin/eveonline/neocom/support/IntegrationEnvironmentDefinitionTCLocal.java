@@ -142,7 +142,7 @@ public class IntegrationEnvironmentDefinitionTCLocal {
 			return null;
 		} ).when( this.itCredentialRepository ).persist( Mockito.any( Credential.class ) );
 		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
+				.optionalApplicationDirectory( "./out/test/NeoCom.UnitTest/" )
 				.build();
 		this.itRetrofitFactory = new RetrofitFactory.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )

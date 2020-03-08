@@ -55,6 +55,6 @@ public class MiningExtractionPersistentIT extends IntegrationEnvironmentDefiniti
 		// Assertions
 		final List<MiningExtraction> obtained = miningRepository.accessMiningExtractions4Pilot( credential4Test );
 		Assertions.assertNotNull( obtained );
-		Assertions.assertEquals( 6, obtained.size() );
+		Assertions.assertEquals( 7, obtained.size() );
 	}
 }

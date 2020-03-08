@@ -135,7 +135,7 @@ public class IntegrationEnvironmentDefinition {
 			return null;
 		} ).when( this.itCredentialRepository ).persist( Mockito.any( Credential.class ) );
 		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
+				.optionalApplicationDirectory( "./out/test/NeoCom.IntegrationTest/" )
 				.build();
 		this.itRetrofitFactory = new RetrofitFactory.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )

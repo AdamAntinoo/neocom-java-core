@@ -1,16 +1,22 @@
 package org.dimensinfin.eveonline.neocom.service.scheduler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
+
 import org.dimensinfin.eveonline.neocom.annotation.Singleton;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.eveonline.neocom.service.scheduler.converter.JobToJobRecordConverter;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.CronScheduleGenerator;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobRecord;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 
 /**
@@ -49,20 +55,21 @@ public class JobScheduler {
 		return this.jobsRegistered.size();
 	}
 
+	public List<JobRecord> getRegisteredJobs() {
+		return Stream.of( this.jobsRegistered.values() )
+				.map( ( job ) -> {
+					final JobRecord record = new JobToJobRecordConverter().convert( job );
+					return record;
+				} )
+				.collect( Collectors.toList() );
+	}
+
 	public void setCronScheduleGenerator( final CronScheduleGenerator cronScheduleGenerator ) {
 		this.cronScheduleGenerator = cronScheduleGenerator;
 	}
 
 	public void clear() {
 		this.jobsRegistered.clear();
-	}
-
-	public boolean needsNetwork() {
-		return true;
-	}
-
-	public boolean needsStorage() {
-		return true;
 	}
 
 	public int registerJob( final Job job2Register ) {
@@ -84,14 +91,17 @@ public class JobScheduler {
 		}
 	}
 
-	public void wait4Completion() {
+	public boolean wait4Completion() {
 		NeoComLogger.enter();
 		schedulerExecutor.shutdown();
 		try {
 			schedulerExecutor.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
-			NeoComLogger.exit();
+			return true;
 		} catch (InterruptedException ie) {
 			NeoComLogger.info( "Scheduler terminated by external event." );
+			return false;
+		} finally {
+			NeoComLogger.exit();
 		}
 	}
 
@@ -100,8 +110,8 @@ public class JobScheduler {
 		try {
 			schedulerExecutor.submit( job );
 		} catch (final NeoComRuntimeException neoe) {
-			NeoComLogger.info( "RT [JobScheduler.submit]> Runtime exception: {}", neoe.getMessage() );
-			NeoComLogger.info( "RT [JobScheduler.submit]> Stack Trace: {}", neoe.toString() );
+			job.setStatus( JobStatus.EXCEPTION );
+			NeoComLogger.error( "RT [JobScheduler.submit]> Runtime exception: {}", neoe );
 		}
 	}
 }

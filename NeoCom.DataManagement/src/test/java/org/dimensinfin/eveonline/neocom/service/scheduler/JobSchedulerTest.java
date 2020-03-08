@@ -1,5 +1,6 @@
 package org.dimensinfin.eveonline.neocom.service.scheduler;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -14,27 +15,145 @@ import org.mockito.Mockito;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.CronScheduleGenerator;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobRecord;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 
-class JobSchedulerTest {
-//	private JobScheduler scheduler4Test;
+public class JobSchedulerTest {
+	@Test
+	public void checkJobName() {
+		// Given
+		final Job4TestRegistration job = new Job4TestRegistration();
+		JobScheduler.getJobScheduler().clear();
+		JobScheduler.getJobScheduler().registerJob( job );
+		// Test
+		final List<JobRecord> jobs = JobScheduler.getJobScheduler().getRegisteredJobs();
+		Assertions.assertNotNull( jobs );
+		Assertions.assertTrue( jobs.size() > 0 );
+		Assertions.assertNotNull( jobs.get( 0 ).getJobName() );
+		Assertions.assertEquals( "Job4TestRegistration", jobs.get( 0 ).getJobName() );
+		Assertions.assertEquals( "* - *", jobs.get( 0 ).getSchedule() );
+		Assertions.assertEquals( JobStatus.READY, jobs.get( 0 ).getStatus() );
+	}
 
-//	@BeforeEach
-//	void setUp() {
-//		this.scheduler4Test = new JobScheduler.Builder()
-//				.withCronScheduleGenerator( new HourlyCronScheduleGenerator() )
-//				.build();
-//	}
+	@Test
+	public void getJobCount() {
+		final Job job = Mockito.mock( Job.class );
+//		Mockito.when( job.getIdentifier() ).thenReturn( "-TEST-JOB-IDENTIFIER-" );
+		JobScheduler.getJobScheduler().clear();
+		Assertions.assertEquals( 0, JobScheduler.getJobScheduler().getJobCount() );
+		JobScheduler.getJobScheduler().registerJob( job );
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
+	}
 
+	@Test
+	public void getJobScheduler() {
+		Assert.assertNotNull( JobScheduler.getJobScheduler() );
+	}
+
+	@Test
+	public void registerJob() {
+		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
+		final Job job = Mockito.mock( Job.class );
+//		Mockito.when( job.getIdentifier() ).thenReturn( identifier );
+
+		JobScheduler.getJobScheduler().clear();
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().registerJob( job ) );
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().registerJob( job ) );
+	}
+
+	@Test
+	public void registerJobReplacingPrevious() {
+		// Given
+		final Job jobA = new Job4TestRegistration.Builder()
+				.addCronSchedule( "* - *" )
+				.withRegistrationTest( "-TEST-JOB-A-" ).build();
+		final Job jobB = new Job4TestRegistration.Builder()
+				.addCronSchedule( "* - *" )
+				.withRegistrationTest( "-TEST-JOB-B-" ).build();
+		final Job jobC = new Job4TestRegistration.Builder()
+				.addCronSchedule( "* - *" )
+				.withRegistrationTest( "-TEST-JOB-A-" ).build();
+		JobScheduler.getJobScheduler().clear();
+		// Assertions
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().registerJob( jobA ) );
+		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().registerJob( jobB ) );
+		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().registerJob( jobC ) );
+		JobScheduler.getJobScheduler().removeJob( jobB );
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
+	}
+
+	/**
+	 * JobScheduler now is a global singleton so different calls to the same instance really modify the global singleton. This
+	 * is why the second test will not fire an exception because it does test an already set field. Once set a schedule
+	 * generator it is not possible with the api to clear that field.
+	 */
 //	@Test
-//	void buildComplete() {
+//	void buildFailure() {
 //		final CronScheduleGenerator scheduleGenerator = Mockito.mock( CronScheduleGenerator.class );
-//		final JobScheduler scheduler = new JobScheduler.Builder()
-//				.withCronScheduleGenerator( scheduleGenerator )
-//				.build();
-//		Assertions.assertNotNull( scheduler );
+//		NullPointerException thrown = Assertions.assertThrows( NullPointerException.class,
+//				() -> new JobScheduler.Builder()
+//						.withCronScheduleGenerator( null )
+//						.build(),
+//				"Expected JobScheduler.Builder() to throw null verification, but it didn't." );
+//		Assertions.assertNull( thrown.getMessage() );
+//		final JobScheduler alreadyExistingScheduler = new JobScheduler.Builder().build();
+//		Assertions.assertNotNull( alreadyExistingScheduler );
 //	}
+	@Test
+	public void runSchedule() {
+		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
+		final Job job = Mockito.mock( Job.class );
+		Mockito.when( job.getSchedule() ).thenReturn( "* - *" );
 
-	private static class Job4TestRegistration extends Job {
+		JobScheduler.getJobScheduler().clear();
+		JobScheduler.getJobScheduler().registerJob( job );
+		final JobScheduler schedulerSpy = Mockito.spy( JobScheduler.getJobScheduler() );
+		schedulerSpy.runSchedule();
+		Mockito.verify( schedulerSpy, Mockito.times( 1 ) ).scheduleJob( job );
+	}
+
+	@Test
+	public void runScheduleWithException() {
+		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
+		final Job job = Mockito.mock( Job.class );
+//		Mockito.when( job.getIdentifier() ).thenReturn( identifier );
+		Mockito.when( job.getSchedule() ).thenReturn( "* - *" );
+
+		JobScheduler.getJobScheduler().clear();
+		JobScheduler.getJobScheduler().registerJob( new Job4TestException.Builder()
+				.addCronSchedule( "* - *" ).build() );
+		final JobScheduler schedulerSpy = Mockito.spy( JobScheduler.getJobScheduler() );
+		schedulerSpy.runSchedule();
+		Mockito.verify( schedulerSpy, Mockito.times( 1 ) ).scheduleJob( Mockito.any( Job.class ) );
+	}
+
+	//	@Test
+	public void scheduleJobFailure() {
+		// Given
+		final Job4TestException job = new Job4TestException();
+		JobScheduler.getJobScheduler().registerJob( job );
+		// Test
+		JobScheduler.getJobScheduler().runSchedule();
+		// Assertions
+		Assertions.assertEquals( JobStatus.EXCEPTION, job.getStatus() );
+	}
+
+	@Test
+	public void setCronScheduleGenerator() {
+		JobScheduler.getJobScheduler().setCronScheduleGenerator( new CronScheduleGenerator() {
+			@Override
+			public boolean match( final String schedule ) {
+				return true;
+			}
+		} );
+	}
+
+	@Test
+	public void wait4Completion() {
+		Assertions.assertTrue( JobScheduler.getJobScheduler().wait4Completion() );
+	}
+
+	public static class Job4TestRegistration extends Job {
 		private String registration;
 
 		@Override
@@ -127,107 +246,5 @@ class JobSchedulerTest {
 				return this;
 			}
 		}
-	}
-
-	/**
-	 * JobScheduler now is a global singleton so different calls to the same instance really modify the global singleton. This
-	 * is why the second test will not fire an exception because it does test an already set field. Once set a schedule
-	 * generator it is not possible with the api to clear that field.
-	 */
-//	@Test
-//	void buildFailure() {
-//		final CronScheduleGenerator scheduleGenerator = Mockito.mock( CronScheduleGenerator.class );
-//		NullPointerException thrown = Assertions.assertThrows( NullPointerException.class,
-//				() -> new JobScheduler.Builder()
-//						.withCronScheduleGenerator( null )
-//						.build(),
-//				"Expected JobScheduler.Builder() to throw null verification, but it didn't." );
-//		Assertions.assertNull( thrown.getMessage() );
-//		final JobScheduler alreadyExistingScheduler = new JobScheduler.Builder().build();
-//		Assertions.assertNotNull( alreadyExistingScheduler );
-//	}
-	@Test
-	void runSchedule() {
-		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
-		final Job job = Mockito.mock( Job.class );
-		Mockito.when( job.getSchedule() ).thenReturn( "* - *" );
-
-		JobScheduler.getJobScheduler().clear();
-		JobScheduler.getJobScheduler().registerJob( job );
-		final JobScheduler schedulerSpy = Mockito.spy( JobScheduler.getJobScheduler() );
-		schedulerSpy.runSchedule();
-		Mockito.verify( schedulerSpy, Mockito.times( 1 ) ).scheduleJob( job );
-	}
-
-	@Test
-	void runScheduleWithException() {
-		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
-		final Job job = Mockito.mock( Job.class );
-//		Mockito.when( job.getIdentifier() ).thenReturn( identifier );
-		Mockito.when( job.getSchedule() ).thenReturn( "* - *" );
-
-		JobScheduler.getJobScheduler().clear();
-		JobScheduler.getJobScheduler().registerJob( new Job4TestException.Builder()
-				.addCronSchedule( "* - *" ).build() );
-		final JobScheduler schedulerSpy = Mockito.spy( JobScheduler.getJobScheduler() );
-		schedulerSpy.runSchedule();
-		Mockito.verify( schedulerSpy, Mockito.times( 1 ) ).scheduleJob( Mockito.any( Job.class ) );
-	}
-
-	@Test
-	void getJobScheduler() {
-		Assert.assertNotNull( JobScheduler.getJobScheduler() );
-	}
-
-	@Test
-	void getJobCount() {
-		final Job job = Mockito.mock( Job.class );
-//		Mockito.when( job.getIdentifier() ).thenReturn( "-TEST-JOB-IDENTIFIER-" );
-		JobScheduler.getJobScheduler().clear();
-		Assertions.assertEquals( 0, JobScheduler.getJobScheduler().getJobCount() );
-		JobScheduler.getJobScheduler().registerJob( job );
-		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
-	}
-
-	@Test
-	void registerJob() {
-		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
-		final Job job = Mockito.mock( Job.class );
-//		Mockito.when( job.getIdentifier() ).thenReturn( identifier );
-
-		JobScheduler.getJobScheduler().clear();
-		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().registerJob( job ) );
-		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().registerJob( job ) );
-	}
-
-	@Test
-	void registerJobReplacingPrevious() {
-		// Given
-		final Job jobA = new Job4TestRegistration.Builder()
-				.addCronSchedule( "* - *" )
-				.withRegistrationTest( "-TEST-JOB-A-" ).build();
-		final Job jobB = new Job4TestRegistration.Builder()
-				.addCronSchedule( "* - *" )
-				.withRegistrationTest( "-TEST-JOB-B-" ).build();
-		final Job jobC = new Job4TestRegistration.Builder()
-				.addCronSchedule( "* - *" )
-				.withRegistrationTest( "-TEST-JOB-A-" ).build();
-		JobScheduler.getJobScheduler().clear();
-  // Assertions
-		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().registerJob( jobA ) );
-		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().registerJob( jobB ) );
-		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().registerJob( jobC ) );
-		JobScheduler.getJobScheduler().removeJob( jobB );
-		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
-	}
-
-	@Test
-	void setCronScheduleGenerator() {
-		JobScheduler.getJobScheduler().setCronScheduleGenerator( new CronScheduleGenerator() {
-			@Override
-			public boolean match( final String schedule ) {
-				return true;
-			}
-		} );
 	}
 }
