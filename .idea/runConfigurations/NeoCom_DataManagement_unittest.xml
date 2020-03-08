@@ -1,0 +1,36 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="NeoCom.DataManagement.unittest" type="JUnit" factoryName="JUnit">
+    <module name="neocom-datamanagement.NeoCom.DataManagement.test" />
+    <useClassPathOnly />
+    <extension name="coverage" runner="jacoco">
+      <pattern>
+        <option name="PATTERN" value="org.dimensinfin.eveonline.neocom.esiswagger.*" />
+        <option name="ENABLED" value="true" />
+        <option name="INCLUDE" value="false" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="org.dimensinfin.eveonline.neocom.auth.mock.*" />
+        <option name="ENABLED" value="true" />
+        <option name="INCLUDE" value="false" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="org.dimensinfin.neocom.support.*" />
+        <option name="ENABLED" value="true" />
+        <option name="INCLUDE" value="false" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="org.dimensinfin.eveonline.neocom.utility.Base64" />
+        <option name="ENABLED" value="true" />
+        <option name="INCLUDE" value="false" />
+      </pattern>
+    </extension>
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="directory" />
+    <option name="PARAMETERS" value="" />
+    <dir value="$PROJECT_DIR$/NeoCom.DataManagement/src/test/java/org/dimensinfin/eveonline/neocom" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

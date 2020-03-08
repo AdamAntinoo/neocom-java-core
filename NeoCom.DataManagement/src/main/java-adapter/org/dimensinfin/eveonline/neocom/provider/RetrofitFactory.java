@@ -34,6 +34,7 @@ import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsCon
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_SERVER_LOCATION;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.AUTHENTICATED_RETROFIT_SERVER_TIMEOUT;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.BACKEND_RETROFIT_CACHE_FILE_NAME;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.BACKEND_RETROFIT_SERVER_LOCATION;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.CACHE_DIRECTORY_PATH;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_ACCESS_TOKEN;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_AGENT;
@@ -43,7 +44,6 @@ import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsCon
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_STATE;
-import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.BACKEND_RETROFIT_SERVER_LOCATION;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_CACHE_NAME;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_CACHE_SIZE;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.UNIVERSE_RETROFIT_SERVER_AGENT;
@@ -77,32 +77,39 @@ public class RetrofitFactory {
 	@LogEnterExit
 	public Retrofit accessAuthenticatedConnector( final Credential credential ) throws IOException {
 		Retrofit hitConnector = this.connectors.get( credential.getUniqueCredential() );
-		if (null == hitConnector) { // Create a new connector for this credential.
-			final String esiDataServerLocation = this.configurationProvider.getResourceString(
-					AUTHENTICATED_RETROFIT_SERVER_LOCATION,
-					DEFAULT_ESI_DATA_SERVER );
-			final String agent = this.configurationProvider
-					.getResourceString( AUTHENTICATED_RETROFIT_SERVER_AGENT, DEFAULT_RETROFIT_AGENT );
-			final int timeout = (int) TimeUnit.SECONDS
-					.toSeconds( this.configurationProvider.getResourceInteger( AUTHENTICATED_RETROFIT_SERVER_TIMEOUT ) );
-			final String cacheFilePath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH )
-					+ this.configurationProvider.getResourceString( AUTHENTICATED_RETROFIT_CACHE_NAME );
-			final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-			final Integer cacheSize = this.configurationProvider.getResourceInteger( AUTHENTICATED_RETROFIT_CACHE_SIZE );
-			hitConnector = new Retrofit.Builder()
-					.baseUrl( esiDataServerLocation )
-					.addConverterFactory( GSON_CONVERTER_FACTORY )
-					.client( new HttpAuthenticatedClientFactory.Builder()
-							.withNeoComOAuth20( this.getConfiguredOAuth( credential ) )
-							.withConfigurationProvider( this.configurationProvider )
-							.withCredential( credential )
-							.withAgent( agent )
-							.withTimeout( timeout )
-							.withCacheFile( cacheDataFile )
-							.withCacheSize( cacheSize, StorageUnits.GIGABYTES )
-							.generate() )
-					.build();
-			this.connectors.put( credential.getUniqueCredential(), hitConnector );
+		try {
+			if (null == hitConnector) { // Create a new connector for this credential.
+				final String esiDataServerLocation = this.configurationProvider.getResourceString(
+						AUTHENTICATED_RETROFIT_SERVER_LOCATION,
+						DEFAULT_ESI_DATA_SERVER );
+				final String agent = this.configurationProvider
+						.getResourceString( AUTHENTICATED_RETROFIT_SERVER_AGENT, DEFAULT_RETROFIT_AGENT );
+				final int timeout = (int) TimeUnit.SECONDS
+						.toSeconds( this.configurationProvider.getResourceInteger( AUTHENTICATED_RETROFIT_SERVER_TIMEOUT ) );
+				final String cacheFilePath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH )
+						+ this.configurationProvider.getResourceString( AUTHENTICATED_RETROFIT_CACHE_NAME );
+				final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
+				this.testValidCacheFile( cacheDataFile );
+				final Integer cacheSize = this.configurationProvider.getResourceInteger( AUTHENTICATED_RETROFIT_CACHE_SIZE );
+				hitConnector = new Retrofit.Builder()
+						.baseUrl( esiDataServerLocation )
+						.addConverterFactory( GSON_CONVERTER_FACTORY )
+						.client( new HttpAuthenticatedClientFactory.Builder()
+								.withNeoComOAuth20( this.getConfiguredOAuth( credential ) )
+								.withConfigurationProvider( this.configurationProvider )
+								.withCredential( credential )
+								.withAgent( agent )
+								.withTimeout( timeout )
+								// TODO - Removed until the effect of same cache in multiple retrofits is confirmed.
+//							.withCacheFile( cacheDataFile )
+//							.withCacheSize( cacheSize, StorageUnits.GIGABYTES )
+								.generate() )
+						.build();
+				this.connectors.put( credential.getUniqueCredential(), hitConnector );
+			}
+		} catch (final IOException ioe) {
+			NeoComLogger.error( ioe );
+			throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
 		}
 		return hitConnector;
 	}
@@ -117,6 +124,7 @@ public class RetrofitFactory {
 				final String cacheFilePath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH )
 						+ this.configurationProvider.getResourceString( BACKEND_RETROFIT_CACHE_FILE_NAME );
 				final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
+				this.testValidCacheFile( cacheDataFile );
 				hitConnector = new Retrofit.Builder()
 						.baseUrl( serverBaseUrl )
 						.addConverterFactory( GSON_CONVERTER_FACTORY )
@@ -146,6 +154,7 @@ public class RetrofitFactory {
 				final String cacheFilePath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH )
 						+ this.configurationProvider.getResourceString( UNIVERSE_RETROFIT_CACHE_NAME );
 				final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
+				this.testValidCacheFile( cacheDataFile );
 				final Integer cacheSize = this.configurationProvider.getResourceInteger( UNIVERSE_RETROFIT_CACHE_SIZE, 1 );
 				hitConnector = new Retrofit.Builder()
 						.baseUrl( esiDataServerLocation )
@@ -201,6 +210,10 @@ public class RetrofitFactory {
 				.build();
 		Objects.requireNonNull( auth );
 		return auth;
+	}
+
+	private void testValidCacheFile( final File cacheDataFile ) throws IOException {
+		cacheDataFile.createNewFile();
 	}
 
 	// - B U I L D E R
