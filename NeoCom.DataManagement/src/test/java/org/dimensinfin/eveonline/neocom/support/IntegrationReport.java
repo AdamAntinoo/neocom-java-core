@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.annimon.stream.Stream;
 
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 public class IntegrationReport {

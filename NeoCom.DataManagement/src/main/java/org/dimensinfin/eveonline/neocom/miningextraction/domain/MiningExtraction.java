@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.database.entities;
+package org.dimensinfin.eveonline.neocom.miningextraction.domain;
 
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
  * @since 0.14.0
  */
 @JsonIgnoreProperties
-public class MiningExtraction  {
+public class MiningExtraction {
 	private Long quantity = 0L;
 	private long delta = 0;
 	private String extractionDateName;
@@ -74,6 +74,7 @@ public class MiningExtraction  {
 	public long getOwnerId() {
 		return this.ownerId;
 	}
+
 	public String getURLForItem() {
 		return this.resourceItem.getURLForItem();
 	}
@@ -81,6 +82,7 @@ public class MiningExtraction  {
 	public Long getQuantity() {
 		return this.quantity;
 	}
+
 	public double getVolume() {
 		return this.resourceItem.getVolume();
 	}
@@ -121,13 +123,11 @@ public class MiningExtraction  {
 	@Override
 	public String toString() {
 		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "quantity", quantity )
-				.append( "delta", delta )
-				.append( "extractionDateName", extractionDateName )
-				.append( "extractionHour", extractionHour )
-				.append( "ownerId", ownerId )
-				.append( "resourceItem", resourceItem )
-				.append( "solarSystemLocation", solarSystemLocation )
+				.append( "quantity", this.quantity )
+				.append( "delta", this.delta )
+				.append( "extractionDateName", this.extractionDateName )
+				.append( "extractionHour", this.extractionHour )
+				.append( "ownerId", this.ownerId )
 				.append( "id", getId() )
 				.append( "typeId", getTypeId() )
 				.append( "locationId", getLocationId() )
@@ -157,21 +157,8 @@ public class MiningExtraction  {
 			Objects.requireNonNull( this.onConstruction.resourceItem );
 			Objects.requireNonNull( this.onConstruction.solarSystemLocation );
 			Objects.requireNonNull( this.onConstruction.extractionDateName );
-//			this.onConstruction.id = MiningExtraction.generateRecordId(
-//					new LocalDate( this.onConstruction.extractionDateName ),
-//					this.onConstruction.extractionHour,
-//					this.onConstruction.typeId,
-//					this.onConstruction.solarSystemId,
-//					this.onConstruction.ownerId );
 			return this.onConstruction;
 		}
-
-//		public Builder fromMining( final GetCharactersCharacterIdMining200Ok mineInstance ) {
-//			this.withTypeId( mineInstance.getTypeId() );
-//			this.withQuantity( mineInstance.getQuantity().intValue() );
-//			this.withExtractionDate( mineInstance.getDate() );
-//			return this;
-//		}
 
 		public MiningExtraction.Builder withExtractionDate( final String extractionDate ) {
 			Objects.requireNonNull( extractionDate );
@@ -185,25 +172,17 @@ public class MiningExtraction  {
 			return this;
 		}
 
-//		public Builder withOwnerId( final Integer ownerId ) {
-//			this.onConstruction.ownerId = ownerId;
-//			return this;
-//		}
+		public MiningExtraction.Builder withNeoItem( final NeoItem resourceItem ) {
+			Objects.requireNonNull( resourceItem );
+			this.onConstruction.resourceItem = resourceItem;
+			return this;
+		}
 
 		public MiningExtraction.Builder withOwnerId( final Integer ownerId ) {
 			Objects.requireNonNull( ownerId );
 			this.onConstruction.ownerId = ownerId;
 			return this;
 		}
-
-//		// TODO - Helper to allow setting the id required system identifier without searching for the Location
-//		@RequiresNetwork
-//		public Builder withSolarSystemId( final Integer solarSystemId ) {
-//			Objects.requireNonNull( solarSystemId );
-//			this.onConstruction.solarSystemId = solarSystemId;
-//			this.onConstruction.solarSystemLocation=
-//			return this;
-//		}
 
 		public MiningExtraction.Builder withQuantity( final Long quantity ) {
 			if (null == quantity) this.onConstruction.quantity = 0L;
@@ -216,17 +195,5 @@ public class MiningExtraction  {
 			this.onConstruction.solarSystemLocation = solarSystemLocation;
 			return this;
 		}
-		public MiningExtraction.Builder withNeoItem( final NeoItem resourceItem ) {
-			Objects.requireNonNull( resourceItem );
-			this.onConstruction.resourceItem = resourceItem;
-			return this;
-		}
-
-//		@RequiresNetwork
-//		public MiningExtraction.Builder withTypeId( final Integer typeId ) {
-//			Objects.requireNonNull( typeId );
-//			this.onConstruction.resourceItem = NeoItemFactory.getItemById( typeId );
-//			return this;
-//		}
 	}
 }

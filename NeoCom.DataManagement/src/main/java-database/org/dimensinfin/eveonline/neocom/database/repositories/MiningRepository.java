@@ -16,11 +16,11 @@ import org.joda.time.LocalDate;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
 import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.miningextraction.converter.MiningExtractionEntityToMiningExtraction;
+import org.dimensinfin.eveonline.neocom.miningextraction.converter.MiningExtractionEntityToMiningExtractionConverter;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 /**
@@ -131,7 +131,7 @@ public class MiningRepository {
 //		return this.accessDatedMiningExtractions4Pilot( credential, LocalDate.now() );
 		return Stream.of( this.accessDatedMiningExtractions4Pilot( credential ) )
 				.filter( ( extraction ) -> this.filterOutNotTodayRecords( extraction ) )
-				.map( ( extraction ) -> new MiningExtractionEntityToMiningExtraction( this.locationCatalogService ).convert( extraction ) )
+				.map( ( extraction ) -> new MiningExtractionEntityToMiningExtractionConverter( this.locationCatalogService ).convert( extraction ) )
 				.collect( Collectors.toList() );
 	}
 

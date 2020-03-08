@@ -18,7 +18,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
