@@ -37,7 +37,7 @@ public class NeoComBackendServiceIT extends IntegrationEnvironmentDefinitionTCLo
 				"Expected NeoComBackendService.Builder() to throw null verification, but it didn't." );
 	}
 
-	@Test
+//	@Test
 	public void putCredential() throws IOException {
 		// Given
 		final NeoComBackendService neoComBackendService = new NeoComBackendService.Builder()

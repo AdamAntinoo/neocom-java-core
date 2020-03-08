@@ -1,8 +1,8 @@
-simlet: credential-store
+simlet: store-credential
 
 request:
-  - method: PUT
-  - uriPathPattern: "/api/v1/neocom/credentials/{credentialId}"
+  - where: UriPath
+    contains: "/api/v1/neocom/credentials"
 
 response:
   from: template

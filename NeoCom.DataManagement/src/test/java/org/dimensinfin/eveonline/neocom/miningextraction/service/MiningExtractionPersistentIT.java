@@ -36,12 +36,6 @@ public class MiningExtractionPersistentIT extends IntegrationEnvironmentDefiniti
 	@Test
 	public void persistMiningExtractionsSuccess() throws SQLException {
 		// Given
-		final MiningRepository miningRepository = new MiningRepository.Builder()
-				.withLocationCatalogService( this.itLocationCatalogService )
-				.withMiningExtractionDao( this.itNeoComIntegrationDBAdapter.getMiningExtractionDao() )
-				.build();
-		final MiningExtractionPersistent miningExtractionPersistent = new MiningExtractionPersistent.Builder()
-				.withMiningRepository( miningRepository ).build();
 		final List<MiningExtraction> extractions = new MiningExtractionDownloader.Builder()
 				.withCredential( credential4Test )
 				.withEsiDataProvider( this.esiDataProvider )
@@ -49,6 +43,12 @@ public class MiningExtractionPersistentIT extends IntegrationEnvironmentDefiniti
 				.build()
 				.downloadMiningExtractions();
 		Assertions.assertEquals( 6, extractions.size() );
+		final MiningRepository miningRepository = new MiningRepository.Builder()
+				.withLocationCatalogService( this.itLocationCatalogService )
+				.withMiningExtractionDao( this.itNeoComIntegrationDBAdapter.getMiningExtractionDao() )
+				.build();
+		final MiningExtractionPersistent miningExtractionPersistent = new MiningExtractionPersistent.Builder()
+				.withMiningRepository( miningRepository ).build();
 
 		// Test
 		miningExtractionPersistent.persistMiningExtractions( extractions );
