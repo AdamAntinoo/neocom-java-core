@@ -1,6 +1,5 @@
 package org.dimensinfin.eveonline.neocom.miningextraction.service;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,38 +11,18 @@ import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
-import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
-import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.miningextraction.converter.GetCharactersCharacterIdMiningToMiningExtractionConverter;
+import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
-public class MiningExtractionDownloader /*extends Job*/ {
+public class MiningExtractionDownloader {
 	private Credential credential;
 	private ESIDataProvider esiDataProvider;
 	private LocationCatalogService locationCatalogService;
-	private MiningRepository miningRepository;
 
 	private MiningExtractionDownloader() {}
 
-	//	// - J O B
-//	@Override
-//	public int getUniqueIdentifier() {
-//		return 0;
-//	}
-//
-//	@Override
-//	public String getName() {
-//		return this.getClass().getSimpleName();
-//	}
-//
-//	@Override
-//	public Boolean call() throws Exception {
-//		return null;
-//	}
 	/**
 	 * Mining actions are small records that register the ore collected by a Pilot or the Moon mining done by a Corporation. The time
 	 * base is 10 minutes and I suppose that those records are aggregated during a day. The data is a list of entries, each one
@@ -70,23 +49,6 @@ public class MiningExtractionDownloader /*extends Job*/ {
 					// Before mapping this record see if this is a delta. Search for an already existing record.
 					final String recordId = extraction.getId();
 					NeoComLogger.info( "Generating record identifier: {}.", recordId );
-					final MiningExtractionEntity targetRecord = this.miningRepository.accessMiningExtractionFindById( recordId );
-					if (null != targetRecord) {
-						NeoComLogger.info( "Found previous record on database: {}.", targetRecord.getId() );
-						// There was a previous record so calculate the delta for this hour.
-						final long currentQty = targetRecord.getQuantity();
-						try {
-							this.miningRepository.persist( targetRecord.setQuantity( extractionOk.getQuantity() ) );
-						} catch (final SQLException sqle) {
-							NeoComLogger.error( sqle );
-							throw new NeoComRuntimeException(
-									ErrorInfoCatalog.MINING_EXTRACTION_PERSISTENCE_FAILED.getErrorMessage(
-											targetRecord.getId(),
-											sqle.getCause().toString() ) );
-						}
-						NeoComLogger.info( "Updating mining extraction: {} > Quantity: {}/{}",
-								recordId + "", extractionOk.getQuantity() + "", currentQty + "" );
-					}
 					return extraction;
 				} )
 				.collect( Collectors.toList() );
@@ -119,12 +81,6 @@ public class MiningExtractionDownloader /*extends Job*/ {
 		public MiningExtractionDownloader.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
 			Objects.requireNonNull( locationCatalogService );
 			this.onConstruction.locationCatalogService = locationCatalogService;
-			return this;
-		}
-
-		public MiningExtractionDownloader.Builder withMiningRepository( final MiningRepository miningRepository ) {
-			Objects.requireNonNull( miningRepository );
-			this.onConstruction.miningRepository = miningRepository;
 			return this;
 		}
 	}
