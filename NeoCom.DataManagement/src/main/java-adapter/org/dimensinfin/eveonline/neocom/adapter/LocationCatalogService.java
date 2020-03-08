@@ -1,12 +1,6 @@
 package org.dimensinfin.eveonline.neocom.adapter;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -40,8 +34,6 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 
 import retrofit2.Response;
-import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.CACHE_DIRECTORY_PATH;
-import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.LOCATIONS_CACHE_LOCATION;
 
 /**
  * The location catalog service will be used to define game locations. It is able to understand their different contents depending on the type of
@@ -86,20 +78,20 @@ public class LocationCatalogService extends Job {
 				.toHashCode();
 	}
 
-//	@Override
-//	public String getName() {
-//		return this.getClass().getSimpleName();
-//	}
-
 	@Override
 	public Boolean call() {
-		this.writeLocationsDataCache();
-		return true;
+		NeoComLogger.enter();
+		try {
+			return this.writeLocationsDataCache();
+		} finally {
+			NeoComLogger.enter();
+		}
 	}
 
 	// - S T O R A G E
 	public void cleanLocationsCache() {
 		locationCache.clear();
+		this.dirtyCache=false;
 	}
 
 	/**
@@ -292,11 +284,6 @@ public class LocationCatalogService extends Job {
 			this.onConstruction = new LocationCatalogService();
 		}
 
-		public Builder( final LocationCatalogService preInstance ) {
-			if (null != preInstance) this.onConstruction = preInstance;
-			else this.onConstruction = new LocationCatalogService();
-		}
-
 		public LocationCatalogService build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
@@ -331,46 +318,9 @@ public class LocationCatalogService extends Job {
 	}
 
 	synchronized void readLocationsDataCache() {
-		NeoComLogger.enter();
-		final String directoryPath = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH );
-		final String fileName = this.configurationProvider.getResourceString( LOCATIONS_CACHE_LOCATION );
-		final String cacheFileName = directoryPath + fileName;
-		NeoComLogger.info( "Opening cache file: {}", cacheFileName );
-		try (final BufferedInputStream buffer = new BufferedInputStream(
-				this.fileSystemAdapter.openResource4Input( cacheFileName ) );
-		     final ObjectInputStream input = new ObjectInputStream( buffer )
-		) {
-			locationCache = (Map<Long, SpaceLocation>) input.readObject();
-			NeoComLogger.info( "Restored cache Locations: {} entries.", locationCache.size() + "" );
-		} catch (final ClassNotFoundException | IOException | IllegalArgumentException cnfe) {
-			NeoComLogger.error( cnfe );
-		} catch (final RuntimeException rex) {
-			NeoComLogger.error( rex );
-		} finally {
-			NeoComLogger.exit();
-		}
 	}
 
-	synchronized void writeLocationsDataCache() {
-		NeoComLogger.enter();
-		if (this.dirtyCache) {
-			final String cacheFileName = this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH ) +
-					this.configurationProvider.getResourceString( LOCATIONS_CACHE_LOCATION );
-			NeoComLogger.info( "Opening cache file: {}", cacheFileName );
-			try (final BufferedOutputStream buffer = new BufferedOutputStream(
-					this.fileSystemAdapter.openResource4Output( cacheFileName ) );
-			     final ObjectOutput output = new ObjectOutputStream( buffer )
-			) {
-				output.writeObject( locationCache );
-				dirtyCache = false;
-				NeoComLogger.info( "Wrote Locations cache: {} entries.", locationCache.size() + "" );
-			} catch (final FileNotFoundException fnfe) {
-				NeoComLogger.error( "FileNotFoundException.", fnfe );
-			} catch (final IOException ioe) {
-				NeoComLogger.error( "IOException.", ioe );
-			} finally {
-				NeoComLogger.exit();
-			}
-		}
+	synchronized boolean writeLocationsDataCache() {
+		return false;
 	}
 }

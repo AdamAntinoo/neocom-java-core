@@ -1,51 +1,23 @@
 package org.dimensinfin.eveonline.neocom.adapter;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
-import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinitionTCLocal;
 
-public class LocationCatalogServiceIT extends IntegrationEnvironmentDefinition {
+public class LocationCatalogServiceIT extends IntegrationEnvironmentDefinitionTCLocal {
 	private static final int ESI_UNITTESTING_PORT = 6090;
 	private static final long LOCATION_ID_STATION_4TEST = 60006526L;
 	private static final long LOCATION_ID_STRUCTURE_4TEST = 1032555370327L;
-//	private static final GenericContainer<?> esisimulator;
-//	private static Credential credential4Test;
-//
-//	static {
-//		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
-//				.withExposedPorts( ESI_UNITTESTING_PORT )
-//				.withFileSystemBind( "/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting",
-//						"/esi-unittesting",
-//						BindMode.READ_WRITE )
-//				.withCommand( "bin/apisimulator start /esi-unittesting" );
-//		esisimulator.start();
-//	}
-
-	@BeforeAll
-	public static void beforeAll() {
-		credential4Test = Mockito.mock( Credential.class );
-		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
-		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
-	}
-
-	@BeforeEach
-	public void beforeEach() throws IOException, SQLException {
-		this.setupEnvironment();
-	}
 
 	@Test
 	public void buildComplete() {
@@ -80,6 +52,27 @@ public class LocationCatalogServiceIT extends IntegrationEnvironmentDefinition {
 					.withRetrofitFactory( this.itRetrofitFactory )
 					.build();
 		} );
+	}
+
+	@Test
+	public void callClean() {
+		// Given
+		final IConfigurationProvider configurationProvider = Mockito.mock( IConfigurationProvider.class );
+		final IFileSystem fileSystem = Mockito.mock( IFileSystem.class );
+		final ESIUniverseDataProvider esiUniverseProvider = Mockito.mock( ESIUniverseDataProvider.class );
+		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
+		final LocationCatalogService locationCatalogService = new LocationCatalogService.Builder()
+				.withConfigurationProvider( configurationProvider )
+				.withFileSystemAdapter( fileSystem )
+				.withRetrofitFactory( itRetrofitFactory )
+				.withESIUniverseDataProvider( esiUniverseProvider )
+				.build();
+		// Test
+		final boolean obtained = locationCatalogService.call();
+		final boolean expected = false;
+		// Assertions
+		Assertions.assertNotNull( locationCatalogService );
+		Assertions.assertEquals( expected, obtained );
 	}
 
 	@Test
