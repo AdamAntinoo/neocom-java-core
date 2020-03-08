@@ -16,11 +16,11 @@ import org.joda.time.LocalDate;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
 import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.miningextraction.converter.MiningExtractionEntityToMiningExtractionConverter;
+import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 /**
@@ -34,9 +34,10 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
  * @since 0.19.0
  */
 public class MiningRepository {
+	private static final String OWNERID_FIELDNAME = "ownerId";
+	private static final String ID_FIELDNAME = "id";
 	// - C O M P O N E N T S
 	protected Dao<MiningExtractionEntity, String> miningExtractionDao;
-	protected Dao<MiningExtraction, String> miningExtractionDao2;
 	protected LocationCatalogService locationCatalogService;
 
 	/**
@@ -47,11 +48,11 @@ public class MiningRepository {
 	 */
 	protected MiningRepository() { }
 
-	public List<MiningExtractionEntity> accessDatedMiningExtractions4Pilot( final Credential credential/*, final LocalDate filterDate */ ) {
+	protected List<MiningExtractionEntity> accessDatedMiningExtractions4Pilot( final Credential credential/*, final LocalDate filterDate */ ) {
 		try {
 			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
 			final Where<MiningExtractionEntity, String> where = builder.where();
-			where.eq( "ownerId", credential.getAccountId() );
+			where.eq( OWNERID_FIELDNAME, credential.getAccountId() );
 			builder.orderBy( "extractionDateName", true );
 			builder.orderBy( "extractionHour", true );
 			builder.orderBy( "solarSystemId", true );
@@ -86,26 +87,26 @@ public class MiningRepository {
 	 * database has
 	 * to expiration time so the number of days is still not predetermined.
 	 */
-	public List<MiningExtraction> accessMiningExtractions4Pilot( final Credential credential ) {
+	public List<MiningExtractionEntity> accessMiningExtractions4Pilot( final Credential credential ) {
 		try {
-			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao2.queryBuilder();
-			final Where<MiningExtraction, String> where = builder.where();
-			where.eq( "ownerId", credential.getAccountId() );
-			builder.orderBy( "id", false );
-			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
+			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
+			final Where<MiningExtractionEntity, String> where = builder.where();
+			where.eq( OWNERID_FIELDNAME, credential.getAccountId() );
+			builder.orderBy( ID_FIELDNAME, false );
+			final PreparedQuery<MiningExtractionEntity> preparedQuery = builder.prepare();
 			NeoComLogger.info( "SELECT: {}", preparedQuery.getStatement() );
-			return this.miningExtractionDao2.query( preparedQuery );
-		} catch (SQLException sqle) {
+			return this.miningExtractionDao.query( preparedQuery );
+		} catch (final SQLException sqle) {
 			NeoComLogger.error( sqle );
 			return new ArrayList<>();
 		}
 	}
 
-	public List<MiningExtraction> accessResources4Date( final Credential credential, final LocalDate filterDate ) {
+	protected List<MiningExtractionEntity> accessResources4Date( final Credential credential, final LocalDate filterDate ) {
 		try {
-			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao2.queryBuilder();
-			final Where<MiningExtraction, String> where = builder.where();
-			where.eq( "ownerId", credential.getAccountId() )
+			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
+			final Where<MiningExtractionEntity, String> where = builder.where();
+			where.eq( OWNERID_FIELDNAME, credential.getAccountId() )
 					.and()
 					.eq( "extractionDateName", filterDate.toString( "YYYY-MM-dd" ) );
 			builder.selectRaw( "\"typeId\"", "MAX(\"quantity\")" );
@@ -114,9 +115,9 @@ public class MiningRepository {
 					builder.prepareStatementString() );
 			final GenericRawResults<String[]> dataList = this.miningExtractionDao.queryRaw(
 					builder.prepareStatementString() );
-			List<MiningExtraction> results = new ArrayList<>();
+			List<MiningExtractionEntity> results = new ArrayList<>();
 			for (String[] record : dataList.getResults()) {
-				results.add( this.miningExtractionDao2.queryForId( record[0] ) );
+				results.add( this.miningExtractionDao.queryForId( record[0] ) );
 			}
 			NeoComLogger.info( "Records read: {}", results.size() + "" );
 			return results;
@@ -127,7 +128,7 @@ public class MiningRepository {
 		}
 	}
 
-	public List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
+	protected List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
 //		return this.accessDatedMiningExtractions4Pilot( credential, LocalDate.now() );
 		return Stream.of( this.accessDatedMiningExtractions4Pilot( credential ) )
 				.filter( ( extraction ) -> this.filterOutNotTodayRecords( extraction ) )
@@ -175,11 +176,6 @@ public class MiningRepository {
 			this.onConstruction = new MiningRepository();
 		}
 
-		public Builder( final MiningRepository preInstance ) {
-			if (null != preInstance) this.onConstruction = preInstance;
-			else this.onConstruction = new MiningRepository();
-		}
-
 		public MiningRepository build() {
 			Objects.requireNonNull( this.onConstruction.miningExtractionDao );
 			Objects.requireNonNull( this.onConstruction.locationCatalogService );
@@ -195,11 +191,6 @@ public class MiningRepository {
 		public MiningRepository.Builder withMiningExtractionDao( final Dao<MiningExtractionEntity, String> miningExtractionDao ) {
 			Objects.requireNonNull( miningExtractionDao );
 			this.onConstruction.miningExtractionDao = miningExtractionDao;
-			return this;
-		}
-		public MiningRepository.Builder withMiningExtractionDao2( final Dao<MiningExtraction, String> miningExtractionDao ) {
-			Objects.requireNonNull( miningExtractionDao );
-			this.onConstruction.miningExtractionDao2 = miningExtractionDao;
 			return this;
 		}
 	}
