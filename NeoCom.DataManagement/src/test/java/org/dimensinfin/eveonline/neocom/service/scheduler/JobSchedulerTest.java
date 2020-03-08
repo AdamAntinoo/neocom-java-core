@@ -41,7 +41,7 @@ class JobSchedulerTest {
 		public int getUniqueIdentifier() {
 			return new HashCodeBuilder( 17, 37 )
 					.appendSuper( super.hashCode() )
-					.append( registration )
+					.append( this.registration )
 					.toHashCode();
 		}
 
@@ -202,6 +202,7 @@ class JobSchedulerTest {
 
 	@Test
 	void registerJobReplacingPrevious() {
+		// Given
 		final Job jobA = new Job4TestRegistration.Builder()
 				.addCronSchedule( "* - *" )
 				.withRegistrationTest( "-TEST-JOB-A-" ).build();
@@ -212,7 +213,7 @@ class JobSchedulerTest {
 				.addCronSchedule( "* - *" )
 				.withRegistrationTest( "-TEST-JOB-A-" ).build();
 		JobScheduler.getJobScheduler().clear();
-
+  // Assertions
 		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().registerJob( jobA ) );
 		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().registerJob( jobB ) );
 		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().registerJob( jobC ) );

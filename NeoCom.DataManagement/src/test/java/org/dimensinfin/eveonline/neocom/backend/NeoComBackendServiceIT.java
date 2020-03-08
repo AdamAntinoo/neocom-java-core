@@ -9,36 +9,9 @@ import org.mockito.Mockito;
 import org.dimensinfin.eveonline.neocom.backend.rest.v1.CredentialStoreResponse;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
-import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinitionTCLocal;
 
-public class NeoComBackendServiceIT extends IntegrationEnvironmentDefinition {
-//	protected static final int BACKEND_UNITTESTING_PORT = 6092;
-//	private static final GenericContainer<?> backendSimulator;
-//
-//	static {
-//		backendSimulator = new GenericContainer<>( "apimastery/apisimulator" )
-//				.withExposedPorts( BACKEND_UNITTESTING_PORT )
-//				.withFileSystemBind(
-//						"/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/backend-unittesting",
-//						"/backend-unittesting",
-//						BindMode.READ_WRITE )
-//				.withCommand( "bin/apisimulator start /backend-unittesting -p " + BACKEND_UNITTESTING_PORT );
-//		backendSimulator.start();
-//	}
-
-//	protected Credential credential4Test;
-//	protected SBConfigurationProvider itConfigurationProvider;
-//	protected IFileSystem itFileSystemAdapter;
-//	protected RetrofitFactory itRetrofitFactory;
-
-//	@BeforeEach
-//	public void beforeEach() throws IOException {
-//		credential4Test = Mockito.mock( Credential.class );
-//		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
-//		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
-//		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
-//	}
-
+public class NeoComBackendServiceIT extends IntegrationEnvironmentDefinitionTCLocal {
 	@Test
 	public void buildComplete() {
 		final RetrofitFactory retrofitFactory = Mockito.mock( RetrofitFactory.class );
@@ -67,20 +40,6 @@ public class NeoComBackendServiceIT extends IntegrationEnvironmentDefinition {
 	@Test
 	public void putCredential() throws IOException {
 		// Given
-//		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
-//				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
-//		this.itConfigurationProvider.setProperty( PropertiesDefinitionsConstants.BACKEND_RETROFIT_SERVER_LOCATION,
-//				"http://" +
-//						backendSimulator.getContainerIpAddress() +
-//						":" +
-//						backendSimulator.getMappedPort( BACKEND_UNITTESTING_PORT ) );
-//		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
-//				.optionalApplicationDirectory( "./build/application.directory/NeoCom.UnitTest/" )
-//				.build();
-//		this.itRetrofitFactory = new RetrofitFactory.Builder()
-//				.withConfigurationProvider( this.itConfigurationProvider )
-//				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.build();
 		final NeoComBackendService neoComBackendService = new NeoComBackendService.Builder()
 				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();

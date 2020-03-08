@@ -46,7 +46,6 @@ public class MiningExtractionDownloader {
 							this.credential.getAccountId(),
 							LocalDate.now() )
 							.convert( extractionOk );
-					// Before mapping this record see if this is a delta. Search for an already existing record.
 					final String recordId = extraction.getId();
 					NeoComLogger.info( "Generating record identifier: {}.", recordId );
 					return extraction;

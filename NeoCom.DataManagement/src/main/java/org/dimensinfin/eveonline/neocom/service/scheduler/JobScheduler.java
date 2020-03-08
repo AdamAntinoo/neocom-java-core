@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.service.scheduler;
 
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,7 +40,7 @@ public class JobScheduler {
 		return singleton;
 	}
 
-	private Map<Integer, Job> jobsRegistered = new IdentityHashMap<>();
+	private Map<Integer, Job> jobsRegistered = new HashMap<>();
 	private CronScheduleGenerator cronScheduleGenerator = new HourlyCronScheduleGenerator.Builder().build();
 
 	private JobScheduler() {}

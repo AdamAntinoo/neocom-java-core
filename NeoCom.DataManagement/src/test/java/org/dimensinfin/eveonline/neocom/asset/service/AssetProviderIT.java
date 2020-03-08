@@ -27,9 +27,10 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 import org.dimensinfin.eveonline.neocom.domain.space.StationImplementation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinition;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinitionTCLocal;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
-public class AssetProviderIT extends IntegrationEnvironmentDefinition {
+public class AssetProviderIT extends IntegrationEnvironmentDefinitionTCLocal {
 	private static final Integer TEST_MINIMAL_CORPORATION_IDENTIFIER = 98300000;
 	private static final Integer TEST_DEEP_CORPORATION_IDENTIFIER = 98310000;
 

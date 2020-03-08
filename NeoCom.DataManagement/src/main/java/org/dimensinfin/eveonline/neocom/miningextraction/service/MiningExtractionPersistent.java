@@ -24,22 +24,21 @@ public class MiningExtractionPersistent {
 		Stream.of( Objects.requireNonNull( extractions ) )
 				.map( ( extraction ) -> {
 					final MiningExtractionEntity extractionEntity = new MiningExtractionToMiningExtractionEntityConverter().convert( extraction );
-					final String recordId = extraction.getId();
-					final MiningExtractionEntity targetRecord = this.miningRepository.accessMiningExtractionFindById( recordId );
-					if (null != targetRecord) {
-						NeoComLogger.info( "Found previous record on database: {}.", targetRecord.getId() );
+					final String recordId = extractionEntity.getId();
+					if (null != this.miningRepository.accessMiningExtractionFindById( recordId )) {
+						NeoComLogger.info( "Found previous record on database: {}.", extractionEntity.getId() );
 						// There was a previous record so calculate the delta for this hour.
-						final long currentQty = targetRecord.getQuantity();
+						final long currentQty = extractionEntity.getQuantity();
 						try {
-							this.miningRepository.persist( targetRecord.setQuantity( extraction.getQuantity() ) );
+							this.miningRepository.persist( extractionEntity.setQuantity( extractionEntity.getQuantity() ) );
 						} catch (final SQLException sqle) {
 							NeoComLogger.error( sqle );
 							throw new NeoComRuntimeException( ErrorInfoCatalog.MINING_EXTRACTION_PERSISTENCE_FAILED.getErrorMessage(
-									targetRecord.getId(),
+									extractionEntity.getId(),
 									sqle.getCause().toString() ) );
 						}
 						NeoComLogger.info( "Updating mining extraction: {} > Quantity: {}/{}",
-								recordId + "", extraction.getQuantity() + "", currentQty + "" );
+								recordId + "", extractionEntity.getQuantity() + "", currentQty + "" );
 					} else {
 						// Create a new record with the entity.
 						try {
@@ -47,11 +46,11 @@ public class MiningExtractionPersistent {
 						} catch (final SQLException sqle) {
 							NeoComLogger.error( sqle );
 							throw new NeoComRuntimeException( ErrorInfoCatalog.MINING_EXTRACTION_PERSISTENCE_FAILED.getErrorMessage(
-									targetRecord.getId(),
+									extractionEntity.getId(),
 									sqle.getCause().toString() ) );
 						}
 						NeoComLogger.info( "Creating mining extraction: {} > Quantity: {}/{}",
-								recordId + "", extraction.getQuantity() + "", extraction.getQuantity() + "" );
+								recordId + "", extractionEntity.getQuantity() + "", extractionEntity.getQuantity() + "" );
 					}
 					return extractionEntity;
 				} )

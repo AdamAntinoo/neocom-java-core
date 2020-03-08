@@ -5,36 +5,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.db.PostgresDatabaseType;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.testcontainers.containers.PostgreSQLContainer;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
-import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationCredentialStore;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
-import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
-import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
-import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
-
-import io.reactivex.Single;
+import org.dimensinfin.eveonline.neocom.miningextraction.service.MiningExtractionDownloader;
+import org.dimensinfin.eveonline.neocom.miningextraction.service.MiningExtractionPersistent;
+import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinitionTCLocal;
 
 /**
  * Tests for repository classes will be executed under a integration environment. There should be a real database instance
@@ -44,140 +28,61 @@ import io.reactivex.Single;
  *
  * Repository instances only depend on Dao components. So they should be provided from the integration environment.
  */
-public class MiningRepositoryIT {
-	private static final Integer characterId = 2113197470;
+public class MiningRepositoryIT extends IntegrationEnvironmentDefinitionTCLocal {
+	private static final String TEST_EXTRACTION_IDENTIFIER = "2018-06-01:24-30001669-17459-92223647";
 
-	private String connectionUrl;
-	private JdbcConnectionSource connectionSource;
-	private Dao<MiningExtraction, String> miningDao;
-	private String expectedVerifiedId;
-	// - C O M P O N E N T S
-	private IntegrationCredentialStore integrationCredentialStore;
-	private IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
-	private RetrofitFactory retrofitFactory;
-	private ESIUniverseDataProvider esiUniverseDataProvider;
+	private static final Integer TEST_CHARACTER_ID = 2113197470;
 	private MiningRepository miningRepository;
-	private LocationCatalogService locationCatalogService;
+	private Dao<MiningExtractionEntity, String> miningExtractionDao;
 
-//	@Rule
-	public PostgreSQLContainer postgres = new PostgreSQLContainer( "postgres:9.6.8" )
-			.withDatabaseName( "postgres" )
-			.withUsername( "neocom" )
-			.withPassword( "01.Alpha" );
-
-//	@Before
-	public void prepareCredential() {
-		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
-				.build();
-		this.integrationCredentialStore = new IntegrationCredentialStore.Builder()
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.build();
-	}
-
-//	@Before
-	public void prepareEnvironment() throws SQLException, IOException {
-		this.connectionUrl = "jdbc:postgresql://"
-				+ postgres.getContainerIpAddress()
-				+ ":" + postgres.getMappedPort( PostgreSQLContainer.POSTGRESQL_PORT )
-				+ "/" + "postgres" +
-				"?user=" + "neocom" +
-				"&password=" + "01.Alpha";
-		NeoComLogger.info( "Postgres SQL URL: {}", connectionUrl );
-		this.connectionSource = new JdbcConnectionSource( this.connectionUrl, new PostgresDatabaseType() );
-		this.onCreate();
-		this.miningDao = DaoManager.createDao( connectionSource, MiningExtraction.class );
-
-		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.optionalPropertiesDirectory( "/src/test/resources/properties.it" ).build();
-		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
-				.build();
-		this.retrofitFactory = new RetrofitFactory.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.build();
-		final GetUniverseTypesTypeIdOk item = Mockito.mock( GetUniverseTypesTypeIdOk.class );
-		final GetUniverseGroupsGroupIdOk group = Mockito.mock( GetUniverseGroupsGroupIdOk.class );
-		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock( GetUniverseCategoriesCategoryIdOk.class );
-		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
-		Mockito.when( storeCacheManager.accessItem( Mockito.anyInt() ) ).thenReturn( Single.just( item ) );
-		Mockito.when( storeCacheManager.accessGroup( Mockito.anyInt() ) ).thenReturn( Single.just( group ) );
-		Mockito.when( storeCacheManager.accessCategory( Mockito.anyInt() ) ).thenReturn( Single.just( category ) );
-		this.esiUniverseDataProvider = new ESIUniverseDataProvider.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.withRetrofitFactory( this.retrofitFactory )
-				.withStoreCacheManager( storeCacheManager )
-				.build();
-		this.locationCatalogService = new LocationCatalogService.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.withESIUniverseDataProvider( this.esiUniverseDataProvider )
-				.withRetrofitFactory( this.retrofitFactory )
-				.build();
+	@Test
+	public void accessMiningExtractionFindByIdFailure() throws SQLException {
+		// Given
+		final Dao localMiningExtractionDao = Mockito.mock( Dao.class );
 		this.miningRepository = new MiningRepository.Builder()
-//				.withMiningExtractionDao( this.miningDao )
-				.withLocationCatalogService( this.locationCatalogService )
+				.withMiningExtractionDao( localMiningExtractionDao )
+				.withLocationCatalogService( this.itLocationCatalogService )
 				.build();
+		final MiningExtractionPersistent miningExtractionPersistent = new MiningExtractionPersistent.Builder()
+				.withMiningRepository( this.miningRepository ).build();
+		// When
+		Mockito.doThrow( new SQLException( "-TEST-EXCEPTION-MESSAGE-" ) )
+				.when( localMiningExtractionDao ).queryForId( Mockito.anyString() );
+		// Exceptions
+		Assertions.assertThrows( NeoComRuntimeException.class, () -> {
+			this.miningRepository.accessMiningExtractionFindById( "-UNEXISTENT-RECORD-" );
+		} );
 	}
 
-//	@Test
-	public void buildComplete() {
-		final Dao miningDao = Mockito.mock( Dao.class );
-		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final MiningRepository repository = new MiningRepository.Builder()
-				.withMiningExtractionDao( miningDao )
-				.withLocationCatalogService( locationService )
-				.build();
-		Assert.assertNotNull( repository );
+	@Test
+	public void accessMiningExtractionFindByIdNotFound() throws SQLException {
+		// Given
+		final MiningExtractionPersistent miningExtractionPersistent = new MiningExtractionPersistent.Builder()
+				.withMiningRepository( this.miningRepository ).build();
+		// Assertions
+		Assertions.assertNull( this.miningRepository.accessMiningExtractionFindById( "-UNEXISTENT-RECORD-" ) );
 	}
 
-//	@Test(expected = NullPointerException.class)
-	public void buildFailureA() {
-		final Dao miningDao = Mockito.mock( Dao.class );
-		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final MiningRepository repository = new MiningRepository.Builder()
-				.withMiningExtractionDao( null )
-				.withLocationCatalogService( locationService )
-				.build();
+	@Test
+	public void accessMiningExtractionFindByIdSuccess() throws SQLException {
+		// Given
+		final MiningExtractionPersistent miningExtractionPersistent = new MiningExtractionPersistent.Builder()
+				.withMiningRepository( this.miningRepository ).build();
+		miningExtractionPersistent.persistMiningExtractions( new MiningExtractionDownloader.Builder()
+				.withCredential( credential4Test )
+				.withEsiDataProvider( this.esiDataProvider )
+				.withLocationCatalogService( this.itLocationCatalogService )
+				.build()
+				.downloadMiningExtractions() );
+		// Test
+		final MiningExtraction extraction = this.miningRepository.accessMiningExtractionFindById( TEST_EXTRACTION_IDENTIFIER );
+		// Assertions
+		Assertions.assertNotNull( extraction );
+		Assertions.assertEquals( TEST_EXTRACTION_IDENTIFIER, extraction.getId() );
+		Assertions.assertEquals( credential4Test.getAccountId().intValue(), extraction.getOwnerId() );
 	}
 
-//	@Test(expected = NullPointerException.class)
-	public void buildFailureB() {
-		final Dao miningDao = Mockito.mock( Dao.class );
-		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final MiningRepository repository = new MiningRepository.Builder()
-				.withMiningExtractionDao( miningDao )
-				.build();
-	}
-
-//	@Test
-	public void accessTodayMiningExtractions4Pilot() throws SQLException, IOException {
-		this.insertTodayMiningExtractions();
-
-		final Credential credential = Mockito.mock( Credential.class );
-		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
-		final List<MiningExtraction> miningRecords = this.miningRepository
-				.accessTodayMiningExtractions4Pilot( credential );
-
-		Assertions.assertEquals( 2, miningRecords.size() );
-	}
-
-//	@Test
-	public void accessResources4Date() throws SQLException {
-		this.insertTodayMiningExtractions();
-
-		final Credential credential = Mockito.mock( Credential.class );
-		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
-//		final List<MiningExtraction> miningRecords = this.miningRepository
-//				.accessResources4Date( credential, LocalDate.now() );
-
-//		Assertions.assertEquals( 2, miningRecords.size() );
-	}
-
-//	@Test
+	//	@Test
 	public void accessMiningExtractions4Pilot() throws SQLException {
 		this.insertTodayMiningExtractions();
 
@@ -189,23 +94,86 @@ public class MiningRepositoryIT {
 //		Assertions.assertEquals( 2, miningRecords.size() );
 	}
 
-//	@Test
-//	public void accessMiningExtractionFindById() throws SQLException {
-//		this.insertTodayMiningExtractions();
-//
-//		final Credential credential = Mockito.mock( Credential.class );
-//		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
-//		MiningExtraction miningRecord = this.miningRepository
-//				.accessMiningExtractionFindById( this.expectedVerifiedId );
-//
-//		Assertions.assertNotNull( miningRecord );
-//		Assertions.assertEquals( characterId.longValue(), miningRecord.getOwnerId() );
-//
-//		miningRecord = this.miningRepository
-//				.accessMiningExtractionFindById( "2019-11-10:24-30002764-35-2113197400" );
-//
-//		Assertions.assertNotNull( miningRecord );
-//	}
+	//	@Test
+	public void accessResources4Date() throws SQLException {
+		this.insertTodayMiningExtractions();
+
+		final Credential credential = Mockito.mock( Credential.class );
+		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
+//		final List<MiningExtraction> miningRecords = this.miningRepository
+//				.accessResources4Date( credential, LocalDate.now() );
+
+//		Assertions.assertEquals( 2, miningRecords.size() );
+	}
+
+	//	@Test
+	public void accessTodayMiningExtractions4Pilot() throws SQLException, IOException {
+		this.insertTodayMiningExtractions();
+
+		final Credential credential = Mockito.mock( Credential.class );
+		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
+		final List<MiningExtraction> miningRecords = this.miningRepository
+				.accessTodayMiningExtractions4Pilot( credential );
+
+		Assertions.assertEquals( 2, miningRecords.size() );
+	}
+
+	@BeforeEach
+	public void beforeEach() throws SQLException {
+		this.miningExtractionDao = this.itNeoComIntegrationDBAdapter.getMiningExtractionDao();
+		this.miningRepository = new MiningRepository.Builder()
+				.withMiningExtractionDao( this.miningExtractionDao )
+				.withLocationCatalogService( this.itLocationCatalogService )
+				.build();
+	}
+
+	@Test
+	public void buildComplete() {
+		final Dao miningDao = Mockito.mock( Dao.class );
+		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
+		final MiningRepository repository = new MiningRepository.Builder()
+				.withMiningExtractionDao( miningDao )
+				.withLocationCatalogService( locationService )
+				.build();
+		Assertions.assertNotNull( repository );
+	}
+
+	@Test
+	public void buildFailure() {
+		final Dao miningDao = Mockito.mock( Dao.class );
+		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
+		Assertions.assertThrows( NullPointerException.class, () -> {
+			final MiningRepository repository = new MiningRepository.Builder()
+					.withMiningExtractionDao( null )
+					.withLocationCatalogService( locationService )
+					.build();
+		} );
+		Assertions.assertThrows( NullPointerException.class, () -> {
+			final MiningRepository repository = new MiningRepository.Builder()
+					.withMiningExtractionDao( miningDao )
+					.withLocationCatalogService( null )
+					.build();
+		} );
+		Assertions.assertThrows( NullPointerException.class, () -> {
+			final MiningRepository repository = new MiningRepository.Builder()
+					.withLocationCatalogService( locationService )
+					.build();
+		} );
+		Assertions.assertThrows( NullPointerException.class, () -> {
+			final MiningRepository repository = new MiningRepository.Builder()
+					.withMiningExtractionDao( miningDao )
+					.build();
+		} );
+	}
+
+	//	@Test(expected = NullPointerException.class)
+	public void buildFailureB() {
+		final Dao miningDao = Mockito.mock( Dao.class );
+		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
+		final MiningRepository repository = new MiningRepository.Builder()
+				.withMiningExtractionDao( miningDao )
+				.build();
+	}
 
 //	@Test(expected = SQLException.class)
 //	public void accessMiningExtractionFindByIdException() throws SQLException {
@@ -218,47 +186,47 @@ public class MiningRepositoryIT {
 //		final MiningExtraction miningRecord = repository.accessMiningExtractionFindById( "TEST-LOCATOR" );
 //	}
 
+	private void insertTodayMiningExtractions() throws SQLException {
+//		final GetUniverseSystemsSystemIdOk solarSystemData = this.esiUniverseDataProvider
+//				.getUniverseSystemById( 30002764 );
+//		final GetUniverseConstellationsConstellationIdOk constellationData = this.esiUniverseDataProvider
+//				.getUniverseConstellationById( 20000405 );
+//		final GetUniverseRegionsRegionIdOk regionData = this.esiUniverseDataProvider
+//				.getUniverseRegionById( 10000033 );
+//		final MiningExtraction miningExtractionA = new MiningExtraction.Builder()
+////				.withTypeId( 35 )
+//				.withSpaceSystem( new SpaceSystemImplementation.Builder()
+//						.withSolarSystem( solarSystemData )
+//						.withConstellation( constellationData )
+//						.withRegion( regionData )
+//						.build() )
+//				.withQuantity( 43215L )
+//				.withOwnerId( TEST_CHARACTER_ID )
+//				.withExtractionDate( "gg" )
+//				.build();
+//		final MiningExtraction miningExtractionB = new MiningExtraction.Builder()
+////				.withTypeId( 34 )
+//				.withSpaceSystem( new SpaceSystemImplementation.Builder()
+//						.withSolarSystem( solarSystemData )
+//						.withConstellation( constellationData )
+//						.withRegion( regionData )
+//						.build() )
+//				.withQuantity( 12345L )
+//				.withOwnerId( TEST_CHARACTER_ID )
+//				.withExtractionDate( "ff" )
+//				.build();
+////		this.miningRepository.persist( miningExtractionA );
+//		NeoComLogger.info( "Extraction id: {}", miningExtractionA.getId() );
+//		this.expectedVerifiedId = miningExtractionA.getId();
+////		this.miningRepository.persist( miningExtractionB );
+//		NeoComLogger.info( "Extraction id: {}", miningExtractionB.getId() );
+//		final List<MiningExtraction> result = this.miningExtractionDao.queryForAll();
+//		Assert.assertEquals( 2, result.size() );
+	}
+
 	private void onCreate() throws SQLException {
 		TableUtils.dropTable( connectionSource, MiningExtraction.class, true );
 		TableUtils.createTableIfNotExists( connectionSource, MiningExtraction.class );
-	}
-
-	private void insertTodayMiningExtractions() throws SQLException {
-		final GetUniverseSystemsSystemIdOk solarSystemData = this.esiUniverseDataProvider
-				.getUniverseSystemById( 30002764 );
-		final GetUniverseConstellationsConstellationIdOk constellationData = this.esiUniverseDataProvider
-				.getUniverseConstellationById( 20000405 );
-		final GetUniverseRegionsRegionIdOk regionData = this.esiUniverseDataProvider
-				.getUniverseRegionById( 10000033 );
-		final MiningExtraction miningExtractionA = new MiningExtraction.Builder()
-//				.withTypeId( 35 )
-				.withSpaceSystem( new SpaceSystemImplementation.Builder()
-						.withSolarSystem( solarSystemData )
-						.withConstellation( constellationData )
-						.withRegion( regionData )
-						.build() )
-				.withQuantity( 43215L )
-				.withOwnerId( characterId )
-				.withExtractionDate( "gg" )
-				.build();
-		final MiningExtraction miningExtractionB = new MiningExtraction.Builder()
-//				.withTypeId( 34 )
-				.withSpaceSystem( new SpaceSystemImplementation.Builder()
-						.withSolarSystem( solarSystemData )
-						.withConstellation( constellationData )
-						.withRegion( regionData )
-						.build() )
-				.withQuantity( 12345L )
-				.withOwnerId( characterId )
-				.withExtractionDate( "ff" )
-				.build();
-//		this.miningRepository.persist( miningExtractionA );
-		NeoComLogger.info( "Extraction id: {}", miningExtractionA.getId() );
-		this.expectedVerifiedId = miningExtractionA.getId();
-//		this.miningRepository.persist( miningExtractionB );
-		NeoComLogger.info( "Extraction id: {}", miningExtractionB.getId() );
-		final List<MiningExtraction> result = this.miningDao.queryForAll();
-		Assert.assertEquals( 2, result.size() );
 	}
 //
 //

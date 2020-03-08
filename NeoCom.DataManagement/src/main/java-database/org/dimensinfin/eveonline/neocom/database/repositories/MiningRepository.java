@@ -48,29 +48,12 @@ public class MiningRepository {
 	 */
 	protected MiningRepository() { }
 
-	protected List<MiningExtractionEntity> accessDatedMiningExtractions4Pilot( final Credential credential/*, final LocalDate filterDate */ ) {
+	public MiningExtraction accessMiningExtractionFindById( final String recordIdentifier ) {
 		try {
-			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
-			final Where<MiningExtractionEntity, String> where = builder.where();
-			where.eq( OWNERID_FIELDNAME, credential.getAccountId() );
-			builder.orderBy( "extractionDateName", true );
-			builder.orderBy( "extractionHour", true );
-			builder.orderBy( "solarSystemId", true );
-			builder.orderBy( "typeId", true );
-			final PreparedQuery<MiningExtractionEntity> preparedQuery = builder.prepare();
-			NeoComLogger.info( "SELECT: {}", preparedQuery.getStatement() );
-			final List<MiningExtractionEntity> dataList = this.miningExtractionDao.query( preparedQuery );
-			NeoComLogger.info( "Records read: {}", dataList.size() + "" );
-			return dataList;
-		} catch (SQLException sqle) {
-			NeoComLogger.error( "SQL [MiningRepository.accessDatedMiningExtractions4Pilot]> SQL Exception: {}", sqle );
-			return new ArrayList<>();
-		}
-	}
-
-	public MiningExtractionEntity accessMiningExtractionFindById( final String recordIdentifier ) {
-		try {
-			return this.miningExtractionDao.queryForId( recordIdentifier );
+			final MiningExtractionEntity extraction = this.miningExtractionDao.queryForId( recordIdentifier );
+			if (null != extraction) return new MiningExtractionEntityToMiningExtractionConverter( this.locationCatalogService ).convert(
+					this.miningExtractionDao.queryForId( recordIdentifier ) );
+			else return null;
 		} catch (final SQLException sqle) {
 			NeoComLogger.error( ErrorInfoCatalog.MINING_EXTRACTION_BYID_SEARCH_FAILED.getErrorMessage( recordIdentifier ), sqle );
 			throw new NeoComRuntimeException( ErrorInfoCatalog.MINING_EXTRACTION_BYID_SEARCH_FAILED.getErrorMessage( recordIdentifier ) );
@@ -87,51 +70,21 @@ public class MiningRepository {
 	 * database has
 	 * to expiration time so the number of days is still not predetermined.
 	 */
-	public List<MiningExtractionEntity> accessMiningExtractions4Pilot( final Credential credential ) {
-		try {
-			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
-			final Where<MiningExtractionEntity, String> where = builder.where();
-			where.eq( OWNERID_FIELDNAME, credential.getAccountId() );
-			builder.orderBy( ID_FIELDNAME, false );
-			final PreparedQuery<MiningExtractionEntity> preparedQuery = builder.prepare();
-			NeoComLogger.info( "SELECT: {}", preparedQuery.getStatement() );
-			return this.miningExtractionDao.query( preparedQuery );
-		} catch (final SQLException sqle) {
-			NeoComLogger.error( sqle );
-			return new ArrayList<>();
-		}
+	public List<MiningExtraction> accessMiningExtractions4Pilot( final Credential credential ) {
+		return Stream.of( this.queryMiningExtractions4Pilot( credential ) )
+				.map( ( extraction ) -> new MiningExtractionEntityToMiningExtractionConverter( this.locationCatalogService ).convert( extraction ) )
+				.collect( Collectors.toList() );
 	}
 
-	protected List<MiningExtractionEntity> accessResources4Date( final Credential credential, final LocalDate filterDate ) {
-		try {
-			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
-			final Where<MiningExtractionEntity, String> where = builder.where();
-			where.eq( OWNERID_FIELDNAME, credential.getAccountId() )
-					.and()
-					.eq( "extractionDateName", filterDate.toString( "YYYY-MM-dd" ) );
-			builder.selectRaw( "\"typeId\"", "MAX(\"quantity\")" );
-			builder.groupBy( "typeId" );
-			NeoComLogger.info( "SELECT: {}",
-					builder.prepareStatementString() );
-			final GenericRawResults<String[]> dataList = this.miningExtractionDao.queryRaw(
-					builder.prepareStatementString() );
-			List<MiningExtractionEntity> results = new ArrayList<>();
-			for (String[] record : dataList.getResults()) {
-				results.add( this.miningExtractionDao.queryForId( record[0] ) );
-			}
-			NeoComLogger.info( "Records read: {}", results.size() + "" );
-			return results;
-		} catch (SQLException sqle) {
-			NeoComLogger.error( "SQL Exception: {}", sqle );
-			sqle.printStackTrace();
-			return new ArrayList<>();
-		}
+	public List<MiningExtraction> accessResources4Date( final Credential credential, final LocalDate filterDate ) {
+		return Stream.of( this.queryResources4Date( credential, filterDate ) )
+				.map( ( extraction ) -> new MiningExtractionEntityToMiningExtractionConverter( this.locationCatalogService ).convert( extraction ) )
+				.collect( Collectors.toList() );
 	}
 
-	protected List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
-//		return this.accessDatedMiningExtractions4Pilot( credential, LocalDate.now() );
-		return Stream.of( this.accessDatedMiningExtractions4Pilot( credential ) )
-				.filter( ( extraction ) -> this.filterOutNotTodayRecords( extraction ) )
+	public List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
+		return Stream.of( this.queryDatedMiningExtractions4Pilot( credential ) )
+				.filter( this::filterOutNotTodayRecords )
 				.map( ( extraction ) -> new MiningExtractionEntityToMiningExtractionConverter( this.locationCatalogService ).convert( extraction ) )
 				.collect( Collectors.toList() );
 	}
@@ -154,19 +107,70 @@ public class MiningRepository {
 		return extraction.getExtractionDateName().equalsIgnoreCase( filterDate );
 	}
 
-//	/**
-//	 * Because transient fields lost their contents when the record is stored on the database, when retrieving the record the
-//	 * date should be set again by searching for the esi resources again.
-//	 *
-//	 * @param extraction the mining extraction to update.
-//	 */
-//	private MiningExtraction postProcessExtraction( final MiningExtraction extraction ) {
-//		extraction.setResourceItem( new NeoItem( extraction.getTypeId() ) );
-//		final SpaceLocation location = this.locationCatalogService.searchLocation4Id( extraction.getLocationId().longValue() );
-//		if (null != location)
-//			extraction.setSolarSystemLocation( (SpaceSystem) location );
-//		return extraction;
-//	}
+	private List<MiningExtractionEntity> queryDatedMiningExtractions4Pilot( final Credential credential ) {
+		try {
+			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
+			final Where<MiningExtractionEntity, String> where = builder.where();
+			where.eq( OWNERID_FIELDNAME, credential.getAccountId() );
+			builder.orderBy( "extractionDateName", true );
+			builder.orderBy( "extractionHour", true );
+			builder.orderBy( "solarSystemId", true );
+			builder.orderBy( "typeId", true );
+			final PreparedQuery<MiningExtractionEntity> preparedQuery = builder.prepare();
+			NeoComLogger.info( "SELECT: {}", preparedQuery.getStatement() );
+			final List<MiningExtractionEntity> dataList = this.miningExtractionDao.query( preparedQuery );
+			NeoComLogger.info( "Records read: {}", dataList.size() + "" );
+			return dataList;
+		} catch (SQLException sqle) {
+			NeoComLogger.error( "SQL [MiningRepository.accessDatedMiningExtractions4Pilot]> SQL Exception: {}", sqle );
+			return new ArrayList<>();
+		}
+	}
+
+	private List<MiningExtractionEntity> queryMiningExtractions4Pilot( final Credential credential ) {
+		try {
+			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
+			final Where<MiningExtractionEntity, String> where = builder.where();
+			where.eq( OWNERID_FIELDNAME, credential.getAccountId() );
+			builder.orderBy( ID_FIELDNAME, false );
+			final PreparedQuery<MiningExtractionEntity> preparedQuery = builder.prepare();
+			NeoComLogger.info( "SELECT: {}", preparedQuery.getStatement() );
+			final List<MiningExtractionEntity> dataList = this.miningExtractionDao.query( preparedQuery );
+			NeoComLogger.info( "Records read: {}", dataList.size() + "" );
+			return dataList;
+		} catch (final SQLException sqle) {
+			NeoComLogger.error( sqle );
+			return new ArrayList<>();
+		}
+	}
+
+	private List<MiningExtractionEntity> queryResources4Date( final Credential credential, final LocalDate filterDate ) {
+		try {
+			final QueryBuilder<MiningExtractionEntity, String> builder = this.miningExtractionDao.queryBuilder();
+			final Where<MiningExtractionEntity, String> where = builder.where();
+			where.eq( OWNERID_FIELDNAME, credential.getAccountId() )
+					.and()
+					.eq( "extractionDateName", filterDate.toString( "YYYY-MM-dd" ) );
+			builder.selectRaw( "\"typeId\"", "MAX(\"quantity\")" );
+			builder.groupBy( "typeId" );
+			NeoComLogger.info( "SELECT: {}",
+					builder.prepareStatementString() );
+			final GenericRawResults<String[]> dataList = this.miningExtractionDao.queryRaw( builder.prepareStatementString() );
+			NeoComLogger.info( "Records read: {}", dataList.getResults().size() + "" );
+			List<MiningExtractionEntity> results = new ArrayList<>();
+			for (String[] record : dataList.getResults()) {
+				try {
+					results.add( this.miningExtractionDao.queryForId( record[0] ) );
+				} catch (SQLException sqle) {
+					NeoComLogger.error( sqle );
+				}
+			}
+			return results;
+		} catch (SQLException sqle) {
+			NeoComLogger.error( "SQL Exception: {}", sqle );
+			return new ArrayList<>();
+		}
+	}
 
 	// - B U I L D E R
 	public static class Builder {

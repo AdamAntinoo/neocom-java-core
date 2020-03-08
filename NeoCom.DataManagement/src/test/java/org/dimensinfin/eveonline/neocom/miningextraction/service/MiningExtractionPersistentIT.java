@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinitionTCLocal;
@@ -53,7 +52,7 @@ public class MiningExtractionPersistentIT extends IntegrationEnvironmentDefiniti
 		// Test
 		miningExtractionPersistent.persistMiningExtractions( extractions );
 		// Assertions
-		final List<MiningExtractionEntity> obtained = miningRepository.accessMiningExtractions4Pilot( credential4Test );
+		final List<MiningExtraction> obtained = miningRepository.accessMiningExtractions4Pilot( credential4Test );
 		Assertions.assertNotNull( obtained );
 		Assertions.assertEquals( 6, obtained.size() );
 	}
