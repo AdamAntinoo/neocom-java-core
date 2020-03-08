@@ -1,4 +1,4 @@
-image: docker:stable
+image: maven:3.6.1
 
 options:
   docker: true
@@ -28,7 +28,7 @@ definitions:
         script:
           - sh ./NeoCom.DataManagement/ci/dependencies.sh
           - docker-compose --file ./NeoCom.DataManagement/src/test/resources/docker/docker-compose.yml up &
-          - sleep 10
+          - sleep 30
           - ./gradlew clean build test
           - docker-compose down
         services:

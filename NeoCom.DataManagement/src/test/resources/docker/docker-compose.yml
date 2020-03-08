@@ -24,7 +24,11 @@ services:
     image: apimastery/apisimulator
     ports:
       - "6091:6090"
+    environment:
+      - JAVA_HOME=/java-11
+      - APISIMULATOR_JAVA=/java-11
     volumes:
+      - /usr/lib/jvm/java-11-oracle:/java-11
       - ./NeoCom.DataManagement/src/test/resources/esi-unittesting:/esi-unittesting
     command: "bin/apisimulator start /esi-unittesting -p 6090"
 
