@@ -48,6 +48,7 @@ public class MiningExtractionPersistentIT extends IntegrationEnvironmentDefiniti
 				.withLocationCatalogService( this.itLocationCatalogService )
 				.build()
 				.downloadMiningExtractions();
+		Assertions.assertEquals( 6, extractions.size() );
 
 		// Test
 		miningExtractionPersistent.persistMiningExtractions( extractions );
