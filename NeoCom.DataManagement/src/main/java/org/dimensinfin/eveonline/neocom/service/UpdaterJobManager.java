@@ -35,7 +35,7 @@ public class UpdaterJobManager {
 	private static final Map<String, JobRecord> runningJobs = new ConcurrentHashMap<>();
 
 	/**
-	 * Submits the job to out private executor. Store the Future to control job duplicates and to check when the
+	 * Submits the job to our private executor. Store the Future to control job duplicates and to check when the
 	 * job completes. The job reference can be used a primary key to detect job duplicates and collision.
 	 * Start the process to launch a new updater process. Check if there already the same request to remove duplicates but if the
 	 * updater pointed by the key is not found or has completed post a new job on the job queue.

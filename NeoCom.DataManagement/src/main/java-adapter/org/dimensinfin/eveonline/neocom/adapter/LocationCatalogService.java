@@ -84,7 +84,7 @@ public class LocationCatalogService extends Job {
 		try {
 			return this.writeLocationsDataCache();
 		} finally {
-			NeoComLogger.enter();
+			NeoComLogger.exit();
 		}
 	}
 

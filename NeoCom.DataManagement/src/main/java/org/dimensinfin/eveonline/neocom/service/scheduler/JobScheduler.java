@@ -73,6 +73,9 @@ public class JobScheduler {
 	}
 
 	public int registerJob( final Job job2Register ) {
+		NeoComLogger.info( "Registering job: (#{}) - {}",
+				job2Register.getUniqueIdentifier() + "",
+				job2Register.getClass().getSimpleName() );
 		this.jobsRegistered.put( job2Register.getUniqueIdentifier(), job2Register );
 		return this.jobsRegistered.size();
 	}
