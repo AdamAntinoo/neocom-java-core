@@ -40,7 +40,7 @@ public class ESIUniverseDataProvider {
 	// - I N T E R N A L   C A C H E S
 	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 1200 );
 	// - C O M P O N E N T S
-	protected IConfigurationProvider configurationProvider;
+	protected IConfigurationService configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected StoreCacheManager storeCacheManager;
 	protected RetrofitFactory retrofitFactory;
@@ -321,7 +321,7 @@ public class ESIUniverseDataProvider {
 			return this.onConstruction;
 		}
 
-		public ESIUniverseDataProvider.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public ESIUniverseDataProvider.Builder withConfigurationProvider( final IConfigurationService configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;

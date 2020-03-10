@@ -67,7 +67,7 @@ public class RetrofitFactory {
 	private static final String DEFAULT_AUTHORIZATION_AUTHORIZE = "oauth/authorize";
 
 	// - C O M P O N E N T S
-	protected IConfigurationProvider configurationProvider;
+	protected IConfigurationService configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	private Map<String, Retrofit> connectors = new HashMap<>();
 
@@ -230,7 +230,7 @@ public class RetrofitFactory {
 			return this.onConstruction;
 		}
 
-		public RetrofitFactory.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public RetrofitFactory.Builder withConfigurationProvider( final IConfigurationService configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;

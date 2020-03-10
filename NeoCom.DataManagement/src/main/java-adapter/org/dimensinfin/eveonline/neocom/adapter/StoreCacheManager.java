@@ -32,7 +32,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSyste
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
@@ -62,7 +62,7 @@ public class StoreCacheManager {
 	}
 
 	// - C O M P O N E N T S
-	protected IConfigurationProvider configurationProvider;
+	protected IConfigurationService configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected RetrofitFactory retrofitFactory;
 
@@ -172,7 +172,7 @@ public class StoreCacheManager {
 			return this.onConstruction;
 		}
 
-		public StoreCacheManager.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public StoreCacheManager.Builder withConfigurationProvider( final IConfigurationService configurationProvider ) {
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
 		}

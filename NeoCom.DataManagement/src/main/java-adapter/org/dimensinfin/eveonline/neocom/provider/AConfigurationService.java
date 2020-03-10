@@ -21,7 +21,7 @@ import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
  * @since 0.14.0
  */
 @NeoComAdapter
-public abstract class AConfigurationService implements IConfigurationProvider {
+public abstract class AConfigurationService implements IConfigurationService {
 	private static final String DEFAULT_PROPERTIES_FOLDER = "properties"; // The default initial location if not specified.
 
 	protected final Properties configurationProperties = new Properties(); // The list of defined properties

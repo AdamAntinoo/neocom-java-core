@@ -3,7 +3,7 @@ package org.dimensinfin.eveonline.neocom.auth;
 import java.io.IOException;
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.utility.Base64;
 
@@ -29,7 +29,7 @@ public class NeoComOauth2Flow {
 
 	private TokenVerification tokenVerificationStore;
 	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
+	private IConfigurationService configurationProvider;
 
 	private NeoComOauth2Flow() {}
 
@@ -171,7 +171,7 @@ public class NeoComOauth2Flow {
 			return this.onConstruction;
 		}
 
-		public Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public Builder withConfigurationProvider( final IConfigurationService configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;

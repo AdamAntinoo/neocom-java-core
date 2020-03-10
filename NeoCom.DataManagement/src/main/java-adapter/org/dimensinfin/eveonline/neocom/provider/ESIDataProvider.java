@@ -613,7 +613,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 			return this.onConstruction;
 		}
 
-		public ESIDataProvider.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public ESIDataProvider.Builder withConfigurationProvider( final IConfigurationService configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;

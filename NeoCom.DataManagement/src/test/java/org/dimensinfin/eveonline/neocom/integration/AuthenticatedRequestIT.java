@@ -16,7 +16,7 @@ import org.dimensinfin.eveonline.neocom.core.support.GSONDateTimeDeserializer;
 import org.dimensinfin.eveonline.neocom.core.support.GSONLocalDateDeserializer;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 
@@ -44,7 +44,7 @@ public class AuthenticatedRequestIT {
 							.registerTypeAdapter( LocalDate.class, new GSONLocalDateDeserializer() )
 							.create() );
 
-	private IConfigurationProvider configurationProvider;
+	private IConfigurationService configurationProvider;
 	private NeoComOauth2Flow flow;
 	private String STATE;
 

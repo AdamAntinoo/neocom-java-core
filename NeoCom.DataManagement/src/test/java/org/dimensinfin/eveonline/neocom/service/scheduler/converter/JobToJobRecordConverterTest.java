@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
@@ -17,7 +17,7 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 public class JobToJobRecordConverterTest {
 	@Test
 	public void convert() {
-		final IConfigurationProvider configurationProvider = Mockito.mock( IConfigurationProvider.class );
+		final IConfigurationService configurationProvider = Mockito.mock( IConfigurationService.class );
 		final IFileSystem fileSystem = Mockito.mock( IFileSystem.class );
 		final RetrofitFactory retrofitFactory = Mockito.mock( RetrofitFactory.class );
 		final ESIUniverseDataProvider esiUniverseDataProvider = Mockito.mock( ESIUniverseDataProvider.class );

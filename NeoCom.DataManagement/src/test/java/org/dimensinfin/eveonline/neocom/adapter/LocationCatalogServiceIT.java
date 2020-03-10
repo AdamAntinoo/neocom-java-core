@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.support.IntegrationEnvironmentDefinitionTCLocal;
@@ -21,7 +21,7 @@ public class LocationCatalogServiceIT extends IntegrationEnvironmentDefinitionTC
 
 	@Test
 	public void buildComplete() {
-		final IConfigurationProvider configurationProvider = Mockito.mock( IConfigurationProvider.class );
+		final IConfigurationService configurationProvider = Mockito.mock( IConfigurationService.class );
 		final IFileSystem fileSystem = Mockito.mock( IFileSystem.class );
 		final ESIUniverseDataProvider esiUniverseProvider = Mockito.mock( ESIUniverseDataProvider.class );
 		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
@@ -57,7 +57,7 @@ public class LocationCatalogServiceIT extends IntegrationEnvironmentDefinitionTC
 	@Test
 	public void callClean() {
 		// Given
-		final IConfigurationProvider configurationProvider = Mockito.mock( IConfigurationProvider.class );
+		final IConfigurationService configurationProvider = Mockito.mock( IConfigurationService.class );
 		final IFileSystem fileSystem = Mockito.mock( IFileSystem.class );
 		final ESIUniverseDataProvider esiUniverseProvider = Mockito.mock( ESIUniverseDataProvider.class );
 		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );

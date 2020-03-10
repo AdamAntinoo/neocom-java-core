@@ -8,7 +8,7 @@ import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.support.IntegrationNeoComDBAdapter;
@@ -44,7 +44,7 @@ public class NeoComUnitTestComponentFactory {
 	}
 
 	// - A C C E S S O R S
-	public IConfigurationProvider getConfigurationProvider() {
+	public IConfigurationService getConfigurationProvider() {
 		if (null == this.configurationProvider)
 			try {
 				this.configurationProvider =

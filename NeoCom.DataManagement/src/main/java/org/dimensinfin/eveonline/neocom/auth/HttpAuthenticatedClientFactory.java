@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.dimensinfin.eveonline.neocom.core.StorageUnits;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 
 import okhttp3.Cache;
 import okhttp3.CertificatePinner;
@@ -25,7 +25,7 @@ public class HttpAuthenticatedClientFactory {
 	private Long cacheSizeBytes = StorageUnits.GIGABYTES.toBytes( 2 );
 //	private Retrofit refreshRetrofit;
 	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
+	private IConfigurationService configurationProvider;
 	private Credential credential;
 	private NeoComOAuth20 neoComOAuth20;
 
@@ -88,7 +88,7 @@ public class HttpAuthenticatedClientFactory {
 			this.onConstruction.neoComOAuth20 = neoComOAuth20;
 			return this;
 		}
-		public HttpAuthenticatedClientFactory.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public HttpAuthenticatedClientFactory.Builder withConfigurationProvider( final IConfigurationService configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;

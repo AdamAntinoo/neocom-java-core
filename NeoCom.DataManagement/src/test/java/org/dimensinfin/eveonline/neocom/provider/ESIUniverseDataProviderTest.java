@@ -31,7 +31,7 @@ public class ESIUniverseDataProviderTest {
 	private static final Integer allianceId = 117383987;
 
 	private ESIUniverseDataProvider provider4Test;
-	private IConfigurationProvider configurationProvider;
+	private IConfigurationService configurationProvider;
 	private IFileSystem fileSystemAdapter;
 
 	@BeforeEach

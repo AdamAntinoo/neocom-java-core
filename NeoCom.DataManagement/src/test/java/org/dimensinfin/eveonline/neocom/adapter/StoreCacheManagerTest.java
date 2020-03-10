@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
@@ -19,7 +19,7 @@ import io.reactivex.Single;
 
 public class StoreCacheManagerTest {
 	private StoreCacheManager storeCacheManager4test;
-	private IConfigurationProvider configurationProvider;
+	private IConfigurationService configurationProvider;
 	private IFileSystem fileSystemAdapter;
 
 	@Before
@@ -43,7 +43,7 @@ public class StoreCacheManagerTest {
 
 	@Test
 	public void buildComplete() throws IOException {
-//		final IConfigurationProvider configurationProvider = new SupportConfigurationProvider.Builder().build();
+//		final IConfigurationService configurationProvider = new SupportConfigurationProvider.Builder().build();
 //		final IFileSystem fileSystemAdapter = new SupportFileSystem.Builder()
 //				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 //				.build();

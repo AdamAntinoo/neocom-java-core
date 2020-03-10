@@ -26,7 +26,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStat
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
@@ -54,7 +54,7 @@ public class LocationCatalogService extends Job {
 	private static final Logger logger = LoggerFactory.getLogger( LocationCatalogService.class );
 	private static Map<Long, SpaceLocation> locationCache = new HashMap<>();
 	// - C O M P O N E N T S
-	protected IConfigurationProvider configurationProvider;
+	protected IConfigurationService configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected ESIUniverseDataProvider esiUniverseDataProvider;
 	protected RetrofitFactory retrofitFactory;
@@ -292,7 +292,7 @@ public class LocationCatalogService extends Job {
 			return this.onConstruction;
 		}
 
-		public Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public Builder withConfigurationProvider( final IConfigurationService configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;

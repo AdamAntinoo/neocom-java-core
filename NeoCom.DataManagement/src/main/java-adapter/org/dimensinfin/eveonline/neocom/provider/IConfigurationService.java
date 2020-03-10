@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.provider;
 
-public interface IConfigurationProvider {
+public interface IConfigurationService {
 	int contentCount();
 
 	String getResourceString( final String key );
