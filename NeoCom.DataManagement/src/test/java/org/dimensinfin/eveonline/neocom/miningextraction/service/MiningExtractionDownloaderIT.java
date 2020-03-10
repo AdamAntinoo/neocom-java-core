@@ -52,7 +52,7 @@ public class MiningExtractionDownloaderIT extends IntegrationEnvironmentDefiniti
 		final List<MiningExtraction> todays = Stream.of( extractionList )
 				.filter( extraction ->
 						extraction.getExtractionDateName()
-								.equalsIgnoreCase( LocalDate.now().toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ) ) )
+								.equalsIgnoreCase( new LocalDate( "2020-03-08" ).toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ) ) )
 				.collect( Collectors.toList() );
 		IntegrationReport.generateMiningExtractionReport( todays );
 		Assertions.assertEquals( 2, todays.size() );

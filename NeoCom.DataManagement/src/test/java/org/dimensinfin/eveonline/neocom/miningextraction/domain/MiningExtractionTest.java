@@ -36,7 +36,7 @@ public class MiningExtractionTest {
 		final SpaceSystemImplementation spaceSystem = Mockito.mock( SpaceSystemImplementation.class );
 		final MiningExtraction miningExtraction = new MiningExtraction.Builder()
 				.withOwnerId( 4321 )
-				.withExtractionDate( LocalDate.now().toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ) )
+				.withExtractionDate( new LocalDate("2020-03-08").toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ) )
 				.withNeoItem( neoItem )
 				.withQuantity( 1000L )
 				.withExtractionHour( 24 )

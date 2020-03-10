@@ -1,10 +1,14 @@
 // - J A C O C O
+apply plugin: 'jacoco'
+
 jacoco {
+    toolVersion = '0.8.5'
     reportsDir = file("$buildDir/../coverage")
 }
 jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.enabled = true
+        html.enabled = true
     }
 }
 test {
