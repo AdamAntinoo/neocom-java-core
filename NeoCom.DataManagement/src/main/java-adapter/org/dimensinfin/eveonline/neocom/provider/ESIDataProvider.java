@@ -14,6 +14,7 @@ import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
+import org.dimensinfin.eveonline.neocom.annotation.RequiresNetwork;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
@@ -43,7 +44,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCorporationsCorporationIdAssetsNames200Ok;
@@ -472,44 +472,43 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		return null;
 	}
 
+	@RequiresNetwork
 	public GetUniverseAncestries200Ok searchSDEAncestry( final int identifier ) {
-		return this.ancestriesCache.get( identifier );
+		if (ancestriesCache.isEmpty()) // First download the family data.
+			this.downloadPilotFamilyData();
+		return ancestriesCache.get( identifier );
 	}
 
+	@RequiresNetwork
 	public GetUniverseBloodlines200Ok searchSDEBloodline( final int identifier ) {
-		return this.bloodLinesCache.get( identifier );
+		if (bloodLinesCache.isEmpty()) // First download the family data.
+			this.downloadPilotFamilyData();
+		return bloodLinesCache.get( identifier );
 	}
 
+	@RequiresNetwork
 	public GetUniverseRaces200Ok searchSDERace( final int identifier ) {
+		if (bloodLinesCache.isEmpty()) // First download the family data.
+			this.downloadPilotFamilyData();
 		return racesCache.get( identifier );
 	}
 
-	public GetUniverseStructuresStructureIdOk searchStructureById( final Long structureId, final Credential credential ) {
-		final String refreshToken = credential.getRefreshToken();
-		final int identifier = credential.getAccountId();
-		try {
-//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = DEFAULT_ESI_SERVER;
-			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
-					.accessAuthenticatedConnector( credential )
-					.create( UniverseApi.class )
-					.getUniverseStructuresStructureId( structureId, datasource, null,
-							credential.getAccessToken() )
-					.execute();
-			if (universeResponse.isSuccessful()) {
-				return universeResponse.body();
-			} else return null;
-		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-			return null;
-		} catch (RuntimeException rte) {
-			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
-			rte.printStackTrace();
-			return null;
-		}
+//	@Deprecated
+//	@RequiresNetwork
+//	public GetUniverseStructuresStructureIdOk searchStructureById( final Long structureId, final Credential credential ) {
+//		try {
+//			String datasource = DEFAULT_ESI_SERVER;
+//			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
+//					.accessAuthenticatedConnector( credential )
+//					.create( UniverseApi.class )
+//					.getUniverseStructuresStructureId( structureId, datasource, null, credential.getAccessToken() )
+//					.execute();
+//			if (universeResponse.isSuccessful()) return universeResponse.body();
+//		} catch (final IOException | RuntimeException ioe) {
+//			NeoComLogger.error( ioe );
+//		}
 //		return null;
-	}
+//	}
 
 	private synchronized void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
@@ -543,8 +542,8 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 					.execute();
 			if (ancestriesList.isSuccessful()) return ancestriesList.body();
 			else return new ArrayList<>();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (final IOException ioe) {
+			NeoComLogger.error(ioe);
 		} finally {
 //			NeoComLogger.exit();
 		}
@@ -565,8 +564,8 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 					.execute();
 			if (bloodLinesList.isSuccessful()) return bloodLinesList.body();
 			else return new ArrayList<>();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (final IOException ioe) {
+			NeoComLogger.error(ioe);
 		} finally {
 //			NeoComLogger.exit();
 		}
@@ -585,7 +584,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 			if (racesList.isSuccessful()) return racesList.body();
 			else return new ArrayList<>();
 		} catch (final IOException ioe) {
-			ioe.printStackTrace();
+			NeoComLogger.error(ioe);
 		} finally {
 //			NeoComLogger.exit();
 		}
@@ -608,8 +607,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 			Objects.requireNonNull( this.onConstruction.retrofitFactory );
 			// Inject the new adapter to the classes that depend on it.
 			NeoComUpdater.injectsEsiDataAdapter( this.onConstruction );
-			// Preload the esi caches with SDE data. Do it on background to avoid problems with Android main UI thread
-			this.onConstruction.downloadPilotFamilyData();
 			return this.onConstruction;
 		}
 
