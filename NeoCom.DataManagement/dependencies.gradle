@@ -55,7 +55,7 @@ dependencies {
     // C O R E
     testImplementation 'org.slf4j:slf4j-simple:1.7.26'
     testImplementation 'joda-time:joda-time:2.9.9'
-//    testImplementation 'junit:junit:4.2'
+    testImplementation 'junit:junit:4.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.4.2'
     testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.1.10'
