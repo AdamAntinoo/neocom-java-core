@@ -233,7 +233,7 @@ public class ESIDataProviderIT extends IntegrationEnvironmentDefinitionTCLocal {
 
 //	@BeforeEach
 //	public void setUp() throws Exception {
-//		this.configurationProvider = new SBConfigurationProvider.Builder()
+//		this.configurationProvider = new TestConfigurationService.Builder()
 //				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 //		this.fileSystemAdapter = new SupportFileSystem.Builder()
 //				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )

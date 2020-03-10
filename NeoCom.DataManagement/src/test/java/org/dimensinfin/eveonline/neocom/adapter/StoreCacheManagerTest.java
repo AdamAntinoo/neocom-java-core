@@ -12,7 +12,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
-import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.support.TestConfigurationService;
 import org.dimensinfin.eveonline.neocom.support.SupportFileSystem;
 
 import io.reactivex.Single;
@@ -24,7 +24,7 @@ public class StoreCacheManagerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.configurationProvider = new SBConfigurationProvider.Builder()
+		this.configurationProvider = new TestConfigurationService.Builder()
 				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" )
 				.build();
 		this.fileSystemAdapter = new SupportFileSystem.Builder()

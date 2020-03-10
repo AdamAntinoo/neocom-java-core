@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.support.TestConfigurationService;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
 import retrofit2.Retrofit;
@@ -17,7 +17,7 @@ import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsCon
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.CACHE_DIRECTORY_PATH;
 
 public class RetrofitFactoryTest {
-	private SBConfigurationProvider configurationProvider;
+	private TestConfigurationService configurationProvider;
 	private IFileSystem fileSystemAdapter;
 
 	@Test
@@ -98,7 +98,7 @@ public class RetrofitFactoryTest {
 
 	@BeforeEach
 	public void beforeEach() {
-		this.configurationProvider = new SBConfigurationProvider.Builder()
+		this.configurationProvider = new TestConfigurationService.Builder()
 				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" )
 				.build();
 		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()

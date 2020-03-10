@@ -248,7 +248,7 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinitionTCLocal {
 //	}
 //	@BeforeEach
 //	void setUp() throws SQLException {
-////		this.configurationProvider = new SBConfigurationProvider.Builder()
+////		this.configurationProvider = new TestConfigurationService.Builder()
 ////				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 //		this.configurationProvider.setProperty( "P.authenticated.retrofit.server.location",
 //				"http://" +
@@ -317,7 +317,7 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinitionTCLocal {
 //		this.itNeoComIntegrationDBAdapter = Mockito.mock( IntegrationNeoComDBAdapter.class );
 //		Mockito.when( this.itNeoComIntegrationDBAdapter.getAssetDao() ).thenReturn( this.assetDao );
 //		// Configure the authenticated esi access to use the apisimulator mock service.
-//		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
+//		this.itConfigurationProvider = new TestConfigurationService.Builder()
 //				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 //		this.itRetrofitFactory = new RetrofitFactory.Builder()
 //				.withConfigurationProvider( this.itConfigurationProvider )

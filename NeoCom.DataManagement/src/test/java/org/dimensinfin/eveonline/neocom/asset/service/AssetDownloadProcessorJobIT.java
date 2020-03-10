@@ -225,7 +225,7 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 //	}
 //	@BeforeEach
 //	void beforeEach() throws IOException, SQLException {
-//		this.configurationProvider = new SBConfigurationProvider.Builder()
+//		this.configurationProvider = new TestConfigurationService.Builder()
 //				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 //		this.configurationProvider.setProperty( "P.authenticated.retrofit.server.location",
 //				"http://" +

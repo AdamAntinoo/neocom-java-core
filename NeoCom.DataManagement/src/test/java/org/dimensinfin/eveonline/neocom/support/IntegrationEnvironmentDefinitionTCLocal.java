@@ -87,7 +87,7 @@ public class IntegrationEnvironmentDefinitionTCLocal {
 		connectionSource = connectionSource1;
 	}
 
-	protected SBConfigurationProvider itConfigurationProvider;
+	protected TestConfigurationService itConfigurationProvider;
 	protected IFileSystem itFileSystemAdapter;
 	protected IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
 	protected AssetRepository itAssetRepository;
@@ -109,7 +109,7 @@ public class IntegrationEnvironmentDefinitionTCLocal {
 		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
 		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
 
-		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
+		this.itConfigurationProvider = new TestConfigurationService.Builder()
 				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 		this.itConfigurationProvider.setProperty( AUTHENTICATED_RETROFIT_SERVER_LOCATION,
 				"http://" +

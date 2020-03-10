@@ -14,7 +14,7 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.provider.AConfigurationService;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
-public class SBConfigurationProvider extends AConfigurationService {
+public class TestConfigurationService extends AConfigurationService {
 	public void readAllProperties() {
 		NeoComLogger.enter();
 		try {
@@ -29,7 +29,7 @@ public class SBConfigurationProvider extends AConfigurationService {
 							// Copy properties to globals.
 							configurationProperties.putAll( properties );
 						} catch (IOException ioe) {
-							NeoComLogger.error( "E [SBConfigurationProvider.readAllProperties]> Exception reading properties file " +
+							NeoComLogger.error( "E [TestConfigurationService.readAllProperties]> Exception reading properties file " +
 									fileName, ioe );
 							ioe.printStackTrace();
 						}
@@ -65,22 +65,22 @@ public class SBConfigurationProvider extends AConfigurationService {
 	}
 
 	// - B U I L D E R
-	public static class Builder extends AConfigurationService.Builder<SBConfigurationProvider, SBConfigurationProvider.Builder> {
-		private SBConfigurationProvider onConstruction;
+	public static class Builder extends AConfigurationService.Builder<TestConfigurationService, TestConfigurationService.Builder> {
+		private TestConfigurationService onConstruction;
 
 		@Override
-		protected SBConfigurationProvider getActual() {
-			if (null == this.onConstruction) this.onConstruction = new SBConfigurationProvider();
+		protected TestConfigurationService getActual() {
+			if (null == this.onConstruction) this.onConstruction = new TestConfigurationService();
 			return this.onConstruction;
 		}
 
 		@Override
-		protected SBConfigurationProvider.Builder getActualBuilder() {
+		protected TestConfigurationService.Builder getActualBuilder() {
 			return this;
 		}
 
-		public SBConfigurationProvider build() {
-			return (SBConfigurationProvider) super.build();
+		public TestConfigurationService build() {
+			return (TestConfigurationService) super.build();
 		}
 	}
 }

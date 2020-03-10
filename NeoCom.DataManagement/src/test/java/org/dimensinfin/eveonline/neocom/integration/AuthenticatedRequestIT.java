@@ -18,7 +18,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
-import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.support.TestConfigurationService;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -65,7 +65,7 @@ public class AuthenticatedRequestIT {
 	}
 
 	private void setupEnvironment() throws IOException {
-		this.configurationProvider = new SBConfigurationProvider.Builder()
+		this.configurationProvider = new TestConfigurationService.Builder()
 				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 	}
 

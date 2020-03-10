@@ -12,7 +12,7 @@ import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.support.IntegrationNeoComDBAdapter;
-import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.support.TestConfigurationService;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
 /**
@@ -26,7 +26,7 @@ public class NeoComUnitTestComponentFactory {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
 	//	protected static Logger logger = LoggerFactory.getLogger( NeoComUnitTestComponentFactory.class );
 	private static NeoComUnitTestComponentFactory singleton;
-	private SBConfigurationProvider configurationProvider;
+	private TestConfigurationService configurationProvider;
 	private IFileSystem fileSystemAdapter;
 	private ESIDataProvider esiDataAdapter;
 	private RetrofitFactory retrofitFactory;
@@ -48,7 +48,7 @@ public class NeoComUnitTestComponentFactory {
 		if (null == this.configurationProvider)
 			try {
 				this.configurationProvider =
-						new SBConfigurationProvider.Builder()
+						new TestConfigurationService.Builder()
 								.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" )
 								.build();
 				this.configurationProvider.readAllProperties();

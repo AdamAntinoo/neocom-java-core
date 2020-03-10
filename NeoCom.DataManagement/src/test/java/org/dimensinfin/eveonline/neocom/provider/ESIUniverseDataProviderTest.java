@@ -18,7 +18,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStat
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.support.TestConfigurationService;
 import org.dimensinfin.eveonline.neocom.support.SupportFileSystem;
 
 public class ESIUniverseDataProviderTest {
@@ -36,7 +36,7 @@ public class ESIUniverseDataProviderTest {
 
 	@BeforeEach
 	void setUp() throws IOException {
-		this.configurationProvider = new SBConfigurationProvider.Builder()
+		this.configurationProvider = new TestConfigurationService.Builder()
 				.optionalPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 		this.fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
