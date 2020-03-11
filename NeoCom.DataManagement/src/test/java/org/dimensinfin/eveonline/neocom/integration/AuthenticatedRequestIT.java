@@ -10,7 +10,7 @@ import org.joda.time.LocalDate;
 
 import org.dimensinfin.eveonline.neocom.auth.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
-import org.dimensinfin.eveonline.neocom.auth.NeoComOauth2Flow;
+import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth2Flow;
 import org.dimensinfin.eveonline.neocom.auth.TokenVerification;
 import org.dimensinfin.eveonline.neocom.core.support.GSONDateTimeDeserializer;
 import org.dimensinfin.eveonline.neocom.core.support.GSONLocalDateDeserializer;
@@ -45,7 +45,7 @@ public class AuthenticatedRequestIT {
 							.create() );
 
 	private IConfigurationService configurationProvider;
-	private NeoComOauth2Flow flow;
+	private NeoComOAuth2Flow flow;
 	private String STATE;
 
 	private List<String> constructScopes( final String data ) {
@@ -60,7 +60,7 @@ public class AuthenticatedRequestIT {
 	private void setupAuthentication( final String code ) {
 		STATE = this.configurationProvider.getResourceString( ESI_OAUTH_AUTHORIZATION_STATE );
 		final String dataSource = "Tranquility".toLowerCase();
-		this.flow = new NeoComOauth2Flow.Builder().withConfigurationProvider( this.configurationProvider ).build();
+		this.flow = new NeoComOAuth2Flow.Builder().withConfigurationService( this.configurationProvider ).build();
 		this.flow.onStartFlow( code, STATE, dataSource );
 	}
 
