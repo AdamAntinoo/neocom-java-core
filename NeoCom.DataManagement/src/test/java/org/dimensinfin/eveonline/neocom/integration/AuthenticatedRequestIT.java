@@ -31,7 +31,7 @@ import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsCon
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CALLBACK;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CLIENTID;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY;
-import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER_URL;
 
 public class AuthenticatedRequestIT {
 	private static final String CURRENT_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkpXVC1TaWduYXR1cmUtS2V5IiwidHlwIjoiSldUIn0" +
@@ -89,7 +89,7 @@ public class AuthenticatedRequestIT {
 				.withStore( ESIStore.DEFAULT )
 				.withScopes( tokenStore.getScopes() )
 				.withState( STATE )
-				.withBaseUrl( this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER
+				.withBaseUrl( this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER_URL
 						, "https://login.eveonline.com/" ) )
 				.withAccessTokenEndpoint( "oauth/token")
 				.withAuthorizationBaseUrl( "oauth/authorize" )

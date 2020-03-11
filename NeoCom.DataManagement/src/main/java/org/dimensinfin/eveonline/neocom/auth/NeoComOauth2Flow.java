@@ -13,17 +13,18 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_OAUTH_AUTHORIZATION_AUTHORIZE;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_OAUTH_AUTHORIZATION_SERVER_NAME;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_OAUTH_AUTHORIZATION_STATE;
-import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_AUTHORIZE;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CLIENTID;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_CONTENT_TYPE;
 import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY;
-import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER;
+import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsConstants.ESI_TRANQUILITY_AUTHORIZATION_SERVER_URL;
 
 public class NeoComOauth2Flow {
-	private static final String V1_OAUTH = "oauth/authorize/";
-	private static final String V2_OAUTH = "v2/oauth/authorize/";
-//	private static final String LOGIN_URL = "https://login.eveonline.com/" + V1_OAUTH +
+//	private static final String V1_OAUTH = "oauth/authorize/";
+//	private static final String V2_OAUTH = "v2/oauth/authorize/";
+////	private static final String LOGIN_URL = "https://login.eveonline.com/" + V1_OAUTH +
 //			"?response_type=code&" +
 //			"redirect_uri=eveauth-neocom%3A%2F%2Fesiauthentication&" +
 //			"scope=publicData esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 esi-skills.read_skillqueue.v1 esi-wallet.read_character_wallet.v1 esi-wallet.read_corporation_wallet.v1 esi-search.search_structures.v1 esi-clones.read_clones.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-planets.manage_planets.v1 esi-fittings.read_fittings.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-contracts.read_character_contracts.v1 esi-clones.read_implants.v1 esi-wallet.read_corporation_wallets.v1 esi-characters.read_notifications.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1 esi-industry.read_character_mining.v1 esi-industry.read_corporation_mining.v1";
@@ -38,8 +39,8 @@ public class NeoComOauth2Flow {
 		final String state = Base64.encodeBytes(
 				this.configurationProvider.getResourceString( ESI_OAUTH_AUTHORIZATION_STATE ).getBytes() );
 		final String clientId = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CLIENTID );
-		return this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER ) +
-				this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_AUTHORIZE ) +
+		return this.configurationProvider.getResourceString( ESI_OAUTH_AUTHORIZATION_SERVER_NAME ) +
+				this.configurationProvider.getResourceString( ESI_OAUTH_AUTHORIZATION_AUTHORIZE ) +
 				"?response_type=code" +
 				"&redirect_uri=eveauth-neocom%3A%2F%2Fesiauthentication" +
 				"&scope=publicData esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 " +
@@ -78,17 +79,15 @@ public class NeoComOauth2Flow {
 
 	private TokenTranslationResponse getTokenTranslationResponse( final TokenVerification store ) {
 		// Preload configuration variables.
-		final String authorizationServer = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER );
+		final String authorizationServer = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER_URL );
 		final String authorizationClientid = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CLIENTID );
 		final String authorizationSecretKey = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SECRETKEY );
 		final String authorizationContentType = this.configurationProvider.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CONTENT_TYPE );
-		final String esiServerLoginUrl = this.configurationProvider.getResourceString(
-				ESI_TRANQUILITY_AUTHORIZATION_SERVER );
 		// Get the request.
 		GetAccessToken serviceGetAccessToken = null;
 		try {
 			serviceGetAccessToken = new Retrofit.Builder()
-					.baseUrl( authorizationServer )
+					.baseUrl( authorizationServer ) // This should be the URL with protocol configured on the tranquility server
 					.addConverterFactory( JacksonConverterFactory.create() )
 					.build()
 					.create( GetAccessToken.class );
@@ -102,9 +101,10 @@ public class NeoComOauth2Flow {
 		final String peckString = authorizationClientid + ":" + authorizationSecretKey;
 		String peck = Base64.encodeBytes( peckString.getBytes() ).replaceAll( "\n", "" );
 		store.setPeck( peck );
+		final String esiAuthenticationServerLoginUrl = this.configurationProvider.getResourceString( ESI_OAUTH_AUTHORIZATION_SERVER_NAME );
 		final Call<TokenTranslationResponse> request = serviceGetAccessToken.getAccessToken(
 				authorizationContentType,
-				esiServerLoginUrl,
+				esiAuthenticationServerLoginUrl, // This is the esi login server for /oauth/token call
 				"Basic " + peck,
 				tokenRequestBody
 		);
