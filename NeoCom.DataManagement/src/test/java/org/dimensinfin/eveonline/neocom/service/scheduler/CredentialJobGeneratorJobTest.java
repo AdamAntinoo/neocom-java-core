@@ -13,7 +13,6 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
-import org.dimensinfin.eveonline.neocom.miningextraction.service.MiningExtractionDownloader;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.service.scheduler.conf.ISchedulerConfiguration;
@@ -26,7 +25,6 @@ public class CredentialJobGeneratorJobTest {
 	private LocationCatalogService locationCatalogService;
 	private MiningRepository miningRepository;
 	private ISchedulerConfiguration schedulerConfiguration;
-	private MiningExtractionDownloader miningExtractionDownloader;
 
 	@BeforeEach
 	public void beforeEach() {
@@ -37,7 +35,6 @@ public class CredentialJobGeneratorJobTest {
 		this.esiDataProvider = Mockito.mock( ESIDataProvider.class );
 		this.locationCatalogService = Mockito.mock( LocationCatalogService.class );
 		this.schedulerConfiguration = Mockito.mock( ISchedulerConfiguration.class );
-		this.miningExtractionDownloader = Mockito.mock(MiningExtractionDownloader.class);
 	}
 
 	@Test
@@ -50,7 +47,6 @@ public class CredentialJobGeneratorJobTest {
 				.withEsiDataProvider( this.esiDataProvider )
 				.withLocationCatalogService( this.locationCatalogService )
 				.withSchedulerConfiguration( this.schedulerConfiguration )
-				.withMiningExtractionsDownloader( this.miningExtractionDownloader )
 				.build();
 		Assertions.assertNotNull( credentialJobGeneratorJob );
 	}
@@ -66,7 +62,6 @@ public class CredentialJobGeneratorJobTest {
 					.withEsiDataProvider( this.esiDataProvider )
 					.withLocationCatalogService( this.locationCatalogService )
 					.withSchedulerConfiguration( this.schedulerConfiguration )
-					.withMiningExtractionsDownloader( this.miningExtractionDownloader )
 					.build();
 		} );
 		Assertions.assertThrows( NullPointerException.class, () -> {
@@ -78,7 +73,6 @@ public class CredentialJobGeneratorJobTest {
 					.withEsiDataProvider( this.esiDataProvider )
 					.withLocationCatalogService( this.locationCatalogService )
 					.withSchedulerConfiguration( null )
-					.withMiningExtractionsDownloader( this.miningExtractionDownloader )
 					.build();
 		} );
 		Assertions.assertThrows( NullPointerException.class, () -> {
@@ -89,7 +83,6 @@ public class CredentialJobGeneratorJobTest {
 					.withEsiDataProvider( this.esiDataProvider )
 					.withLocationCatalogService( this.locationCatalogService )
 					.withSchedulerConfiguration( this.schedulerConfiguration )
-					.withMiningExtractionsDownloader( this.miningExtractionDownloader )
 					.build();
 		} );
 		Assertions.assertThrows( NullPointerException.class, () -> {
@@ -100,13 +93,12 @@ public class CredentialJobGeneratorJobTest {
 					.withMiningRepository( this.miningRepository )
 					.withLocationCatalogService( this.locationCatalogService )
 					.withSchedulerConfiguration( this.schedulerConfiguration )
-					.withMiningExtractionsDownloader( this.miningExtractionDownloader )
 					.build();
 		} );
 	}
 
 	@Test
-	public void call() {
+	public void callAllowedAll() {
 		// Given
 		final Credential credential = Mockito.mock( Credential.class );
 		final List<Credential> credentialList = new ArrayList<>();
@@ -127,11 +119,91 @@ public class CredentialJobGeneratorJobTest {
 				.withEsiDataProvider( this.esiDataProvider )
 				.withLocationCatalogService( this.locationCatalogService )
 				.withSchedulerConfiguration( this.schedulerConfiguration )
-				.withMiningExtractionsDownloader( this.miningExtractionDownloader )
 				.build();
 		// Assertions
 		Assertions.assertTrue( credentialJobGeneratorJob.call() );
 		Assertions.assertEquals( 2, JobScheduler.getJobScheduler().getJobCount() );
+	}
+	@Test
+	public void callAllowedMining() {
+		// Given
+		final Credential credential = Mockito.mock( Credential.class );
+		final List<Credential> credentialList = new ArrayList<>();
+		credentialList.add( credential );
+		JobScheduler.getJobScheduler().clear();
+		// When
+		Mockito.when( this.credentialRepository.accessAllCredentials() ).thenReturn( credentialList );
+		Mockito.when( this.schedulerConfiguration.getAllowedToRun() ).thenReturn( true );
+		Mockito.when( this.schedulerConfiguration.getAllowedMiningExtractions() ).thenReturn( true );
+		Mockito.when( this.schedulerConfiguration.getAllowedAssets() ).thenReturn( false );
+		Mockito.when( this.configurationService.getResourceString( Mockito.anyString(), Mockito.anyString() ) ).thenReturn( "* - *" );
+		// Test
+		final CredentialJobGeneratorJob credentialJobGeneratorJob = new CredentialJobGeneratorJob.Builder()
+				.withConfigurationService( this.configurationService )
+				.withAssetRepository( this.assetRepository )
+				.withCredentialRepository( this.credentialRepository )
+				.withMiningRepository( this.miningRepository )
+				.withEsiDataProvider( this.esiDataProvider )
+				.withLocationCatalogService( this.locationCatalogService )
+				.withSchedulerConfiguration( this.schedulerConfiguration )
+				.build();
+		// Assertions
+		Assertions.assertTrue( credentialJobGeneratorJob.call() );
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
+	}
+	@Test
+	public void callAllowedAsssets() {
+		// Given
+		final Credential credential = Mockito.mock( Credential.class );
+		final List<Credential> credentialList = new ArrayList<>();
+		credentialList.add( credential );
+		JobScheduler.getJobScheduler().clear();
+		// When
+		Mockito.when( this.credentialRepository.accessAllCredentials() ).thenReturn( credentialList );
+		Mockito.when( this.schedulerConfiguration.getAllowedToRun() ).thenReturn( true );
+		Mockito.when( this.schedulerConfiguration.getAllowedMiningExtractions() ).thenReturn( false );
+		Mockito.when( this.schedulerConfiguration.getAllowedAssets() ).thenReturn( true );
+		Mockito.when( this.configurationService.getResourceString( Mockito.anyString(), Mockito.anyString() ) ).thenReturn( "* - *" );
+		// Test
+		final CredentialJobGeneratorJob credentialJobGeneratorJob = new CredentialJobGeneratorJob.Builder()
+				.withConfigurationService( this.configurationService )
+				.withAssetRepository( this.assetRepository )
+				.withCredentialRepository( this.credentialRepository )
+				.withMiningRepository( this.miningRepository )
+				.withEsiDataProvider( this.esiDataProvider )
+				.withLocationCatalogService( this.locationCatalogService )
+				.withSchedulerConfiguration( this.schedulerConfiguration )
+				.build();
+		// Assertions
+		Assertions.assertTrue( credentialJobGeneratorJob.call() );
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
+	}
+	@Test
+	public void callNotAllowed() {
+		// Given
+		final Credential credential = Mockito.mock( Credential.class );
+		final List<Credential> credentialList = new ArrayList<>();
+		credentialList.add( credential );
+		JobScheduler.getJobScheduler().clear();
+		// When
+		Mockito.when( this.credentialRepository.accessAllCredentials() ).thenReturn( credentialList );
+		Mockito.when( this.schedulerConfiguration.getAllowedToRun() ).thenReturn( false );
+		Mockito.when( this.schedulerConfiguration.getAllowedMiningExtractions() ).thenReturn( true );
+		Mockito.when( this.schedulerConfiguration.getAllowedAssets() ).thenReturn( true );
+		Mockito.when( this.configurationService.getResourceString( Mockito.anyString(), Mockito.anyString() ) ).thenReturn( "* - *" );
+		// Test
+		final CredentialJobGeneratorJob credentialJobGeneratorJob = new CredentialJobGeneratorJob.Builder()
+				.withConfigurationService( this.configurationService )
+				.withAssetRepository( this.assetRepository )
+				.withCredentialRepository( this.credentialRepository )
+				.withMiningRepository( this.miningRepository )
+				.withEsiDataProvider( this.esiDataProvider )
+				.withLocationCatalogService( this.locationCatalogService )
+				.withSchedulerConfiguration( this.schedulerConfiguration )
+				.build();
+		// Assertions
+		Assertions.assertTrue( credentialJobGeneratorJob.call() );
+		Assertions.assertEquals( 0, JobScheduler.getJobScheduler().getJobCount() );
 	}
 
 	@Test
@@ -144,7 +216,6 @@ public class CredentialJobGeneratorJobTest {
 				.withEsiDataProvider( this.esiDataProvider )
 				.withLocationCatalogService( this.locationCatalogService )
 				.withSchedulerConfiguration( this.schedulerConfiguration )
-				.withMiningExtractionsDownloader( this.miningExtractionDownloader )
 				.build();
 		Assertions.assertEquals( -1288800699, credentialJobGeneratorJob.getUniqueIdentifier() );
 	}

@@ -28,7 +28,6 @@ public class CredentialJobGeneratorJob extends Job {
 	private MiningRepository miningRepository;
 	private ESIDataProvider esiDataProvider;
 	private LocationCatalogService locationCatalogService;
-//	private MiningExtractionDownloader miningExtractionDownloader;
 
 	private CredentialJobGeneratorJob() {
 		this.setSchedule( "0/5 - *" );
@@ -41,6 +40,17 @@ public class CredentialJobGeneratorJob extends Job {
 				.appendSuper( super.hashCode() )
 				.append( this.getClass().getSimpleName() )
 				.toHashCode();
+	}
+
+	// - C O R E
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals( final Object o ) {
+		return super.equals( o );
 	}
 
 	/**
@@ -56,8 +66,8 @@ public class CredentialJobGeneratorJob extends Job {
 		NeoComLogger.enter();
 		// Read the list of Credentials and process them.
 		for (Credential credential : this.credentialRepository.accessAllCredentials()) {
-			if (this.schedulerConfiguration.getAllowedToRun())
-				if (this.schedulerConfiguration.getAllowedMiningExtractions())
+			if (Boolean.TRUE.equals( this.schedulerConfiguration.getAllowedToRun() )) {
+				if (Boolean.TRUE.equals( this.schedulerConfiguration.getAllowedMiningExtractions() ))
 					JobScheduler.getJobScheduler()
 							.registerJob( new MiningExtractionsProcessJob.Builder()
 									.withCredential( credential )
@@ -72,16 +82,17 @@ public class CredentialJobGeneratorJob extends Job {
 									.addCronSchedule( this.configurationService.getResourceString(
 											CRON_SCHEDULE_MINING_EXTRACTIONS, "* - *" ) )
 									.build() );
-			if (this.schedulerConfiguration.getAllowedAssets())
-				JobScheduler.getJobScheduler()
-						.registerJob(
-								new AssetDownloadProcessorJob.Builder()
-										.withCredential( credential )
-										.withAssetRepository( this.assetRepository )
-										.withEsiDataProvider( this.esiDataProvider )
-										.withLocationCatalogService( this.locationCatalogService )
-										.addCronSchedule( CRON_SCHEDULE_ASSETS )
-										.build() );
+				if (Boolean.TRUE.equals( this.schedulerConfiguration.getAllowedAssets() ))
+					JobScheduler.getJobScheduler()
+							.registerJob(
+									new AssetDownloadProcessorJob.Builder()
+											.withCredential( credential )
+											.withAssetRepository( this.assetRepository )
+											.withEsiDataProvider( this.esiDataProvider )
+											.withLocationCatalogService( this.locationCatalogService )
+											.addCronSchedule( CRON_SCHEDULE_ASSETS )
+											.build() );
+			}
 		}
 		NeoComLogger.exit();
 		return true;
@@ -106,6 +117,7 @@ public class CredentialJobGeneratorJob extends Job {
 			return this;
 		}
 
+		@Override
 		public CredentialJobGeneratorJob build() {
 			super.build();
 			Objects.requireNonNull( this.onConstruction.configurationService );
@@ -147,12 +159,6 @@ public class CredentialJobGeneratorJob extends Job {
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
-
-//		public CredentialJobGeneratorJob.Builder withMiningExtractionsDownloader( final MiningExtractionDownloader miningExtractionDownloader ) {
-//			Objects.requireNonNull( miningExtractionDownloader );
-//			this.onConstruction.miningExtractionDownloader = miningExtractionDownloader;
-//			return this;
-//		}
 
 		public CredentialJobGeneratorJob.Builder withMiningRepository( final MiningRepository miningRepository ) {
 			Objects.requireNonNull( miningRepository );

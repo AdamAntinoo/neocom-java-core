@@ -28,14 +28,11 @@ public abstract class Job implements Callable<Boolean> {
 		return this.schedule;
 	}
 
-	protected Job setSchedule( final String schedule ) {
+	protected void setSchedule( final String schedule ) {
 		this.schedule = schedule;
-		return this;
 	}
 
 	public abstract int getUniqueIdentifier();
-
-//	public abstract String getName();
 
 	public JobStatus getStatus() {
 		return this.status;
@@ -86,7 +83,7 @@ public abstract class Job implements Callable<Boolean> {
 
 		public B addCronSchedule( final String cronPattern ) {
 			Objects.requireNonNull( cronPattern );
-			final Job r = this.getActual().setSchedule( cronPattern );
+			this.getActual().setSchedule( cronPattern );
 			return this.actualClassBuilder;
 		}
 
