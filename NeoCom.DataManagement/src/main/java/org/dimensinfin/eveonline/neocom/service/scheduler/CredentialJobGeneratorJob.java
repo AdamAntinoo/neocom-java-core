@@ -28,7 +28,7 @@ public class CredentialJobGeneratorJob extends Job {
 	private MiningRepository miningRepository;
 	private ESIDataProvider esiDataProvider;
 	private LocationCatalogService locationCatalogService;
-	private MiningExtractionDownloader miningExtractionDownloader;
+//	private MiningExtractionDownloader miningExtractionDownloader;
 
 	private CredentialJobGeneratorJob() {
 		this.setSchedule( "0/5 - *" );
@@ -64,7 +64,11 @@ public class CredentialJobGeneratorJob extends Job {
 									.withEsiDataProvider( this.esiDataProvider )
 									.withLocationCatalogService( this.locationCatalogService )
 									.withMiningRepository( this.miningRepository )
-									.withMiningExtractionsDownloader( this.miningExtractionDownloader )
+									.withMiningExtractionsDownloader( new MiningExtractionDownloader.Builder()
+											.withCredential( credential )
+											.withEsiDataProvider( this.esiDataProvider )
+											.withLocationCatalogService( this.locationCatalogService )
+											.build() )
 									.addCronSchedule( this.configurationService.getResourceString(
 											CRON_SCHEDULE_MINING_EXTRACTIONS, "* - *" ) )
 									.build() );
@@ -138,17 +142,17 @@ public class CredentialJobGeneratorJob extends Job {
 			return this;
 		}
 
-		public Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+		public CredentialJobGeneratorJob.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
 			Objects.requireNonNull( locationCatalogService );
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
 
-		public CredentialJobGeneratorJob.Builder withMiningExtractionsDownloader( final MiningExtractionDownloader miningExtractionDownloader ) {
-			Objects.requireNonNull( miningExtractionDownloader );
-			this.onConstruction.miningExtractionDownloader = miningExtractionDownloader;
-			return this;
-		}
+//		public CredentialJobGeneratorJob.Builder withMiningExtractionsDownloader( final MiningExtractionDownloader miningExtractionDownloader ) {
+//			Objects.requireNonNull( miningExtractionDownloader );
+//			this.onConstruction.miningExtractionDownloader = miningExtractionDownloader;
+//			return this;
+//		}
 
 		public CredentialJobGeneratorJob.Builder withMiningRepository( final MiningRepository miningRepository ) {
 			Objects.requireNonNull( miningRepository );
