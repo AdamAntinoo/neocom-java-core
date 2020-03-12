@@ -136,17 +136,18 @@ public class NeoComOAuth2Flow {
 										.build() ) );
 		// Verify the character authenticated.
 		NeoComLogger.info( "Creating character verification." );
-		final String esiAuthenticationServerLoginUrl = this.configurationService.getResourceString( ESI_OAUTH_AUTHORIZATION_SERVER_NAME );
+		final String authorizationServer = this.configurationService.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_SERVER_URL );
 		final VerifyCharacter verificationService = new Retrofit.Builder()
-				.baseUrl( esiAuthenticationServerLoginUrl )
+				.baseUrl( authorizationServer ) // This should be the URL with protocol configured on the tranquility server
 				.addConverterFactory( JacksonConverterFactory.create() )
 				.client( verifyClient.build() )
 				.build()
 				.create( VerifyCharacter.class );
 		final String accessToken = store.getTokenTranslationResponse().getAccessToken();
 		try {
-			final Response<VerifyCharacterResponse> verificationResponse =
-					verificationService.getVerification( "Bearer " + accessToken ).execute();
+			final Response<VerifyCharacterResponse> verificationResponse = verificationService
+					.getVerification( "Bearer " + accessToken )
+					.execute();
 			if (verificationResponse.isSuccessful()) {
 				NeoComLogger.info( "Character verification OK." );
 				return verificationResponse.body();
