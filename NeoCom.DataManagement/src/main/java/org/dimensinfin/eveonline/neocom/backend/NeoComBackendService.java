@@ -10,7 +10,7 @@ import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.backend.rest.v1.CredentialStoreResponse;
 import org.dimensinfin.eveonline.neocom.backend.rest.v1.NeoComApiv1;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtractionEntity;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
@@ -26,10 +26,10 @@ public class NeoComBackendService {
 
 	@TimeElapsed
 	@LogEnterExit
-	public List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
+	public List<MiningExtractionEntity> accessTodayMiningExtractions4Pilot( final Credential credential ) {
 		NeoComLogger.enter( "Credential: {}", credential.toString() );
 		try {
-			final Response<List<MiningExtraction>> backendApiResponse = this.retrofitFactory
+			final Response<List<MiningExtractionEntity>> backendApiResponse = this.retrofitFactory
 					.accessBackendConnector()
 					.create( NeoComApiv1.class )
 					.accessTodayMiningExtractions4Pilot( DEFAULT_CONTENT_TYPE, credential.getAccountId() )

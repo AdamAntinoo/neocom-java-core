@@ -36,14 +36,13 @@ public class IntegrationEnvironmentDefinitionTCLocal {
 	protected static final int DEFAULT_CHARACTER_IDENTIFIER = 92223647;
 	protected static final int DEFAULT_PLANET_IDENTIFIER = 40208304;
 	protected static final int DEFAULT_SCHEMATIC = 127;
-
-	protected static JdbcConnectionSource connectionSource;
 	protected static final int ESI_UNITTESTING_PORT = 6090;
 	protected static final int BACKEND_UNITTESTING_PORT = 6092;
 	protected static final GenericContainer<?> esisimulator;
 	protected static final GenericContainer<?> backendSimulator;
 	private static final PostgreSQLContainer postgres;
 	private static final String connectionUrl;
+	protected static JdbcConnectionSource connectionSource;
 	protected static Credential credential4Test;
 
 	static {
@@ -115,12 +114,12 @@ public class IntegrationEnvironmentDefinitionTCLocal {
 				"http://" +
 						esisimulator.getContainerIpAddress() +
 						":" +
-						esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) /*+ "/latest/"*/ );
+						esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) );
 		this.itConfigurationProvider.setProperty( BACKEND_RETROFIT_SERVER_LOCATION,
 				"http://" +
 						backendSimulator.getContainerIpAddress() +
 						":" +
-						backendSimulator.getMappedPort( ESI_UNITTESTING_PORT ) );
+						backendSimulator.getMappedPort( BACKEND_UNITTESTING_PORT ) );
 		final String databaseHostName = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasehost" );
 		final String databasePath = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepath" );
 		final String databaseUser = this.itConfigurationProvider.getResourceString( "P.database.neocom.databaseuser" );

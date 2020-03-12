@@ -1,0 +1,12 @@
+[
+  {
+    "id": "2020-03-08:24-30001669-1228-2113197470",
+    "typeId": 1228,
+    "solarSystemId": 30001669,
+    "quantity": 0,
+    "delta": 0,
+    "extractionDateName": "2020-03-08",
+    "extractionHour": 24,
+    "ownerId": 2113197470
+  }
+]
