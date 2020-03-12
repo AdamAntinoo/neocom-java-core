@@ -40,7 +40,7 @@ public class NeoComBackendServiceIT extends IntegrationEnvironmentDefinitionTCLo
 		Assertions.assertEquals( 24, obtained.get( 0 ).getExtractionHour() );
 	}
 
-	@Test
+//	@Test
 	public void accessTodayMiningExtractions4PilotException() {
 		// Given
 		final NeoComBackendService neoComBackendService = new NeoComBackendService.Builder()
