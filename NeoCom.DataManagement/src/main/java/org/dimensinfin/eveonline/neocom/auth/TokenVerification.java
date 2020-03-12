@@ -14,8 +14,18 @@ public class TokenVerification {
 		return authCode;
 	}
 
+	public TokenVerification setAuthCode( final String authCode ) {
+		this.authCode = authCode;
+		return this;
+	}
+
 	public String getState() {
 		return this.state;
+	}
+
+	public TokenVerification setState( final String state ) {
+		this.state = state;
+		return this;
 	}
 
 	public String getDataSource() {
@@ -23,16 +33,36 @@ public class TokenVerification {
 		return this.dataSource;
 	}
 
+	public TokenVerification setDataSource( final String dataSource ) {
+		this.dataSource = dataSource;
+		return this;
+	}
+
 	public TokenTranslationResponse getTokenTranslationResponse() {
 		return this.tokenTranslationResponse;
+	}
+
+	public TokenVerification setTokenTranslationResponse( TokenTranslationResponse tokenTranslationResponse ) {
+		this.tokenTranslationResponse = tokenTranslationResponse;
+		return this;
 	}
 
 	public String getPeck() {
 		return this.peck;
 	}
 
+	public TokenVerification setPeck( String peck ) {
+		this.peck = peck;
+		return this;
+	}
+
 	public VerifyCharacterResponse getVerifyCharacterResponse() {
 		return verifyCharacterResponse;
+	}
+
+	public TokenVerification setVerifyCharacterResponse( VerifyCharacterResponse verifyCharacterResponse ) {
+		this.verifyCharacterResponse = verifyCharacterResponse;
+		return this;
 	}
 
 	public String getAccessToken() {
@@ -45,35 +75,5 @@ public class TokenVerification {
 
 	public String getScopes() {
 		return this.verifyCharacterResponse.getScopes();
-	}
-
-	public TokenVerification setAuthCode( final String authCode ) {
-		this.authCode = authCode;
-		return this;
-	}
-
-	public TokenVerification setState( final String state ) {
-		this.state = state;
-		return this;
-	}
-
-	public TokenVerification setDataSource( final String dataSource ) {
-		this.dataSource = dataSource;
-		return this;
-	}
-
-	public TokenVerification setTokenTranslationResponse( TokenTranslationResponse tokenTranslationResponse ) {
-		this.tokenTranslationResponse = tokenTranslationResponse;
-		return this;
-	}
-
-	public TokenVerification setPeck( String peck ) {
-		this.peck = peck;
-		return this;
-	}
-
-	public TokenVerification setVerifyCharacterResponse( VerifyCharacterResponse verifyCharacterResponse ) {
-		this.verifyCharacterResponse = verifyCharacterResponse;
-		return this;
 	}
 }
