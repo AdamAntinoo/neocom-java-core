@@ -33,7 +33,8 @@ public class NeoComOAuth2Flow {
 		final String state = Base64.encodeBytes(
 				this.configurationService.getResourceString( ESI_OAUTH_AUTHORIZATION_STATE ).getBytes() );
 		final String clientId = this.configurationService.getResourceString( ESI_TRANQUILITY_AUTHORIZATION_CLIENTID );
-		return this.configurationService.getResourceString( ESI_OAUTH_AUTHORIZATION_SERVER_NAME ) +
+		return "https://" +
+				this.configurationService.getResourceString( ESI_OAUTH_AUTHORIZATION_SERVER_NAME ) +
 				"/" +
 				this.configurationService.getResourceString( ESI_OAUTH_AUTHORIZATION_AUTHORIZE ) +
 				"?response_type=code" +
@@ -135,11 +136,9 @@ public class NeoComOAuth2Flow {
 										.build() ) );
 		// Verify the character authenticated.
 		NeoComLogger.info( "Creating character verification." );
+		final String esiAuthenticationServerLoginUrl = this.configurationService.getResourceString( ESI_OAUTH_AUTHORIZATION_SERVER_NAME );
 		final VerifyCharacter verificationService = new Retrofit.Builder()
-				.baseUrl( this.configurationService.getResourceString(
-						"P.esi." +
-								store.getDataSource().toLowerCase() +
-								".authorization.server" ) )
+				.baseUrl( esiAuthenticationServerLoginUrl )
 				.addConverterFactory( JacksonConverterFactory.create() )
 				.client( verifyClient.build() )
 				.build()
