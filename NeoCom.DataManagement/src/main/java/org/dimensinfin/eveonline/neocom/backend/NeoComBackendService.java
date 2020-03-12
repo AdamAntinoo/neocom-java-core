@@ -1,6 +1,8 @@
 package org.dimensinfin.eveonline.neocom.backend;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
@@ -8,6 +10,7 @@ import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.backend.rest.v1.CredentialStoreResponse;
 import org.dimensinfin.eveonline.neocom.backend.rest.v1.NeoComApiv1;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.miningextraction.domain.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
@@ -23,16 +26,33 @@ public class NeoComBackendService {
 
 	@TimeElapsed
 	@LogEnterExit
+	public List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
+		NeoComLogger.enter( "Credential: {}", credential.toString() );
+		try {
+			final Response<List<MiningExtraction>> backendApiResponse = this.retrofitFactory
+					.accessBackendConnector()
+					.create( NeoComApiv1.class )
+					.accessTodayMiningExtractions4Pilot( DEFAULT_CONTENT_TYPE, credential.getAccountId() )
+					.execute();
+			if (backendApiResponse.isSuccessful()) return backendApiResponse.body();
+		} catch (final IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		}
+		return new ArrayList<>();
+	}
+
+	@TimeElapsed
+	@LogEnterExit
 	public CredentialStoreResponse storeCredential( final Credential credential ) {
 		NeoComLogger.enter( "Credential: {}", credential.toString() );
 		try {
 			final Response<CredentialStoreResponse> backendApiResponse = this.retrofitFactory
 					.accessBackendConnector()
 					.create( NeoComApiv1.class )
-					.putCredential( DEFAULT_CONTENT_TYPE, credential.getAccountId(), credential )
+					.storeCredential( DEFAULT_CONTENT_TYPE, credential.getAccountId(), credential )
 					.execute();
 			if (backendApiResponse.isSuccessful()) return backendApiResponse.body();
-		} catch (IOException | RuntimeException ioe) {
+		} catch (final IOException | RuntimeException ioe) {
 			NeoComLogger.error( ioe );
 		}
 		return null;
