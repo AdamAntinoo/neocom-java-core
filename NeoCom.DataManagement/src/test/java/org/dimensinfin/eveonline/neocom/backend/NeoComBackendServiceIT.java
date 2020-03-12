@@ -57,7 +57,7 @@ public class NeoComBackendServiceIT extends IntegrationEnvironmentDefinitionTCLo
 		// Test
 		final String expected = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9" +
 				".eyJzdWIiOiJFU0kgT0F1dGgyIEF1dGhlbnRpY2F0aW9uIiwiY29ycG9yYXRpb25JZCI6OTgzODQ3MjYsImFjY291bnROYW1lIjoiVGVzdGluZyBDaGFyYWN0ZXIgQWNjb3VudCIsImlzcyI6Ik5lb0NvbS5JbmZpbml0eS5CYWNrZW5kIiwidW5pcXVlSWQiOiJ0cmFucXVpbGl0eS85MzgxMzMxMCIsInBpbG90SWQiOjkzODEzMzEwfQ.eJvBC2144s7sKv5rxSUVEjNbP2BpQJlJhmTOu4AJ9eJj9so_WcrAthbvwgYM4BqyBSNZAjw7bVegieWqx8IX8Q";
-		final CredentialStoreResponse obtained = neoComBackendService.putCredential( credential );
+		final CredentialStoreResponse obtained = neoComBackendService.storeCredential( credential );
 		Assertions.assertEquals( expected, obtained.getJwtToken() );
 	}
 }

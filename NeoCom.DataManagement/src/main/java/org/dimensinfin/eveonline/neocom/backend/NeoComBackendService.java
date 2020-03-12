@@ -23,7 +23,7 @@ public class NeoComBackendService {
 
 	@TimeElapsed
 	@LogEnterExit
-	public CredentialStoreResponse putCredential( final Credential credential ) {
+	public CredentialStoreResponse storeCredential( final Credential credential ) {
 		NeoComLogger.enter( "Credential: {}", credential.toString() );
 		try {
 			final Response<CredentialStoreResponse> backendApiResponse = this.retrofitFactory
