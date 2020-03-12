@@ -17,6 +17,7 @@ import org.dimensinfin.core.interfaces.IEventEmitter;
 import org.dimensinfin.core.interfaces.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.service.UpdaterJobManager;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 
 public abstract class NeoComUpdater<M> implements IEventEmitter {
@@ -29,8 +30,8 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 		esiDataProvider = newesiDataProvider;
 	}
 
-	private M model;
 	protected DateTime startTime;
+	private M model;
 	private Exception lastException;
 	private JobStatus status = JobStatus.READY;
 	private EventEmitter eventEmitter = new EventEmitter();
@@ -55,39 +56,7 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 		return this.lastException;
 	}
 
-	public void update() {
-		this.update( false );
-	}
-
-	public void update( final boolean force ) {
-		if (force) UpdaterJobManager.submit( this );
-		else if (this.needsRefresh())
-			UpdaterJobManager.submit( this );
-	}
-
-	// - N E O C O M U P D A T E R
-	public abstract boolean needsRefresh();
-
 	public abstract String getIdentifier();
-
-	public abstract void onRun();
-
-	public void onPrepare() {
-		Objects.requireNonNull( esiDataProvider );
-		this.status = JobStatus.RUNNING;
-		this.startTime = DateTime.now();
-	}
-
-	public void onException( final Exception exception ) {
-		this.lastException = exception;
-		this.status = JobStatus.EXCEPTION;
-		UpdaterJobManager.logger.info( "EX [NeoComUpdater.onException]> Message: {}", exception.getMessage() );
-	}
-
-	public void onComplete() {
-		this.status = JobStatus.COMPLETED;
-		this.eventEmitter.sendChangeEvent( EEvents.EVENT_REFRESHDATA.name() );
-	}
 
 	// - D E L E G A T E D
 	@Override
@@ -101,13 +70,13 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 	}
 
 	@Override
-	public boolean sendChangeEvent( final String eventName ) {
-		return this.eventEmitter.sendChangeEvent( eventName );
+	public boolean sendChangeEvent( final IntercommunicationEvent event ) {
+		return this.eventEmitter.sendChangeEvent( event.getPropertyName() );
 	}
 
 	@Override
-	public boolean sendChangeEvent( final IntercommunicationEvent event ) {
-		return this.eventEmitter.sendChangeEvent( event.getPropertyName() );
+	public boolean sendChangeEvent( final String eventName ) {
+		return this.eventEmitter.sendChangeEvent( eventName );
 	}
 
 	@Override
@@ -119,16 +88,14 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 	public boolean sendChangeEvent( final String eventName, final Object origin, final Object oldValue, final Object newValue ) {
 		return this.eventEmitter.sendChangeEvent( eventName, origin, oldValue, newValue );
 	}
-	// - C O R E
 
 	@Override
-	public String toString() {
-		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "model", model )
-				.append( "startTime", startTime )
-				.append( "lastException", lastException )
-				.append( "status", status )
-				.toString();
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.append( startTime )
+				.append( lastException )
+				.append( status )
+				.toHashCode();
 	}
 
 	@Override
@@ -144,11 +111,43 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 	}
 
 	@Override
-	public int hashCode() {
-		return new HashCodeBuilder( 17, 37 )
-				.append( startTime )
-				.append( lastException )
-				.append( status )
-				.toHashCode();
+	public String toString() {
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "model", model )
+				.append( "startTime", startTime )
+				.append( "lastException", lastException )
+				.append( "status", status )
+				.toString();
+	}
+
+	// - N E O C O M U P D A T E R
+	public abstract boolean needsRefresh();
+
+	public void onComplete() {
+		this.status = JobStatus.COMPLETED;
+		this.eventEmitter.sendChangeEvent( EEvents.EVENT_REFRESHDATA.name() );
+	}
+
+	public void onException( final Exception exception ) {
+		this.lastException = exception;
+		this.status = JobStatus.EXCEPTION;
+		NeoComLogger.error( exception );
+	}
+
+	public void onPrepare() {
+		Objects.requireNonNull( esiDataProvider );
+		this.status = JobStatus.RUNNING;
+		this.startTime = DateTime.now();
+	}
+	// - C O R E
+
+	public abstract void onRun();
+
+	public void update( final boolean force ) {
+		if ((force) || (this.needsRefresh())) UpdaterJobManager.submit( this );
+	}
+
+	public void update() {
+		this.update( false );
 	}
 }

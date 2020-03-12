@@ -149,7 +149,7 @@ public class JobSchedulerTest {
 	}
 
 	@Test
-	public void wait4Completion() {
+	public void wait4Completion() throws InterruptedException {
 		Assertions.assertTrue( JobScheduler.getJobScheduler().wait4Completion() );
 	}
 

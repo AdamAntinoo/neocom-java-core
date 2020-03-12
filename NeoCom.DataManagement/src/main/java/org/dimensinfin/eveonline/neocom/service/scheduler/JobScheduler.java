@@ -57,10 +57,7 @@ public class JobScheduler {
 
 	public List<JobRecord> getRegisteredJobs() {
 		return Stream.of( this.jobsRegistered.values() )
-				.map( ( job ) -> {
-					final JobRecord record = new JobToJobRecordConverter().convert( job );
-					return record;
-				} )
+				.map( job -> new JobToJobRecordConverter().convert( job ) )
 				.collect( Collectors.toList() );
 	}
 
@@ -94,18 +91,18 @@ public class JobScheduler {
 		}
 	}
 
-	public boolean wait4Completion() {
+	public boolean wait4Completion() throws InterruptedException {
 		NeoComLogger.enter();
 		schedulerExecutor.shutdown();
 		try {
 			schedulerExecutor.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
 			return true;
-		} catch (InterruptedException ie) {
-			NeoComLogger.info( "Scheduler terminated by external event." );
-			return false;
+//		} catch (final InterruptedException ie) {
+//			NeoComLogger.info( "Scheduler terminated by external event." );
 		} finally {
 			NeoComLogger.exit();
 		}
+//		return false;
 	}
 
 	protected void scheduleJob( final Job job ) {

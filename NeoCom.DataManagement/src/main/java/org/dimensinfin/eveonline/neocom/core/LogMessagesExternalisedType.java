@@ -1,7 +1,7 @@
 package org.dimensinfin.eveonline.neocom.core;
 
 public enum LogMessagesExternalisedType {
-	UPDATEMANAGER_JOB_ENTERING_STATE("-- [UpdaterJobManager.call]> Job {} entering state: {}");
+	UPDATEMANAGER_JOB_ENTERING_STATE("Job {} entering state: {}");
 
 	private String message;
 

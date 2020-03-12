@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -17,17 +16,12 @@ import com.nytimes.android.external.store3.base.RecordState;
 import com.nytimes.android.external.store3.base.impl.Store;
 import com.nytimes.android.external.store3.base.impl.StoreBuilder;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.core.StorageUnits;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
@@ -51,7 +45,7 @@ import static org.dimensinfin.eveonline.neocom.provider.PropertiesDefinitionsCon
  */
 @NeoComAdapter
 public class StoreCacheManager {
-	private static final Logger logger = LoggerFactory.getLogger( StoreCacheManager.class );
+	private static final String PATH_DELIMITER = "/";
 	private static final int CACHE_VERSION = 151;
 	private static final int CACHE_COUNTER = 2;
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
@@ -70,16 +64,16 @@ public class StoreCacheManager {
 	private Store<GetUniverseTypesTypeIdOk, Integer> esiItemStore;
 	private Store<GetUniverseGroupsGroupIdOk, Integer> itemGroupStore;
 	private Store<GetUniverseCategoriesCategoryIdOk, Integer> categoryStore;
-	private Store<GetUniverseStationsStationIdOk, Integer> stationStore;
+//	private Store<GetUniverseStationsStationIdOk, Integer> stationStore;
 	private Store<GetUniverseSystemsSystemIdOk, Integer> systemsStoreCache;
-	private Store<GetUniverseConstellationsConstellationIdOk, Integer> constellationsStoreCache;
-	private Store<GetUniverseRegionsRegionIdOk, Integer> regionStoreCache;
+//	private Store<GetUniverseConstellationsConstellationIdOk, Integer> constellationsStoreCache;
+//	private Store<GetUniverseRegionsRegionIdOk, Integer> regionStoreCache;
 
 	// - S T O R A G E S
 	private DiskLruCache esiItemPersistentStore;
-	private DiskLruCache systemsStoreCachePersistence;
-	private DiskLruCache constellationsStoreCachePersistence;
-	private DiskLruCache regionStoreCachePersistence;
+//	private DiskLruCache systemsStoreCachePersistence;
+//	private DiskLruCache constellationsStoreCachePersistence;
+//	private DiskLruCache regionStoreCachePersistence;
 
 	// - C O N S T R U C T O R S
 	protected StoreCacheManager() { }
@@ -106,7 +100,8 @@ public class StoreCacheManager {
 		try {
 			final File cachedir = new File( this.fileSystemAdapter.accessResource4Path(
 					this.configurationProvider.getResourceString( CACHE_DIRECTORY_PATH ) +
-							"/" + this.configurationProvider.getResourceString( CACHE_STORE_ESI_ITEM_DATA ) ) );
+							PATH_DELIMITER +
+							this.configurationProvider.getResourceString( CACHE_STORE_ESI_ITEM_DATA ) ) );
 			this.esiItemPersistentStore = DiskLruCache.open( cachedir, CACHE_VERSION, CACHE_COUNTER,
 					StorageUnits.GIGABYTES.toBytes( 2 ) );
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()
@@ -114,8 +109,8 @@ public class StoreCacheManager {
 					.persister( new EsiItemPersister( esiItemPersistentStore ) )
 					.networkBeforeStale()
 					.open();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		} catch (final IOException ioe) {
+			NeoComLogger.error( ioe );
 			throw new NeoComRuntimeException( "Unable to create the item cache store." );
 		}
 	}
@@ -316,12 +311,10 @@ public class StoreCacheManager {
 				final String dataSerialized = jsonMapper.writeValueAsString( item );
 				final DiskLruCache.Editor editor = this.persistentStorage.edit( key.toString() );
 				editor.set( DATA_CACHE_INDEX, dataSerialized );
-				editor.set( TIMESTAMP_CACHE_INDEX, Long.valueOf( DateTime.now().getMillis() ).toString() );
+				editor.set( TIMESTAMP_CACHE_INDEX, Long.toString( DateTime.now().getMillis() ) );
 				editor.commit();
 				return Single.just( true );
-			} catch (JsonProcessingException jpe) {
-				return Single.just( false );
-			} catch (IOException ioe) {
+			} catch (final IOException ioe) {
 				return Single.just( false );
 			}
 		}

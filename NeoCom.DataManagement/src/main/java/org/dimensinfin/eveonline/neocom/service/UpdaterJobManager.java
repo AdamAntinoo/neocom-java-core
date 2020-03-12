@@ -7,11 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.dimensinfin.eveonline.neocom.core.LogMessagesExternalisedType;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
@@ -30,7 +28,6 @@ import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
  * @author Adam Antinoo
  */
 public class UpdaterJobManager {
-	public static Logger logger = LoggerFactory.getLogger(UpdaterJobManager.class);
 	public static final ExecutorService updaterExecutor = Executors.newSingleThreadExecutor();
 	private static final Map<String, JobRecord> runningJobs = new ConcurrentHashMap<>();
 
@@ -42,59 +39,25 @@ public class UpdaterJobManager {
 	 *
 	 * @param updater the updater to be used when running the job.
 	 */
-	public static synchronized void submit( final NeoComUpdater updater ) {
+	public static synchronized void submit( final NeoComUpdater<?> updater ) {
 		final String identifier = updater.getIdentifier();
-		if (alreadyScheduled(identifier)) {
-			final JobRecord target = runningJobs.get(identifier);
+		if (alreadyScheduled( identifier )) {
+			final JobRecord target = runningJobs.get( identifier );
 			final JobStatus jobStatus = target.getJob().getStatus();
-			logger.info("-- [UpdaterJobManager.submit]> Job {} already on state: {}",
-					updater.getIdentifier(), jobStatus.name());
+			NeoComLogger.info( "Job {} already on state: {}", updater.getIdentifier() + "", jobStatus.name() );
 			return;
 		}
-		logger.info("-- [UpdaterJobManager.submit]> Scheduling job {}", updater.getIdentifier());
-		updater.setStatus(JobStatus.SCHEDULED);
+		NeoComLogger.info( "Scheduling job {}", updater.getIdentifier() + "" );
+		updater.setStatus( JobStatus.SCHEDULED );
 		try {
-			final JobRecord record = new JobRecord(updater);
-			final Future<NeoComUpdater> future = updaterExecutor.submit(record);
-			record.setFuture(future);
-			runningJobs.put(updater.getIdentifier(), record);
+			final JobRecord record = new JobRecord( updater );
+			final Future<NeoComUpdater<?>> future = updaterExecutor.submit( record );
+			record.setFuture( future );
+			runningJobs.put( updater.getIdentifier(), record );
 		} catch (NeoComRuntimeException neoe) {
-			logger.info("RT [UpdaterJobManager.submit]> Runtime exception: {}", neoe.getMessage());
-			logger.error("RT [UpdaterJobManager.submit]> Stack Trace: {}", neoe);
+			NeoComLogger.error( neoe );
 		}
 	}
-
-//	@Deprecated
-//	public static synchronized void submit( final ServiceJob newJob ) {
-//		try {
-//			// Search for the job to detect duplications
-//			final String identifier = newJob.getReference();
-//			//			final Future<?> hit = runningJobs.get(identifier);
-//			final CompletableFuture hit = null;
-//			if (null == hit) {
-//				// New job. Launch it and store the reference.
-//				logger.info("-- [MARKETORDERS]> Launching job {}", newJob.getReference());
-//				logger.info("-- [UpdaterJobManager.submit]> Launching job {}", newJob.getReference());
-//				final Future<?> future = newJob.submit();
-//				//				runningJobs.put(identifier, future);
-//			} else {
-//				// Check for job completed.
-//				if (hit.isDone()) {
-//					// The job with this same reference has completed. We can launch a new one.
-//					final Future<?> future = newJob.submit();
-//					//					runningJobs.put(identifier, future);
-//				}
-//			}
-//		} catch (NeoComRuntimeException neoe) {
-//			neoe.printStackTrace();
-//		}
-//		// Count the running or pending jobs to update the ActionBar counter.
-//		//		int counter = 0;
-//		//		for (Future<?> future : runningJobs.values()) {
-//		//			if (!future.isDone()) counter++;
-//		//		}
-//		//		updateJobCounter = counter;
-//	}
 
 	/**
 	 * Clean up all the jobs that are already completed.
@@ -104,11 +67,11 @@ public class UpdaterJobManager {
 	public static int clearJobs() {
 		synchronized (runningJobs) {
 			for (Map.Entry<String, JobRecord> entry : runningJobs.entrySet()) {
-				if (entry.getValue().getFuture().isDone()) runningJobs.remove(entry.getKey());
+				if (entry.getValue().getFuture().isDone()) runningJobs.remove( entry.getKey() );
 				if (entry.getValue().getJob().getStatus() == JobStatus.COMPLETED)
-					runningJobs.remove(entry.getKey());
+					runningJobs.remove( entry.getKey() );
 				if (entry.getValue().getJob().getStatus() == JobStatus.EXCEPTION)
-					runningJobs.remove(entry.getKey());
+					runningJobs.remove( entry.getKey() );
 			}
 			return runningJobs.size();
 		}
@@ -124,59 +87,59 @@ public class UpdaterJobManager {
 	}
 
 	protected static boolean alreadyScheduled( final String jobIdentifier ) {
-		final JobRecord target = runningJobs.get(jobIdentifier);
+		final JobRecord target = runningJobs.get( jobIdentifier );
 		if (null == target) return false;
 		if (target.getJob().getStatus() == JobStatus.COMPLETED) return false;
-		return !(target.getJob().getStatus() == JobStatus.EXCEPTION);
+		return (target.getJob().getStatus() != JobStatus.EXCEPTION);
 	}
 
 	private UpdaterJobManager() {
 	}
 
 	// - J O B R E C O R D
-	public static class JobRecord implements Callable<NeoComUpdater> {
-		private Future<NeoComUpdater> future;
-		private NeoComUpdater job;
+	public static class JobRecord implements Callable<NeoComUpdater<?>> {
+		private Future<NeoComUpdater<?>> future;
+		private NeoComUpdater<?> job;
 
-		public JobRecord( final NeoComUpdater job ) {
+		public JobRecord( final NeoComUpdater<?> job ) {
 			this.job = job;
 		}
 
-		public Future<NeoComUpdater> getFuture() {
-			return future;
+		public Future<NeoComUpdater<?>> getFuture() {
+			return this.future;
 		}
 
-		public void setFuture( final Future<NeoComUpdater> future ) {
+		public void setFuture( final Future<NeoComUpdater<?>> future ) {
 			this.future = future;
 		}
 
-		public NeoComUpdater getJob() {
+		public NeoComUpdater<?> getJob() {
 			return job;
-		}
-
-		@Override
-		public NeoComUpdater call() {
-			try {
-				logger.info(LogMessagesExternalisedType.UPDATEMANAGER_JOB_ENTERING_STATE.getMessage()
-						, this.getJob().getIdentifier(), "OnPrepare");
-				this.job.onPrepare();
-				logger.info(LogMessagesExternalisedType.UPDATEMANAGER_JOB_ENTERING_STATE.getMessage()
-						, this.getJob().getIdentifier(), "OnRun");
-				this.job.onRun();
-				logger.info(LogMessagesExternalisedType.UPDATEMANAGER_JOB_ENTERING_STATE.getMessage()
-						, this.getJob().getIdentifier(), "OnComplete");
-				this.job.onComplete();
-			} catch (RuntimeException rte) {
-				logger.info(LogMessagesExternalisedType.UPDATEMANAGER_JOB_ENTERING_STATE.getMessage()
-						, this.getJob().getIdentifier(), "OnException");
-				this.job.onException(rte);
-			}
-			return this.job;
 		}
 
 		public boolean isDone() {
 			return (this.job.getStatus() == JobStatus.COMPLETED) ||
 					(this.job.getStatus() == JobStatus.EXCEPTION);
+		}
+
+		@Override
+		public NeoComUpdater<?> call() {
+			try {
+				NeoComLogger.info( LogMessagesExternalisedType.UPDATEMANAGER_JOB_ENTERING_STATE.getMessage()
+						, this.getJob().getIdentifier(), "OnPrepare" );
+				this.job.onPrepare();
+				NeoComLogger.info( LogMessagesExternalisedType.UPDATEMANAGER_JOB_ENTERING_STATE.getMessage()
+						, this.getJob().getIdentifier(), "OnRun" );
+				this.job.onRun();
+				NeoComLogger.info( LogMessagesExternalisedType.UPDATEMANAGER_JOB_ENTERING_STATE.getMessage()
+						, this.getJob().getIdentifier(), "OnComplete" );
+				this.job.onComplete();
+			} catch (RuntimeException rte) {
+				NeoComLogger.info( LogMessagesExternalisedType.UPDATEMANAGER_JOB_ENTERING_STATE.getMessage()
+						, this.getJob().getIdentifier(), "OnException" );
+				this.job.onException( rte );
+			}
+			return this.job;
 		}
 	}
 }
