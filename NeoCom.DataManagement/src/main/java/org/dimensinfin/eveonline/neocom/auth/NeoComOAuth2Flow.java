@@ -67,10 +67,10 @@ public class NeoComOAuth2Flow {
 	 * @param encodedState the state data received encoded in Base64. Needs to match the state generated locally.
 	 */
 	public boolean verifyState( final String encodedState ) {
-		final String testState = Base64.encodeBytes(
+		final String checkState = Base64.encodeBytes(
 				this.configurationService.getResourceString( ESI_OAUTH_AUTHORIZATION_STATE ).getBytes()
 		).replaceAll( "\n", "" );
-		return encodedState.equals( testState );
+		return encodedState.equals( checkState );
 	}
 
 	private TokenTranslationResponse getTokenTranslationResponse( final TokenVerification store ) {

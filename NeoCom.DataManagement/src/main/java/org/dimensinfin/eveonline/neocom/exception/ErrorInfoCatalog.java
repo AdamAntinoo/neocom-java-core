@@ -3,6 +3,7 @@ package org.dimensinfin.eveonline.neocom.exception;
 import java.text.MessageFormat;
 
 import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.ASSETS_DOWNLOAD_PROCESS_ERRORCODE;
+import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.AUTHENTICATION_VERIFICATION_ERRORCODE;
 import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.INVALID_LOCATION_TYPE_ERRORCODE;
 import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.MINING_REPOSITORY_EXTRACTION_SQL_ERRORCODE;
 import static org.dimensinfin.eveonline.neocom.exception.ErrorCodesData.RETROFIT_CACHE_FILE_SYSTEM_ERRORCODE;
@@ -19,7 +20,10 @@ public enum ErrorInfoCatalog {
 	MINING_EXTRACTION_BYID_SEARCH_FAILED( MINING_REPOSITORY_EXTRACTION_SQL_ERRORCODE,
 			"SQL exception while searching for extraction with id {0}." ),
 	MINING_EXTRACTION_PERSISTENCE_FAILED( MINING_REPOSITORY_EXTRACTION_SQL_ERRORCODE,
-			"SQL exception while persisting mining extraction {0} - {1}" );
+			"SQL exception while persisting mining extraction {0} - {1}" ),
+	INVALID_CREDENTIAL_IDENTIFIER( AUTHENTICATION_VERIFICATION_ERRORCODE,
+			"The validation character response is not valid and then the unique character identifier is not found." );
+
 	public final String errorCode;
 	public final String errorMessage;
 

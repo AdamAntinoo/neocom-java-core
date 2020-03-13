@@ -1,6 +1,7 @@
 [DEVELOPMENT FOLLOWUP]
 >* NeoComBackendService
->
+>* TokenVerification
+
 [CLASSES TO COMPLETE UNIT TESTING]
 
 >* NeoAsset

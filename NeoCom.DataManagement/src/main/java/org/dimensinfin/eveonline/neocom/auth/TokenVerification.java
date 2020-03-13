@@ -1,5 +1,7 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
+import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 
 public class TokenVerification {
@@ -11,7 +13,7 @@ public class TokenVerification {
 	private VerifyCharacterResponse verifyCharacterResponse;
 
 	public String getAuthCode() {
-		return authCode;
+		return this.authCode;
 	}
 
 	public TokenVerification setAuthCode( final String authCode ) {
@@ -38,6 +40,12 @@ public class TokenVerification {
 		return this;
 	}
 
+	public int getAccountIdentifier() {
+		if (null != this.verifyCharacterResponse)
+			return Long.valueOf( this.verifyCharacterResponse.getCharacterID() ).intValue();
+		else throw new NeoComRuntimeException( ErrorInfoCatalog.INVALID_CREDENTIAL_IDENTIFIER );
+	}
+
 	public TokenTranslationResponse getTokenTranslationResponse() {
 		return this.tokenTranslationResponse;
 	}
@@ -57,12 +65,18 @@ public class TokenVerification {
 	}
 
 	public VerifyCharacterResponse getVerifyCharacterResponse() {
-		return verifyCharacterResponse;
+		return this.verifyCharacterResponse;
 	}
 
 	public TokenVerification setVerifyCharacterResponse( VerifyCharacterResponse verifyCharacterResponse ) {
 		this.verifyCharacterResponse = verifyCharacterResponse;
 		return this;
+	}
+
+	public String getScopes() {
+		if (null != this.verifyCharacterResponse)
+			return this.verifyCharacterResponse.getScopes();
+		else return "publicData";
 	}
 
 	public String getAccessToken() {
@@ -71,9 +85,5 @@ public class TokenVerification {
 
 	public String getRefreshToken() {
 		return this.tokenTranslationResponse.getRefreshToken();
-	}
-
-	public String getScopes() {
-		return this.verifyCharacterResponse.getScopes();
 	}
 }

@@ -58,11 +58,11 @@ ext {
 
 // - C O R E
 dependencies {
-    implementation 'org.slf4j:slf4j-simple:1.7.25'
-    implementation "joda-time:joda-time:$jodaTimeVersion"
-    implementation 'com.google.code.gson:gson:2.7'
-    implementation 'com.annimon:stream:1.1.9'
-    implementation 'org.apache.commons:commons-lang3:3.9'
+    compileOnly 'org.slf4j:slf4j-simple:1.7.25'
+    compileOnly "joda-time:joda-time:$jodaTimeVersion"
+    compileOnly 'com.google.code.gson:gson:2.7'
+    compileOnly 'com.annimon:stream:1.1.9'
+    compileOnly 'org.apache.commons:commons-lang3:3.9'
     // D A T A B A S E
     implementation 'com.google.auto.service:auto-service-annotations:1.0-rc6'
     implementation 'com.squareup:javapoet:1.9.0'

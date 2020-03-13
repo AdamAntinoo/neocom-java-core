@@ -89,6 +89,12 @@ public class MiningRepository {
 				.collect( Collectors.toList() );
 	}
 
+	public List<MiningExtractionEntity> accessTodayMiningExtractions4PilotNotTransformed( final Credential credential ) {
+		return Stream.of( this.queryDatedMiningExtractions4Pilot( credential ) )
+				.filter( this::filterOutNotTodayRecords )
+				.collect( Collectors.toList() );
+	}
+
 	public void persist( final MiningExtractionEntity record ) throws SQLException {
 		if (null != record) {
 			record.timeStamp();
