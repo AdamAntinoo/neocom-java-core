@@ -12,10 +12,9 @@ public class MiningExtractionToMiningExtractionEntityConverter implements Conver
 				.withId( value.getId() )
 				.withTypeId( value.getTypeId() )
 				.withOwnerId( (int) value.getOwnerId() )
-				.withDelta( value.getDelta() )
 				.withExtractionDateName( value.getExtractionDateName() )
 				.withExtractionHour( value.getExtractionHour() )
-				.withQuantity( value.getQuantity().intValue() )
+				.withQuantity( value.getQuantity() )
 				.withSolarSystemId( value.getLocationId().intValue() )
 				.build();
 	}

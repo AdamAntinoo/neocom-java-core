@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Database entities are the data views that are stored on repositories. Usually they require transformation to and from the storage. This class
@@ -50,8 +52,6 @@ public class MiningExtractionEntity extends UpdatableEntity {
 	private int solarSystemId; // The solar system where the extraction is recorded.
 	@DatabaseField
 	private long quantity = 0;
-	@DatabaseField
-	private long delta = 0L;
 	@DatabaseField(dataType = DataType.STRING, canBeNull = false, index = true)
 	private String extractionDateName;
 	@DatabaseField
@@ -84,10 +84,6 @@ public class MiningExtractionEntity extends UpdatableEntity {
 		return this;
 	}
 
-	public Long getDelta() {
-		return this.delta;
-	}
-
 	public String getExtractionDateName() {
 		return this.extractionDateName;
 	}
@@ -100,6 +96,38 @@ public class MiningExtractionEntity extends UpdatableEntity {
 		return this.ownerId;
 	}
 
+	// - C O R E
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final MiningExtractionEntity that = (MiningExtractionEntity) o;
+		return new EqualsBuilder()
+				.appendSuper( super.equals( o ) )
+				.append( this.typeId, that.typeId )
+				.append( this.solarSystemId, that.solarSystemId )
+				.append( this.quantity, that.quantity )
+				.append( this.extractionHour, that.extractionHour )
+				.append( this.ownerId, that.ownerId )
+				.append( this.id, that.id )
+				.append( this.extractionDateName, that.extractionDateName )
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( this.id )
+				.append( this.typeId )
+				.append( this.solarSystemId )
+				.append( this.quantity )
+				.append( this.extractionDateName )
+				.append( this.extractionHour )
+				.append( this.ownerId )
+				.toHashCode();
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private MiningExtractionEntity onConstruction;
@@ -110,12 +138,6 @@ public class MiningExtractionEntity extends UpdatableEntity {
 
 		public MiningExtractionEntity build() {
 			return this.onConstruction;
-		}
-
-		public MiningExtractionEntity.Builder withDelta( final Long delta ) {
-			Objects.requireNonNull( delta );
-			this.onConstruction.delta = delta;
-			return this;
 		}
 
 		public MiningExtractionEntity.Builder withExtractionDateName( final String extractionDateName ) {
@@ -142,7 +164,7 @@ public class MiningExtractionEntity extends UpdatableEntity {
 			return this;
 		}
 
-		public MiningExtractionEntity.Builder withQuantity( final Integer quantity ) {
+		public MiningExtractionEntity.Builder withQuantity( final Long quantity ) {
 			Objects.requireNonNull( quantity );
 			this.onConstruction.quantity = quantity;
 			return this;

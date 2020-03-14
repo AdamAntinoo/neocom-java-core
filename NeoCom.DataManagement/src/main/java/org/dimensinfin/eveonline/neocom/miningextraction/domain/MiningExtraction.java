@@ -20,13 +20,13 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
  */
 @JsonIgnoreProperties
 public class MiningExtraction {
-	private Long quantity = 0L;
+	private long quantity = 0L;
 	private long delta = 0;
 	private String extractionDateName;
 	private int extractionHour = 24; // The hour of the day for this extraction delta or 24 if this is the date aggregated value.
 	private Integer ownerId; // The credential identifier of the pilot's extraction.
-	private transient NeoItem resourceItem;
-	private transient SpaceSystem solarSystemLocation;
+	private NeoItem resourceItem;
+	private SpaceSystem solarSystemLocation;
 
 	// - C O N S T R U C T O R S
 	private MiningExtraction() {
@@ -35,8 +35,16 @@ public class MiningExtraction {
 
 	// -  G E T T E R S   &   S E T T E R S
 	public String getId() {
+		return String.format( "".concat( this.extractionDateName ).concat( ":" )
+				.concat( Integer.toString( this.extractionHour ) ), "%d02" ).concat( "-" )
+				.concat( this.getLocationId().toString() ).concat( "-" )
+				.concat( this.getTypeId().toString() ).concat( "-" )
+				.concat( this.ownerId.toString() );
+	}
+
+	public String getPreviousHourId() {
 		return "".concat( this.extractionDateName ).concat( ":" )
-				.concat( Integer.toString( this.extractionHour ) ).concat( "-" )
+				.concat( String.format( Integer.toString( this.extractionHour - 1 ), "%d02" ) ).concat( "-" )
 				.concat( this.getLocationId().toString() ).concat( "-" )
 				.concat( this.getTypeId().toString() ).concat( "-" )
 				.concat( this.ownerId.toString() );
@@ -62,6 +70,10 @@ public class MiningExtraction {
 		return this.solarSystemLocation.getSolarSystemName();
 	}
 
+	public SpaceSystem getSolarSystemLocation() {
+		return this.solarSystemLocation;
+	}
+
 	public long getDelta() {
 		return this.delta;
 	}
@@ -79,7 +91,7 @@ public class MiningExtraction {
 		return this.resourceItem.getURLForItem();
 	}
 
-	public Long getQuantity() {
+	public long getQuantity() {
 		return this.quantity;
 	}
 
@@ -186,7 +198,7 @@ public class MiningExtraction {
 
 		public MiningExtraction.Builder withQuantity( final Long quantity ) {
 			if (null == quantity) this.onConstruction.quantity = 0L;
-			this.onConstruction.quantity = quantity;
+			this.onConstruction.quantity = Objects.requireNonNull( quantity );
 			return this;
 		}
 
