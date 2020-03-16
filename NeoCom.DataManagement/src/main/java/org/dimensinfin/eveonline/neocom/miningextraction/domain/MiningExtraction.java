@@ -74,16 +74,7 @@ public class MiningExtraction {
 		return this.solarSystemLocation;
 	}
 
-	public long getDelta() {
-		return this.delta;
-	}
-
-	public MiningExtraction setDelta( final long delta ) {
-		this.delta = delta;
-		return this;
-	}
-
-	public long getOwnerId() {
+	public int getOwnerId() {
 		return this.ownerId;
 	}
 
@@ -107,13 +98,14 @@ public class MiningExtraction {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder( 17, 37 )
-				.appendSuper( super.hashCode() )
 				.append( this.getId() )
 				.append( this.quantity )
 				.append( this.delta )
 				.append( this.extractionDateName )
 				.append( this.extractionHour )
 				.append( this.ownerId )
+				.append( this.getTypeId() )
+				.append( this.getLocationId() )
 				.toHashCode();
 	}
 
@@ -123,12 +115,14 @@ public class MiningExtraction {
 		if (o == null || getClass() != o.getClass()) return false;
 		final MiningExtraction that = (MiningExtraction) o;
 		return new EqualsBuilder()
-				.appendSuper( super.equals( o ) )
+				.append( this.getId(), that.getId() )
 				.append( this.quantity, that.quantity )
 				.append( this.delta, that.delta )
 				.append( this.extractionHour, that.extractionHour )
 				.append( this.ownerId, that.ownerId )
 				.append( this.extractionDateName, that.extractionDateName )
+				.append( this.getTypeId(), that.getTypeId() )
+				.append( this.getLocationId(), that.getLocationId() )
 				.isEquals();
 	}
 

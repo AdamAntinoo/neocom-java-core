@@ -29,7 +29,7 @@ public class MiningExtractionDownloaderIT extends IntegrationEnvironmentDefiniti
 		final List<MiningExtraction> extractionList = miningExtractionDownloader.downloadMiningExtractions();
 		// Assertions
 		Assertions.assertNotNull( extractionList );
-		Assertions.assertEquals( 6, extractionList.size() );
+		Assertions.assertEquals( 13, extractionList.size() );
 	}
 
 	@Test
@@ -42,19 +42,19 @@ public class MiningExtractionDownloaderIT extends IntegrationEnvironmentDefiniti
 				.withLocationCatalogService( this.itLocationCatalogService )
 				.build();
 		// When
-		Mockito.when( credential4Test.getAccountId() ).thenReturn( 93813310 );
+//		Mockito.when( credential4Test.getAccountId() ).thenReturn( 93813310 );
 		// Test
 		final List<MiningExtraction> extractionList = miningExtractionDownloader.downloadMiningExtractions();
 		IntegrationReport.generateMiningExtractionReport( extractionList );
 		// Assertions
 		Assertions.assertNotNull( extractionList );
-		Assertions.assertEquals( 8, extractionList.size() );
+		Assertions.assertEquals( 13, extractionList.size() );
 		final List<MiningExtraction> todays = Stream.of( extractionList )
 				.filter( extraction ->
 						extraction.getExtractionDateName()
-								.equalsIgnoreCase( new LocalDate( "2020-03-08" ).toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ) ) )
+								.equalsIgnoreCase( new LocalDate( "2020-03-16" ).toString( MiningExtractionEntity.EXTRACTION_DATE_FORMAT ) ) )
 				.collect( Collectors.toList() );
 		IntegrationReport.generateMiningExtractionReport( todays );
-		Assertions.assertEquals( 2, todays.size() );
+		Assertions.assertEquals( 5, todays.size() );
 	}
 }

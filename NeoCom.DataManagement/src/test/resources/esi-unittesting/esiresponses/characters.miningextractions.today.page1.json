@@ -1,50 +1,32 @@
 [
   {
-    "date": "2018-06-01",
-    "quantity": 15759,
-    "solar_system_id": 30001669,
-    "type_id": 17459
+    "date": "2020-03-16",
+    "quantity": 4495,
+    "solar_system_id": 30001699,
+    "type_id": 17460
   },
   {
-    "date": "2018-06-01",
-    "quantity": 64290,
-    "solar_system_id": 30001669,
-    "type_id": 17470
+    "date": "2020-03-16",
+    "quantity": 11551,
+    "solar_system_id": 30001699,
+    "type_id": 17464
   },
   {
-    "date": "2018-06-01",
-    "quantity": 20000,
-    "solar_system_id": 30001644,
-    "type_id": 28617
+    "date": "2020-03-16",
+    "quantity": 105368,
+    "solar_system_id": 30001699,
+    "type_id": 17471
   },
   {
-    "date": "2018-06-01",
-    "quantity": 87658,
-    "solar_system_id": 30001644,
-    "type_id": 17470
+    "date": "2020-03-16",
+    "quantity": 601,
+    "solar_system_id": 30001699,
+    "type_id": 17453
   },
   {
-    "date": "2018-06-01",
-    "quantity": 162251,
-    "solar_system_id": 30001644,
-    "type_id": 1230
-  },
-  {
-    "date": "2018-06-01",
-    "quantity": 9118,
-    "solar_system_id": 30001644,
-    "type_id": 17452
-  },
-  {
-    "date": "2020-03-08",
-    "quantity": 200000,
-    "solar_system_id": 30001664,
-    "type_id": 1230
-  },
-  {
-    "date": "2020-03-08",
-    "quantity": 300000,
-    "solar_system_id": 30001664,
+    "date": "2020-03-16",
+    "quantity": 496,
+    "solar_system_id": 30001699,
     "type_id": 17452
   }
 ]
