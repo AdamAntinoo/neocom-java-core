@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.infinity.authorization.rest;
+package org.dimensinfin.eveonline.neocom.auth;
 
 
 import org.junit.jupiter.api.Assertions;
@@ -6,10 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.auth.TokenTranslationResponse;
-import org.dimensinfin.eveonline.neocom.auth.VerifyCharacterResponse;
-import org.dimensinfin.eveonline.neocom.infinity.authorization.TokenVerification;
-import org.dimensinfin.eveonline.neocom.infinity.core.exceptions.NeoComSBException;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 public class TokenVerificationTest {
 	private TokenTranslationResponse tokenTranslationResponse;
@@ -32,7 +29,7 @@ public class TokenVerificationTest {
 
 	@Test
 	public void getAccountIdentifierFailure() {
-		Assertions.assertThrows( NeoComSBException.class, () -> {
+		Assertions.assertThrows( NeoComRuntimeException.class, () -> {
 					this.tokenVerification.setVerifyCharacterResponse( null );
 					this.tokenVerification.getAccountIdentifier();
 				},
