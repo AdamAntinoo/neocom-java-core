@@ -32,7 +32,9 @@ public class NeoComBackendService {
 			final Response<List<MiningExtractionEntity>> backendApiResponse = this.retrofitFactory
 					.accessBackendConnector()
 					.create( NeoComApiv1.class )
-					.accessTodayMiningExtractions4Pilot( DEFAULT_CONTENT_TYPE, credential.getAccountId() )
+					.accessTodayMiningExtractions4Pilot( DEFAULT_CONTENT_TYPE,
+							"Bearer " + credential.getJwtToken(),
+							credential.getAccountId() )
 					.execute();
 			if (backendApiResponse.isSuccessful()) return backendApiResponse.body();
 		} catch (final IOException | RuntimeException ioe) {
