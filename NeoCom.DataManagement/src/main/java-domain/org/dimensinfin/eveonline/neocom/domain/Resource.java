@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
+import org.dimensinfin.eveonline.neocom.service.NeoItemFactory;
 
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same
@@ -24,16 +25,16 @@ import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
  * @author Adam Antinoo
  */
 public class Resource extends NeoComNode implements IAggregableItem, IItemFacet {
-	private static final long serialVersionUID = 921961484632479376L;
+	private static final long serialVersionUID = -1722630075425980171L;
 	protected int baseQty;
 	protected int stackSize = 1;
 
-	protected transient NeoItem esiItem;
+	protected transient NeoItem neoItemDelegate;
 
 	// - C O N S T R U C T O R S
 	public Resource( final int typeId ) {
 		super();
-		this.esiItem = new NeoItem( typeId );
+		this.neoItemDelegate = NeoItemFactory.getSingleton().getItemById( typeId );
 		this.baseQty = 0;
 	}
 
@@ -48,7 +49,7 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public int getBaseQuantity() {
-		return baseQty;
+		return this.baseQty;
 	}
 
 	public String getCategory() {
@@ -60,7 +61,7 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public NeoItem getItem() {
-		return Objects.requireNonNull(this.esiItem);
+		return Objects.requireNonNull( this.neoItemDelegate );
 	}
 
 	public String getName() {
@@ -95,7 +96,8 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public Resource setQuantity( final int newQuantity ) {
-		baseQty = newQuantity;
+		this.baseQty = newQuantity;
+		this.stackSize = 1;
 		return this;
 	}
 
@@ -114,11 +116,11 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 		this.setStackSize( size );
 		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Blueprint )) {
 			if (this.getItem().getTech().equalsIgnoreCase( ModelWideConstants.eveglobal.TechII )) {
-				final double stack = Math.ceil( size / 10d );
+				final double stack = Math.ceil( size / 10.0 );
 				this.setStackSize( Math.max( (int) stack, 1 ) );
 			}
 			if (this.getItem().getTech().equalsIgnoreCase( ModelWideConstants.eveglobal.TechI )) {
-				final double stack = Math.ceil( size / 300d );
+				final double stack = Math.ceil( size / 300.0 );
 				this.setStackSize( Math.max( (int) stack, 1 ) );
 			}
 		}
@@ -128,7 +130,8 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public int add( final int count ) {
-		this.baseQty += count;
+		this.baseQty = this.getQuantity() + count;
+		this.stackSize = 1;
 		return this.baseQty;
 	}
 
@@ -147,23 +150,13 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 
 	// - C O R E
 	@Override
-	public String toString() {
-		return new ToStringBuilder( this )
-				.append( "[" ).append( this.getCategory() ).append( "] " )
-				.append( getItem().getName() ).append( " x" ).append( baseQty ).append( " " )
-				.append( "stack: ", stackSize ).append( " " )
-				.append( "total: ", this.getQuantity() ).append( " " )
-				.append( "#" ).append( this.getTypeId() ).append( " " )
-				.append( "]" )
-				.toString();
-	}
-
-	public String toStringJson() {
-		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "baseQty", baseQty )
-				.append( "stackSize", stackSize )
-				.append( "esiItem", esiItem )
-				.toString();
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( this.baseQty )
+				.append( this.stackSize )
+				.append( this.neoItemDelegate.getTypeId() )
+				.toHashCode();
 	}
 
 	@Override
@@ -175,17 +168,29 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 				.appendSuper( super.equals( o ) )
 				.append( this.baseQty, resource.baseQty )
 				.append( this.stackSize, resource.stackSize )
-				.append( this.esiItem, resource.esiItem )
+				.append( this.neoItemDelegate.getTypeId(), resource.neoItemDelegate.getTypeId() )
 				.isEquals();
 	}
 
 	@Override
-	public int hashCode() {
-		return new HashCodeBuilder( 17, 37 )
-				.appendSuper( super.hashCode() )
-				.append( this.baseQty )
-				.append( this.stackSize )
-				.append( this.esiItem )
-				.toHashCode();
+	public String toString() {
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "baseQty", baseQty )
+				.append( "stackSize", stackSize )
+				.append( "name", getName() )
+				.append( "typeId", getTypeId() )
+				.append( "quantity", getQuantity() )
+				.append( "volume", getVolume() )
+				.append( "price", getPrice() )
+				.append( "jsonClass", getJsonClass() )
+				.toString();
+	}
+
+	public String toStringJson() {
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "baseQty", baseQty )
+				.append( "stackSize", stackSize )
+				.append( "esiItem", neoItemDelegate )
+				.toString();
 	}
 }
