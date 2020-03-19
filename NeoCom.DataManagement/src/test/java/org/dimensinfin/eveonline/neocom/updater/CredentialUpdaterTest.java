@@ -61,7 +61,6 @@ public class CredentialUpdaterTest {
 	public void onRun() {
 //		Mockito.when( credential.isValid() ).thenReturn( true );
 		final Credential credential = new Credential.Builder( 93813310 )
-				.withAccountId( 93813310 )
 				.withAccountName( "Perico Tuerto" )
 				.withAccessToken( "-TEST-ACCESS-TOKEN-" )
 				.withRefreshToken( "-TEST-REFRESH-TOKEN-" )

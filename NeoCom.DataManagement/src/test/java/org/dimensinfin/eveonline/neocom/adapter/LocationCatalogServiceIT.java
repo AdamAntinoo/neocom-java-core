@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
@@ -24,7 +23,6 @@ public class LocationCatalogServiceIT extends IntegrationEnvironmentDefinitionTC
 		final IConfigurationService configurationProvider = Mockito.mock( IConfigurationService.class );
 		final IFileSystem fileSystem = Mockito.mock( IFileSystem.class );
 		final ESIUniverseDataProvider esiUniverseProvider = Mockito.mock( ESIUniverseDataProvider.class );
-		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
 		final RetrofitFactory retrofitFactory = Mockito.mock( RetrofitFactory.class );
 		final LocationCatalogService locationService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( configurationProvider )
@@ -60,7 +58,6 @@ public class LocationCatalogServiceIT extends IntegrationEnvironmentDefinitionTC
 		final IConfigurationService configurationProvider = Mockito.mock( IConfigurationService.class );
 		final IFileSystem fileSystem = Mockito.mock( IFileSystem.class );
 		final ESIUniverseDataProvider esiUniverseProvider = Mockito.mock( ESIUniverseDataProvider.class );
-		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
 		final LocationCatalogService locationCatalogService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( configurationProvider )
 				.withFileSystemAdapter( fileSystem )

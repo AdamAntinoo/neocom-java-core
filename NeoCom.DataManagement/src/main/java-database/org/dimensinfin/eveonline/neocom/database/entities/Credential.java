@@ -194,7 +194,7 @@ public class Credential extends UpdatableEntity {
 	}
 
 	public String getScope() {
-		return scope;
+		return this.scope;
 	}
 
 	@Override

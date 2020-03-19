@@ -3,7 +3,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.domain.Resource;
 
 public class PlanetaryResource extends Resource {
 	// - C O N S T R U C T O R S

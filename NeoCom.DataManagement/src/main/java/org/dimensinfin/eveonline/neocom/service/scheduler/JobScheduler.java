@@ -11,7 +11,6 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
 import org.dimensinfin.eveonline.neocom.annotation.Singleton;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.converter.JobToJobRecordConverter;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.CronScheduleGenerator;
@@ -107,9 +106,9 @@ public class JobScheduler {
 		job.setStatus( JobStatus.SCHEDULED );
 		try {
 			schedulerExecutor.submit( job );
-		} catch (final NeoComRuntimeException neoe) {
+		} catch (final RuntimeException neoe) {
 			job.setStatus( JobStatus.EXCEPTION );
-			NeoComLogger.error( "RT [JobScheduler.submit]> Runtime exception: {}", neoe );
+			NeoComLogger.error( "Runtime exception: {}", neoe );
 		}
 	}
 }

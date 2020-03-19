@@ -67,6 +67,7 @@ dependencies {
     testImplementation "org.testcontainers:postgresql:1.9.1"
     testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'com.openpojo:openpojo:0.8.12'
+    testImplementation 'org.awaitility:awaitility:4.0.2'
     // D A T A B A S E
     testImplementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
     testImplementation 'org.postgresql:postgresql:42.2.5'

@@ -2,11 +2,13 @@ package org.dimensinfin.eveonline.neocom.service.scheduler;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,8 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.domain.CronScheduleGen
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobRecord;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class JobSchedulerTest {
 	@Test
@@ -38,7 +42,6 @@ public class JobSchedulerTest {
 	@Test
 	public void getJobCount() {
 		final Job job = Mockito.mock( Job.class );
-//		Mockito.when( job.getIdentifier() ).thenReturn( "-TEST-JOB-IDENTIFIER-" );
 		JobScheduler.getJobScheduler().clear();
 		Assertions.assertEquals( 0, JobScheduler.getJobScheduler().getJobCount() );
 		JobScheduler.getJobScheduler().registerJob( job );
@@ -54,7 +57,6 @@ public class JobSchedulerTest {
 	public void registerJob() {
 		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
 		final Job job = Mockito.mock( Job.class );
-//		Mockito.when( job.getIdentifier() ).thenReturn( identifier );
 
 		JobScheduler.getJobScheduler().clear();
 		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().registerJob( job ) );
@@ -82,23 +84,18 @@ public class JobSchedulerTest {
 		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
 	}
 
-	/**
-	 * JobScheduler now is a global singleton so different calls to the same instance really modify the global singleton. This
-	 * is why the second test will not fire an exception because it does test an already set field. Once set a schedule
-	 * generator it is not possible with the api to clear that field.
-	 */
-//	@Test
-//	void buildFailure() {
-//		final CronScheduleGenerator scheduleGenerator = Mockito.mock( CronScheduleGenerator.class );
-//		NullPointerException thrown = Assertions.assertThrows( NullPointerException.class,
-//				() -> new JobScheduler.Builder()
-//						.withCronScheduleGenerator( null )
-//						.build(),
-//				"Expected JobScheduler.Builder() to throw null verification, but it didn't." );
-//		Assertions.assertNull( thrown.getMessage() );
-//		final JobScheduler alreadyExistingScheduler = new JobScheduler.Builder().build();
-//		Assertions.assertNotNull( alreadyExistingScheduler );
-//	}
+	@Test
+	public void registerJobValidatingReporting() {
+		// Given
+		final Job job = Mockito.mock( Job.class );
+		// Test
+		JobScheduler.getJobScheduler().registerJob( job );
+		JobScheduler.getJobScheduler().registerJob( job );
+		// Assertions
+		Mockito.verify( job, Mockito.times( 3 ) ).getUniqueIdentifier();
+
+	}
+
 	@Test
 	public void runSchedule() {
 		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
@@ -116,7 +113,6 @@ public class JobSchedulerTest {
 	public void runScheduleWithException() {
 		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
 		final Job job = Mockito.mock( Job.class );
-//		Mockito.when( job.getIdentifier() ).thenReturn( identifier );
 		Mockito.when( job.getSchedule() ).thenReturn( "* - *" );
 
 		JobScheduler.getJobScheduler().clear();
@@ -127,7 +123,20 @@ public class JobSchedulerTest {
 		Mockito.verify( schedulerSpy, Mockito.times( 1 ) ).scheduleJob( Mockito.any( Job.class ) );
 	}
 
-	//	@Test
+	@Test
+	public void scheduleJob() {
+		// Given
+		final Job4TestRegistration job = new Job4TestRegistration.Builder()
+				.withRegistrationTest( "-REGISTRATION-" )
+				.build();
+		Assertions.assertEquals( JobStatus.READY, job.getStatus() );
+		// Test
+		JobScheduler.getJobScheduler().scheduleJob( job );
+		// Assertions
+		Assertions.assertEquals( JobStatus.SCHEDULED, job.getStatus() );
+	}
+
+	@Test
 	public void scheduleJobFailure() {
 		// Given
 		final Job4TestException job = new Job4TestException();
@@ -135,7 +144,23 @@ public class JobSchedulerTest {
 		// Test
 		JobScheduler.getJobScheduler().runSchedule();
 		// Assertions
+		Awaitility.await().atMost( 5, SECONDS ).until( this.jobGeneratesException( job ) );
 		Assertions.assertEquals( JobStatus.EXCEPTION, job.getStatus() );
+	}
+
+	@Test
+	public void scheduleJobWithRegistration() {
+		// Given
+		final Job4TestRegistration job = new Job4TestRegistration.Builder()
+				.withRegistrationTest( "-REGISTRATION-" )
+				.build();
+		Assertions.assertEquals( JobStatus.READY, job.getStatus() );
+		// Test
+		JobScheduler.getJobScheduler().registerJob( job );
+		JobScheduler.getJobScheduler().runSchedule();
+		// Assertions
+		Awaitility.await().atMost( 5, SECONDS ).until( this.jobIsScheduled( job ) );
+		Assertions.assertEquals( JobStatus.SCHEDULED, job.getStatus() );
 	}
 
 	@Test
@@ -151,6 +176,14 @@ public class JobSchedulerTest {
 	@Test
 	public void wait4Completion() throws InterruptedException {
 		Assertions.assertTrue( JobScheduler.getJobScheduler().wait4Completion() );
+	}
+
+	private Callable<Boolean> jobGeneratesException( final Job job ) {
+		return () -> job.getStatus().equals( JobStatus.EXCEPTION );
+	}
+
+	private Callable<Boolean> jobIsScheduled( final Job job ) {
+		return () -> job.getStatus().equals( JobStatus.SCHEDULED );
 	}
 
 	public static class Job4TestRegistration extends Job {
@@ -199,6 +232,10 @@ public class JobSchedulerTest {
 		public static class Builder extends Job.Builder<Job4TestRegistration, Job4TestRegistration.Builder> {
 			private Job4TestRegistration onConstruction;
 
+			public Builder() {
+				this.onConstruction = new Job4TestRegistration();
+			}
+
 			@Override
 			protected Job4TestRegistration getActual() {
 				if (null == this.onConstruction) this.onConstruction = new Job4TestRegistration();
@@ -227,13 +264,18 @@ public class JobSchedulerTest {
 		}
 
 		@Override
-		public Boolean call() throws Exception {
+		public Boolean call() {
+			this.setStatus( JobStatus.EXCEPTION );
 			throw new NeoComRuntimeException( "This is the test exception expected." );
 		}
 
 		// - B U I L D E R
 		public static class Builder extends Job.Builder<Job4TestException, Job4TestException.Builder> {
 			private Job4TestException onConstruction;
+
+			public Builder() {
+				this.onConstruction = new Job4TestException();
+			}
 
 			@Override
 			protected Job4TestException getActual() {

@@ -33,7 +33,6 @@
 >* ESIDataProvider
 >* ESIUniverseDataProvider
 >* PlanetaryResource
->* PlanetaryResource
->* EsiLocation - DELETED
->* Credential
+> EsiLocation - DELETED
+> Credential
 

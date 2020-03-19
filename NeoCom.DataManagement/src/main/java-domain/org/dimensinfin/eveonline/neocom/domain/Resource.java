@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.industry;
+package org.dimensinfin.eveonline.neocom.domain;
 
 import java.util.Objects;
 
@@ -9,9 +9,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
-import org.dimensinfin.eveonline.neocom.domain.IItemFacet;
-import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
-import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same

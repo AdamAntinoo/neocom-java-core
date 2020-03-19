@@ -15,7 +15,6 @@ import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
-import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
@@ -152,7 +151,6 @@ public class IntegrationEnvironmentDefinition {
 				.withStoreCacheManager( this.itStoreCacheManager )
 				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();
-		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
 		this.itLocationCatalogService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )

@@ -173,10 +173,10 @@ public class ESIUniverseDataProvider {
 			final Response<GetUniverseStationsStationIdOk> stationResponse = this.retrofitFactory
 					.accessUniverseConnector()
 					.create( UniverseApi.class )
-					.getUniverseStationsStationId( stationId
-							, DEFAULT_ESI_SERVER.toLowerCase(), null )
+					.getUniverseStationsStationId( stationId, DEFAULT_ESI_SERVER, null )
 					.execute();
-			if (stationResponse.isSuccessful()) return stationResponse.body();
+			if (stationResponse.isSuccessful())
+				return stationResponse.body();
 		} catch (final IOException ioe) {
 			NeoComLogger.error( "IOException during ESI data access.", ioe );
 		}
@@ -247,11 +247,6 @@ public class ESIUniverseDataProvider {
 
 		public Builder() {
 			this.onConstruction = new ESIUniverseDataProvider();
-		}
-
-		public Builder( final ESIUniverseDataProvider preInstance ) {
-			if (null != preInstance) this.onConstruction = preInstance;
-			else this.onConstruction = new ESIUniverseDataProvider();
 		}
 
 		public ESIUniverseDataProvider build() {
