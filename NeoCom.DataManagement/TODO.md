@@ -5,11 +5,10 @@
 [CLASSES TO COMPLETE UNIT TESTING]
 
 >* NeoAsset
->* SpaceKLocation
+>* SpaceKLocation - DELETED
 >* LocationIdentifier
->* LocationRepository
+>* LocationRepository - DELETED
 >* StoreCacheManager
->* ESIUniverseDataProvider
 >* AssetsRepository
 >* AssetsProvider
 >* EsiLocation2SpaceKLocationConverter
@@ -36,4 +35,5 @@
 >* PlanetaryResource
 >* PlanetaryResource
 >* EsiLocation - DELETED
+>* Credential
 

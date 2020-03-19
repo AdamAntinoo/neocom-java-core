@@ -197,6 +197,27 @@ public class Credential extends UpdatableEntity {
 		return scope;
 	}
 
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( this.accountId )
+				.append( this.corporationId )
+				.append( this.assetsCount )
+				.append( this.accessToken )
+				.append( this.tokenType )
+				.append( this.dataSource )
+				.append( this.scope )
+				.append( this.uniqueCredential )
+				.append( this.walletBalance )
+				.append( this.refreshToken )
+				.append( this.miningResourcesEstimatedValue )
+				.append( this.accountName )
+				.append( this.raceName )
+				.append( this.jwtToken )
+				.toHashCode();
+	}
+
 	// - C O R E
 	@Override
 	public boolean equals( final Object o ) {
@@ -220,27 +241,6 @@ public class Credential extends UpdatableEntity {
 				.append( this.raceName, that.raceName )
 				.append( this.jwtToken, that.jwtToken )
 				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder( 17, 37 )
-				.appendSuper( super.hashCode() )
-				.append( this.accountId )
-				.append( this.corporationId )
-				.append( this.assetsCount )
-				.append( this.accessToken )
-				.append( this.tokenType )
-				.append( this.dataSource )
-				.append( this.scope )
-				.append( this.uniqueCredential )
-				.append( this.walletBalance )
-				.append( this.refreshToken )
-				.append( this.miningResourcesEstimatedValue )
-				.append( this.accountName )
-				.append( this.raceName )
-				.append( this.jwtToken )
-				.toHashCode();
 	}
 
 	@Override
@@ -291,6 +291,7 @@ public class Credential extends UpdatableEntity {
 			if (null != dataSource) this.onConstruction.dataSource = dataSource;
 			return this;
 		}
+
 		public Builder withRefreshToken( final String refreshToken ) {
 			if (null != refreshToken) this.onConstruction.refreshToken = refreshToken;
 			return this;

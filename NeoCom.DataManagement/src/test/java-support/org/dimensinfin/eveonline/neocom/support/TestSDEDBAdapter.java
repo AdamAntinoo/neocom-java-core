@@ -5,17 +5,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import com.j256.ormlite.dao.Dao;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.RawStatement;
 import org.dimensinfin.eveonline.neocom.database.SBRawStatement;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 
 public class TestSDEDBAdapter implements ISDEDatabaseAdapter {
     protected static Logger logger = LoggerFactory.getLogger(TestSDEDBAdapter.class);
@@ -35,11 +31,6 @@ public class TestSDEDBAdapter implements ISDEDatabaseAdapter {
     @Override
     public Integer getDatabaseVersion() {
         return this.databaseVersion;
-    }
-
-    @Override
-    public Dao<EsiLocation, Long> getLocationDao() throws NeoComRuntimeException {
-        return Mockito.mock(Dao.class);
     }
 
     protected String getConnectionDescriptor() {
