@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
@@ -17,7 +14,6 @@ import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.annotation.RequiresNetwork;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
@@ -67,8 +63,7 @@ import retrofit2.Response;
 public class ESIDataProvider extends ESIUniverseDataProvider {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
-	//	public static final String DEFAULT_CONTENT_TYPE = "application/json";
-	//	private static final List<Long> id4Names = new ArrayList<>();
+	private static final String CREDENTIAL_LOG_LITERAL="Credential: {}";
 	// - C A C H E S
 	private static final Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
 	private static final Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
@@ -97,7 +92,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 
 	@TimeElapsed
 	public List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final Credential credential ) {
-//		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+		NeoComLogger.enter( CREDENTIAL_LOG_LITERAL, credential.toString() );
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -121,13 +116,15 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 			}
 		} catch (IOException | RuntimeException ioe) {
 			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
 		}
 		return returnAssetList;
 	}
 
 	@TimeElapsed
 	public List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final Credential credential ) {
-//		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+		NeoComLogger.enter( CREDENTIAL_LOG_LITERAL, credential.toString() );
 		List<GetCharactersCharacterIdBlueprints200Ok> returnBlueprintList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -154,13 +151,15 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 			}
 		} catch (IOException | RuntimeException ioe) {
 			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
 		}
 		return returnBlueprintList;
 	}
 
 	@TimeElapsed
 	public List<GetCharactersCharacterIdFittings200Ok> getCharactersCharacterIdFittings( final Credential credential ) {
-//		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+		NeoComLogger.enter( CREDENTIAL_LOG_LITERAL, credential.toString() );
 		try {
 			final Response<List<GetCharactersCharacterIdFittings200Ok>> fittingsResponse = this.retrofitFactory
 					.accessAuthenticatedConnector( credential )
@@ -174,7 +173,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		} finally {
 			NeoComLogger.exit();
 		}
-		return null;
+		return new ArrayList<>(  );
 	}
 
 	/**
@@ -188,7 +187,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	 */
 	@TimeElapsed
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
-		NeoComLogger.enter( "Credential: {}", credential.toString() );
+		NeoComLogger.enter( CREDENTIAL_LOG_LITERAL, credential.toString() );
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -221,7 +220,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 
 	@TimeElapsed
 	public List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final Credential credential ) {
-//		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+		NeoComLogger.enter( CREDENTIAL_LOG_LITERAL, credential.toString() );
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.retrofitFactory
@@ -243,7 +242,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	@TimeElapsed
 	public GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final Integer planetId,
 	                                                                                          final Credential credential ) {
-//		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+		NeoComLogger.enter( CREDENTIAL_LOG_LITERAL, credential.toString() );
 		try {
 			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.retrofitFactory
 					.accessAuthenticatedConnector( credential )
@@ -264,7 +263,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 
 	@TimeElapsed
 	public Double getCharactersCharacterIdWallet( final Credential credential ) {
-//		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+		NeoComLogger.enter( CREDENTIAL_LOG_LITERAL, credential.toString() );
 		try {
 			final Response<Double> walletApiResponse = this.retrofitFactory
 					.accessAuthenticatedConnector( credential )
@@ -282,9 +281,9 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	}
 
 	@TimeElapsed
-	public List<GetCorporationsCorporationIdAssets200Ok> getCorporationsCorporationIdAssets( final Credential credential
-			, final Integer corporationId ) {
-//		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+	public List<GetCorporationsCorporationIdAssets200Ok> getCorporationsCorporationIdAssets( final Credential credential,
+	                                                                                         final Integer corporationId ) {
+		NeoComLogger.enter( CREDENTIAL_LOG_LITERAL, credential.toString() );
 		List<GetCorporationsCorporationIdAssets200Ok> returnAssetList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -308,6 +307,8 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 			}
 		} catch (IOException | RuntimeException ioe) {
 			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
 		}
 		return returnAssetList;
 	}
@@ -337,28 +338,20 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 
 	@TimeElapsed
 	public GetUniverseSchematicsSchematicIdOk getUniversePlanetarySchematicsById( final int schematicId ) {
-		logger.info( ">> [ESIDataProvider.getUniversePlanetarySchematicsById]" );
-		final DateTime startTimePoint = DateTime.now();
+		NeoComLogger.enter( "Schematic id: {}", Integer.toString( schematicId ) );
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = this.retrofitFactory
 					.accessUniverseConnector()
 					.create( PlanetaryInteractionApi.class )
 					.getUniverseSchematicsSchematicId(
-							schematicId
-							, DEFAULT_ESI_SERVER
-							, null )
+							schematicId, DEFAULT_ESI_SERVER, null )
 					.execute();
-			if (!schematicistResponse.isSuccessful()) {
-				return null;
-			} else return schematicistResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (RuntimeException runtime) {
-			runtime.printStackTrace();
+			if (schematicistResponse.isSuccessful()) return schematicistResponse.body();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
 		} finally {
-			logger.info( "<< [ESIDataProvider.getUniverseMarketsPrices]> [TIMING] Full elapsed: {}"
-					, new Duration( startTimePoint, DateTime.now() ).getMillis() + "ms" );
+			NeoComLogger.exit();
 		}
 		return null;
 	}
@@ -422,7 +415,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		} finally {
 			NeoComLogger.exit();
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	public List<PostCorporationsCorporationIdAssetsNames200Ok> postCorporationsCorporationIdAssetsNames( final List<Long> listItemIds,
@@ -444,32 +437,23 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		} finally {
 			NeoComLogger.exit();
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
+	@Override
 	public GetUniverseTypesTypeIdOk searchEsiItem4Id( final int itemId ) {
 		return this.storeCacheManager.accessItem( itemId ).blockingGet();
 	}
 
+	@Override
 	@TimeElapsed
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
-		logger.info( "-- [ESIDataProvider.searchItemCategory4Id]> categoryId: {}", categoryId );
 		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
 	}
 
+	@Override
 	public GetUniverseGroupsGroupIdOk searchItemGroup4Id( final int groupId ) {
-		logger.info( "-- [ESIDataProvider.searchItemGroup4Id]> targetGroupId: {}", groupId );
 		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
-	}
-
-	@Deprecated
-	public EsiLocation searchLocation4Id( final Long locationId ) {
-		return null;
-	}
-
-	@Deprecated
-	public EsiLocation searchLocation4Id( final Integer locationId ) {
-		return null;
 	}
 
 	@RequiresNetwork
@@ -493,23 +477,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		return racesCache.get( identifier );
 	}
 
-//	@Deprecated
-//	@RequiresNetwork
-//	public GetUniverseStructuresStructureIdOk searchStructureById( final Long structureId, final Credential credential ) {
-//		try {
-//			String datasource = DEFAULT_ESI_SERVER;
-//			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
-//					.accessAuthenticatedConnector( credential )
-//					.create( UniverseApi.class )
-//					.getUniverseStructuresStructureId( structureId, datasource, null, credential.getAccessToken() )
-//					.execute();
-//			if (universeResponse.isSuccessful()) return universeResponse.body();
-//		} catch (final IOException | RuntimeException ioe) {
-//			NeoComLogger.error( ioe );
-//		}
-//		return null;
-//	}
-
 	private synchronized void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
 		final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces( DEFAULT_ESI_SERVER );
@@ -531,62 +498,53 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 
 	@TimeElapsed
 	private List<GetUniverseAncestries200Ok> getUniverseAncestries( final String datasource ) {
-//		NeoComLogger.enter();
 		try {
 			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = this.retrofitFactory
 					.accessUniverseConnector()
 					.create( UniverseApi.class )
 					.getUniverseAncestries(
 							DEFAULT_ACCEPT_LANGUAGE,
-							datasource, null, "en-us" )
+							datasource, null, DEFAULT_ACCEPT_LANGUAGE )
 					.execute();
 			if (ancestriesList.isSuccessful()) return ancestriesList.body();
 			else return new ArrayList<>();
 		} catch (final IOException ioe) {
-			NeoComLogger.error(ioe);
-		} finally {
-//			NeoComLogger.exit();
+			NeoComLogger.error( ioe );
 		}
 		return new ArrayList<>();
 	}
 
 	@TimeElapsed
 	private List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String datasource ) {
-//		NeoComLogger.enter();
 		try {
 			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = this.retrofitFactory
 					.accessUniverseConnector()
 					.create(
 							UniverseApi.class )
-					.getUniverseBloodlines(
-							DEFAULT_ACCEPT_LANGUAGE,
-							datasource, null, "en-us" )
+					.getUniverseBloodlines( DEFAULT_ACCEPT_LANGUAGE, datasource,
+							null, DEFAULT_ACCEPT_LANGUAGE )
 					.execute();
 			if (bloodLinesList.isSuccessful()) return bloodLinesList.body();
 			else return new ArrayList<>();
 		} catch (final IOException ioe) {
-			NeoComLogger.error(ioe);
-		} finally {
-//			NeoComLogger.exit();
+			NeoComLogger.error( ioe );
 		}
 		return new ArrayList<>();
 	}
 
 	@TimeElapsed
 	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
-//		NeoComLogger.enter();
 		try {
 			final Response<List<GetUniverseRaces200Ok>> racesList = this.retrofitFactory
 					.accessUniverseConnector()
 					.create( UniverseApi.class )
-					.getUniverseRaces( DEFAULT_ACCEPT_LANGUAGE, datasource, null, "en-us" )
+					.getUniverseRaces( DEFAULT_ACCEPT_LANGUAGE, datasource,
+							null, DEFAULT_ACCEPT_LANGUAGE )
 					.execute();
 			if (racesList.isSuccessful()) return racesList.body();
 			else return new ArrayList<>();
 		} catch (final IOException ioe) {
-			NeoComLogger.error(ioe);
-		} finally {
-//			NeoComLogger.exit();
+			NeoComLogger.error( ioe );
 		}
 		return new ArrayList<>();
 	}

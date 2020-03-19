@@ -1,34 +1,25 @@
 package org.dimensinfin.eveonline.neocom.planetary;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 public class PlanetaryResource extends Resource {
-	public org.dimensinfin.eveonline.neocom.planetary.PlanetaryResourceTierType tier = org.dimensinfin.eveonline.neocom.planetary.PlanetaryResourceTierType.RAW;
-
 	// - C O N S T R U C T O R S
 	public PlanetaryResource( final int typeId ) {
 		super( typeId );
 	}
 
-	public PlanetaryResource( final int typeId, final int qty ) {
-		super( typeId, qty );
+	public PlanetaryResourceTierType getTier() {
+		return PlanetaryResourceTierType.searchTierType4Group( this.getItem().getGroupName() );
 	}
 
-	public String getName() {
-		return this.getName();
-	}
-
-	public org.dimensinfin.eveonline.neocom.planetary.PlanetaryResourceTierType getTier() {
-		return org.dimensinfin.eveonline.neocom.planetary.PlanetaryResourceTierType.searchTierType4Group( this.getItem().getGroupName() );
-	}
-
+	// - C O R E
 	@Override
 	public String toString() {
-		return new ToStringBuilder( this )
-				.append( "tier", tier )
-//				       .append("typeId", typeId)
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "tier", this.getTier() )
 				.append( super.toString() )
 				.toString();
 	}

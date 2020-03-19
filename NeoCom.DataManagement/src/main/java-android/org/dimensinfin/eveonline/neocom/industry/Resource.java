@@ -30,7 +30,6 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	private static final long serialVersionUID = 921961484632479376L;
 	protected int baseQty;
 	protected int stackSize = 1;
-	protected double damage = 1.0;
 
 	protected transient NeoItem esiItem;
 
@@ -38,7 +37,6 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	public Resource( final int typeId ) {
 		super();
 		this.esiItem = new NeoItem( typeId );
-		Objects.requireNonNull( this.esiItem );
 		this.baseQty = 0;
 	}
 
@@ -60,21 +58,12 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 		return this.getItem().getCategoryName();
 	}
 
-	public double getDamage() {
-		return damage;
-	}
-
-	public Resource setDamage( final double damage ) {
-		this.damage = damage;
-		return this;
-	}
-
 	public String getGroupName() {
-		return getItem().getGroupName();
+		return this.getItem().getGroupName();
 	}
 
 	public NeoItem getItem() {
-		return this.esiItem;
+		return Objects.requireNonNull(this.esiItem);
 	}
 
 	public String getName() {
@@ -96,8 +85,7 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public int getTypeId() {
-		Objects.requireNonNull( this.esiItem );
-		return this.esiItem.getTypeId();
+		return this.getItem().getTypeId();
 	}
 
 	/**
@@ -125,7 +113,6 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	// - I A G G R E G A B L E I T E M
-
 	public void setAdaptiveStackSize( final int size ) {
 		this.setStackSize( size );
 		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Blueprint )) {
@@ -178,7 +165,6 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
 				.append( "baseQty", baseQty )
 				.append( "stackSize", stackSize )
-				.append( "damage", damage )
 				.append( "esiItem", esiItem )
 				.toString();
 	}
@@ -192,7 +178,6 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 				.appendSuper( super.equals( o ) )
 				.append( this.baseQty, resource.baseQty )
 				.append( this.stackSize, resource.stackSize )
-				.append( this.damage, resource.damage )
 				.append( this.esiItem, resource.esiItem )
 				.isEquals();
 	}
@@ -203,7 +188,6 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 				.appendSuper( super.hashCode() )
 				.append( this.baseQty )
 				.append( this.stackSize )
-				.append( this.damage )
 				.append( this.esiItem )
 				.toHashCode();
 	}

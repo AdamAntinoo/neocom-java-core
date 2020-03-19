@@ -1,4 +1,4 @@
-[DEVELOPMENT FOLLOWUP]
+	[DEVELOPMENT FOLLOWUP]
 >* NeoComBackendService
 >* TokenVerification
 
@@ -28,3 +28,10 @@
 [OPTIONAL CLASSES TO DO UNIT TESTING]
 >* AssetContainer
 >* LocationRepository
+>* MiningExtractionAggregationByHour
+
+[NEW UNIT TESTING]
+>* ESIDataProvider
+>* ESIUniverseDataProvider
+>* PlanetaryResource
+

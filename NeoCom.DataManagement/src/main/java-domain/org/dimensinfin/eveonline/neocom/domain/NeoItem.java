@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Future;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -37,24 +36,9 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 	 */
 	private double price = -1.0;
 	private String tech = EveGlobalConstants.TechI;
-	//	/**
-	//	 * This is the default price set for an item at the SDE database. This price should not be changed and there should be
-	//	 * methods to get any other price set from the market data.
-	//	 */
-	//	private double baseprice = -1.0;
 	// - A D D I T I O N A L   F I E L D S
 	private transient IndustryGroup industryGroup = IndustryGroup.UNDEFINED;
-	/**
-	 * This represents the market data for the BUY market orders present at different selected systems. This element and the
-	 * next are lazy evaluated as futures and should enqueue market requests for background threads.
-	 */
-	@Deprecated
-	private transient Future<String> futureBuyerData;
-	/**
-	 * The same but for SELLER orders present at the market.
-	 */
-	@Deprecated
-	private transient Future<String> futureSellerData;
+
 	// - C O N S T R U C T O R S
 	@Deprecated
 	public NeoItem() {
@@ -66,16 +50,19 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 		this.item = sdeItem;
 	}
 
+	@Deprecated
 	@RequiresNetwork
 	public NeoItem( final int typeId ) {
 		this.id = typeId;
 		this.loadup();
 	}
 
+	@Deprecated
 	public static void injectEsiUniverseDataAdapter( final ESIUniverseDataProvider newEsiUniverseDataProvider ) {
 		esiUniverseDataProvider = newEsiUniverseDataProvider;
 	}
 
+	@Deprecated
 	@RequiresNetwork
 	private void loadup() {
 		try {
