@@ -119,18 +119,6 @@ public class Credential extends UpdatableEntity {
 		return this.accountId;
 	}
 
-	/**
-	 * @param accountId the new account identifier to be set
-	 * @return the self instance.
-	 * @deprecated
-	 */
-	@Deprecated
-	public Credential setAccountId( final Integer accountId ) {
-		this.accountId = accountId;
-		this.uniqueCredential = Credential.createUniqueIdentifier( this.dataSource, this.accountId );
-		return this;
-	}
-
 	public String getAccountName() {
 		return this.accountName;
 	}
@@ -167,17 +155,6 @@ public class Credential extends UpdatableEntity {
 
 	public String getDataSource() {
 		return this.dataSource.toLowerCase();
-	}
-
-	/**
-	 * This is mostly not required since there is only a single data source.
-	 *
-	 * @param dataSource the data source to be set.
-	 * @deprecated
-	 */
-	@Deprecated
-	public void setDataSource( final String dataSource ) {
-		if (null != dataSource) this.dataSource = dataSource.toLowerCase();
 	}
 
 	public Double getWalletBalance() {
@@ -241,6 +218,7 @@ public class Credential extends UpdatableEntity {
 				.append( this.miningResourcesEstimatedValue, that.miningResourcesEstimatedValue )
 				.append( this.accountName, that.accountName )
 				.append( this.raceName, that.raceName )
+				.append( this.jwtToken, that.jwtToken )
 				.isEquals();
 	}
 
@@ -261,6 +239,7 @@ public class Credential extends UpdatableEntity {
 				.append( this.miningResourcesEstimatedValue )
 				.append( this.accountName )
 				.append( this.raceName )
+				.append( this.jwtToken )
 				.toHashCode();
 	}
 
@@ -272,6 +251,7 @@ public class Credential extends UpdatableEntity {
 				.append( "walletBalance", this.walletBalance )
 				.append( "assetsCount", this.assetsCount )
 				.append( "miningResourcesEstimatedValue", this.miningResourcesEstimatedValue )
+				.append( "accountId", this.accountId )
 				.append( "accountName", this.accountName )
 				.append( "raceName", this.raceName )
 				.toString();
@@ -297,24 +277,8 @@ public class Credential extends UpdatableEntity {
 			return this;
 		}
 
-		/**
-		 * This should not be used since the credential identifier is set when creating the credential on the Builder.
-		 *
-		 * @deprecated
-		 */
-		@Deprecated
-		public Builder withAccountId( final Integer accountId ) {
-			if (null != accountId) this.onConstruction.accountId = accountId;
-			return this;
-		}
-
 		public Builder withAccountName( final String accountName ) {
 			if (null != accountName) this.onConstruction.accountName = accountName;
-			return this;
-		}
-
-		public Builder withAssetsCount( final Integer assetsCount ) {
-			if (null != assetsCount) this.onConstruction.assetsCount = assetsCount;
 			return this;
 		}
 
@@ -327,18 +291,6 @@ public class Credential extends UpdatableEntity {
 			if (null != dataSource) this.onConstruction.dataSource = dataSource;
 			return this;
 		}
-
-		public Builder withMiningResourcesEstimatedValue( final Double miningResourcesEstimatedValue ) {
-			if (null != miningResourcesEstimatedValue)
-				this.onConstruction.miningResourcesEstimatedValue = miningResourcesEstimatedValue;
-			return this;
-		}
-
-		public Builder withRaceName( final String raceName ) {
-			if (null != raceName) this.onConstruction.raceName = raceName;
-			return this;
-		}
-
 		public Builder withRefreshToken( final String refreshToken ) {
 			if (null != refreshToken) this.onConstruction.refreshToken = refreshToken;
 			return this;
@@ -351,11 +303,6 @@ public class Credential extends UpdatableEntity {
 
 		public Builder withTokenType( final String tokenType ) {
 			if (null != tokenType) this.onConstruction.tokenType = tokenType;
-			return this;
-		}
-
-		public Builder withWalletBalance( final Double walletBalance ) {
-			if (null != walletBalance) this.onConstruction.walletBalance = walletBalance;
 			return this;
 		}
 	}
