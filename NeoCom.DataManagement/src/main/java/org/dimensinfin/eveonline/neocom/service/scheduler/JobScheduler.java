@@ -70,10 +70,11 @@ public class JobScheduler {
 	}
 
 	public int registerJob( final Job job2Register ) {
-		NeoComLogger.info( "Registering job: (#{}) - {}",
-				job2Register.getUniqueIdentifier() + "",
-				job2Register.getClass().getSimpleName() );
-		this.jobsRegistered.put( job2Register.getUniqueIdentifier(), job2Register );
+		final Job registration = this.jobsRegistered.put( job2Register.getUniqueIdentifier(), job2Register );
+		if (null == registration)
+			NeoComLogger.info( "Registering job: (#{}) - {}",
+					job2Register.getUniqueIdentifier() + "",
+					job2Register.getClass().getSimpleName() );
 		return this.jobsRegistered.size();
 	}
 
@@ -97,12 +98,9 @@ public class JobScheduler {
 		try {
 			schedulerExecutor.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
 			return true;
-//		} catch (final InterruptedException ie) {
-//			NeoComLogger.info( "Scheduler terminated by external event." );
 		} finally {
 			NeoComLogger.exit();
 		}
-//		return false;
 	}
 
 	protected void scheduleJob( final Job job ) {

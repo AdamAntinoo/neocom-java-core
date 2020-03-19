@@ -34,4 +34,6 @@
 >* ESIDataProvider
 >* ESIUniverseDataProvider
 >* PlanetaryResource
+>* PlanetaryResource
+>* EsiLocation - DELETED
 
