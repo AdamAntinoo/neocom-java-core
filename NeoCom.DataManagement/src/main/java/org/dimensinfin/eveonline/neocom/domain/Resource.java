@@ -7,7 +7,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.service.NeoItemFactory;
 
@@ -112,22 +111,22 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	// - I A G G R E G A B L E I T E M
-	public void setAdaptiveStackSize( final int size ) {
-		this.setStackSize( size );
-		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Blueprint )) {
-			if (this.getItem().getTech().equalsIgnoreCase( ModelWideConstants.eveglobal.TechII )) {
-				final double stack = Math.ceil( size / 10.0 );
-				this.setStackSize( Math.max( (int) stack, 1 ) );
-			}
-			if (this.getItem().getTech().equalsIgnoreCase( ModelWideConstants.eveglobal.TechI )) {
-				final double stack = Math.ceil( size / 300.0 );
-				this.setStackSize( Math.max( (int) stack, 1 ) );
-			}
-		}
-		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Skill )) {
-			this.setStackSize( 1 );
-		}
-	}
+//	public void setAdaptiveStackSize( final int size ) {
+//		this.setStackSize( size );
+//		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Blueprint )) {
+//			if (this.getItem().getTech().equalsIgnoreCase( ModelWideConstants.eveglobal.TechII )) {
+//				final double stack = Math.ceil( size / 10.0 );
+//				this.setStackSize( Math.max( (int) stack, 1 ) );
+//			}
+//			if (this.getItem().getTech().equalsIgnoreCase( ModelWideConstants.eveglobal.TechI )) {
+//				final double stack = Math.ceil( size / 300.0 );
+//				this.setStackSize( Math.max( (int) stack, 1 ) );
+//			}
+//		}
+//		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Skill )) {
+//			this.setStackSize( 1 );
+//		}
+//	}
 
 	public int add( final int count ) {
 		this.baseQty = this.getQuantity() + count;
@@ -186,11 +185,11 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 				.toString();
 	}
 
-	public String toStringJson() {
-		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "baseQty", baseQty )
-				.append( "stackSize", stackSize )
-				.append( "esiItem", neoItemDelegate )
-				.toString();
-	}
+//	public String toStringJson() {
+//		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+//				.append( "baseQty", baseQty )
+//				.append( "stackSize", stackSize )
+//				.append( "esiItem", neoItemDelegate )
+//				.toString();
+//	}
 }
