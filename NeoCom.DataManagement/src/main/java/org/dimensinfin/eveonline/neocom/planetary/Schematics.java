@@ -2,6 +2,8 @@ package org.dimensinfin.eveonline.neocom.planetary;
 
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.planetary.domain.PlanetaryResource;
+
 /**
  * This schematic will define a input or a output for a planetary interaction transformation process delivered by a factory. To simplify
  * instance structure each of the components of the transformation have the whole data related to the schematic, both the name and cycle data

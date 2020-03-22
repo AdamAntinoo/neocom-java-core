@@ -1,9 +1,10 @@
-package org.dimensinfin.eveonline.neocom.planetary;
+package org.dimensinfin.eveonline.neocom.planetary.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.dimensinfin.eveonline.neocom.domain.Resource;
+import org.dimensinfin.eveonline.neocom.planetary.PlanetaryResourceTierType;
 
 public class PlanetaryResource extends Resource {
 	// - C O N S T R U C T O R S
@@ -18,9 +19,8 @@ public class PlanetaryResource extends Resource {
 	// - C O R E
 	@Override
 	public String toString() {
-		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "tier", this.getTier() )
-				.append( super.toString() )
+		return new ToStringBuilder( this , ToStringStyle.JSON_STYLE)
+				.append( "tier", this.getTier().name() )
 				.toString();
 	}
 }

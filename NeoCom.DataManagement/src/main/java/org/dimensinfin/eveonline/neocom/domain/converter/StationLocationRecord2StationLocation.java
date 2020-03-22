@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.converter;
+package org.dimensinfin.eveonline.neocom.domain.converter;
 
 public class StationLocationRecord2StationLocation {
 	private StationLocationRecord2StationLocation() {}
