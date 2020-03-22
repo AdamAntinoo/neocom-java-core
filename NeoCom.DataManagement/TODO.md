@@ -32,7 +32,7 @@
 [NEW UNIT TESTING]
 >* ESIDataProvider
 >* ESIUniverseDataProvider
->* PlanetaryResource
+> PlanetaryResource
 > EsiLocation - DELETED
 > Credential
 
