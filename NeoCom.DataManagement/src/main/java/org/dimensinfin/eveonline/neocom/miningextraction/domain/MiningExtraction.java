@@ -32,6 +32,24 @@ public class MiningExtraction {
 		super();
 	}
 
+// - G E T T E R S   &   S E T T E R S
+	public long getDelta() {
+		return this.delta;
+	}
+
+	public MiningExtraction setDelta( final long delta ) {
+		this.delta = delta;
+		return this;
+	}
+
+	public String getExtractionDateName() {
+		return this.extractionDateName;
+	}
+
+	public int getExtractionHour() {
+		return this.extractionHour;
+	}
+
 	// -  G E T T E R S   &   S E T T E R S
 	public String getId() {
 		return String.format( "".concat( this.extractionDateName ).concat( ":" )
@@ -48,32 +66,41 @@ public class MiningExtraction {
 				.concat( this.getTypeId().toString() ).concat( "-" )
 				.concat( this.ownerId.toString() );
 	}
-
-	public Integer getTypeId() {return this.resourceItem.getTypeId();}
-
-	public Long getLocationId() {return this.solarSystemLocation.getLocationId();}
-
-	public String getResourceName() {
-		return this.resourceItem.getName();
-	}
-
-	public String getExtractionDateName() {
-		return this.extractionDateName;
-	}
-
-	public int getExtractionHour() {
-		return this.extractionHour;
-	}
-
-	public String getSystemName() {
-		return this.solarSystemLocation.getSolarSystemName();
-	}
-
 	public SpaceSystem getSolarSystemLocation() {
 		return this.solarSystemLocation;
 	}
+	public Long getLocationId() {return this.solarSystemLocation.getLocationId();}
 
-	public int getOwnerId() {
+	public long getOwnerId() {
+		return this.ownerId;
+	}
+
+	public String getPreviousHourId() {
+		return "".concat( this.extractionDateName ).concat( ":" )
+				.concat( String.format( Integer.toString( this.extractionHour - 1 ), "%d02" ) ).concat( "-" )
+				.concat( this.getLocationId().toString() ).concat( "-" )
+				.concat( this.getTypeId().toString() ).concat( "-" )
+				.concat( this.ownerId.toString() );
+	}
+
+	public double getPrice() {
+		return this.resourceItem.getPrice();
+	}
+
+	public Long getQuantity() {
+		return this.quantity;
+	}
+
+	public long getDelta() {
+		return this.delta;
+	}
+
+	public MiningExtraction setDelta( final long delta ) {
+		this.delta = delta;
+		return this;
+	}
+
+	public long getOwnerId() {
 		return this.ownerId;
 	}
 
@@ -81,7 +108,7 @@ public class MiningExtraction {
 		return this.resourceItem.getURLForItem();
 	}
 
-	public long getQuantity() {
+	public Long getQuantity() {
 		return this.quantity;
 	}
 
@@ -91,11 +118,6 @@ public class MiningExtraction {
 
 	public double getPrice() {
 		return this.resourceItem.getPrice();
-	}
-
-	public MiningExtraction setQuantity( final long quantity ) {
-		this.quantity = quantity;
-		return this;
 	}
 
 	// - C O R E
@@ -150,6 +172,7 @@ public class MiningExtraction {
 	public static class Builder {
 		private MiningExtraction onConstruction;
 
+// - C O N S T R U C T O R S
 		public Builder() {
 			this.onConstruction = new MiningExtraction();
 		}

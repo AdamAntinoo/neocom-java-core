@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="NeoCom.DataManagement.unittest" type="JUnit" factoryName="JUnit">
-    <module name="neocom-datamanagement.NeoCom.DataManagement.test" />
+    <module name="NeoCom-DataManagement.NeoCom.DataManagement.test" />
     <useClassPathOnly />
     <extension name="coverage" runner="jacoco">
       <pattern>
