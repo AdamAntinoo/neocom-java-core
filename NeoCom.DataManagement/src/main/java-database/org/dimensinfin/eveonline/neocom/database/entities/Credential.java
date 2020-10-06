@@ -38,7 +38,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author Adam Antinoo
  */
 @Entity(name = "Credentials")
-@DatabaseTable(tableName = "Credentials")
+@DatabaseTable(tableName = "neocom.Credentials")
 @JsonIgnoreProperties
 public class Credential extends UpdatableEntity {
 	private static final long serialVersionUID = -4248173464157148843L;

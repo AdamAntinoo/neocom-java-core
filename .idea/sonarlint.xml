@@ -2,19 +2,6 @@
 <project version="4">
   <component name="SonarLintProjectSettings">
     <option name="bindingEnabled" value="true" />
-    <option name="fileExclusions">
-      <list>
-        <option value="DIRECTORY:NeoCom.DataManagement/src/test" />
-        <option value="DIRECTORY:NeoCom.DataManagement/coverage" />
-        <option value="DIRECTORY:ESI.SwaggerApi/generated" />
-        <option value="GLOB:**/*{!.java}" />
-        <option value="GLOB:**/*.html" />
-        <option value="DIRECTORY:NeoCom.DataManagement/src/stage" />
-        <option value="FILE:NeoCom.DataManagement/src/main/java/org/dimensinfin/eveonline/neocom/utility/Base64.java" />
-        <option value="DIRECTORY:NeoCom.DataManagement.AcceptanceTests/src/test" />
-      </list>
-    </option>
     <option name="projectKey" value="evedimensinfin_neocom-datamanagement" />
-    <option name="serverId" value="SonarCloud-DataManagement" />
   </component>
 </project>
