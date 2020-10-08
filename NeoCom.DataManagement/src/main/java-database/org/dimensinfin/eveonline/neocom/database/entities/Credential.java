@@ -37,7 +37,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author Adam Antinoo
  */
-@Entity(name = "Credentials")
+//@Entity(name = "Credentials")
 @DatabaseTable(tableName = "neocom.Credentials")
 @JsonIgnoreProperties
 public class Credential extends UpdatableEntity {
