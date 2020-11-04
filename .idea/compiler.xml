@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="BUILD_PROCESS_HEAP_SIZE" value="1200" />
-    <bytecodeTargetLevel target="1.8">
-      <module name="neocom-datamanagement.ESI.SwaggerApi.main" target="1.8" />
-      <module name="neocom-datamanagement.ESI.SwaggerApi.test" target="1.8" />
-      <module name="neocom-datamanagement.NeoCom.DataManagement.Support.main" target="1.8" />
-      <module name="neocom-datamanagement.NeoCom.DataManagement.Support.test" target="1.8" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8" />
   </component>
 </project>
