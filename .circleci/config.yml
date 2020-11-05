@@ -19,7 +19,9 @@ jobs:
       - image: circleci/openjdk:11-jdk
     steps:
       - checkout
-      - ./gradlew --version
+      - run:
+          command: |
+            ./gradlew --version
 
   compile-swagger-job:
     docker:
