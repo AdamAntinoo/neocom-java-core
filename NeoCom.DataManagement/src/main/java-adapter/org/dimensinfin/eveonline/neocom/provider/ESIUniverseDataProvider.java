@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.provider;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,25 +12,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
+import org.dimensinfin.eveonline.neocom.annotation.RequiresNetwork;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApiV2;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdIconsOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdIconsOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsRegionIdOrders200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.logging.LogWrapper;
 
 import retrofit2.Response;
 import static org.dimensinfin.eveonline.neocom.provider.ESIDataProvider.DEFAULT_ACCEPT_LANGUAGE;
@@ -39,13 +47,19 @@ public class ESIUniverseDataProvider {
 	protected static final Logger logger = LoggerFactory.getLogger( ESIUniverseDataProvider.class );
 	// - I N T E R N A L   C A C H E S
 	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 1200 );
+	private static final Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
+	private static final Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
+	private static final Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
 	// - C O M P O N E N T S
 	protected IConfigurationService configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected StoreCacheManager storeCacheManager;
 	protected RetrofitFactory retrofitFactory;
 
+	// - C O N S T R U C T O R S
 	protected ESIUniverseDataProvider() {}
+
+	// - G E T T E R S   &   S E T T E R S
 
 	/**
 	 * Go to the ESI api to get the list of market prices. This method does not use other server than the Tranquility
@@ -149,6 +163,42 @@ public class ESIUniverseDataProvider {
 		return null;
 	}
 
+	@TimeElapsed
+	public List<GetMarketsRegionIdOrders200Ok> getUniverseMarketOrdersForId( final Integer regionId, final Integer typeId ) {
+		LogWrapper.enter( MessageFormat.format( "regionId: {0} - typeId: {1}", regionId, typeId ) );
+		final List<GetMarketsRegionIdOrders200Ok> returnMarketOrderList = new ArrayList<>( 1000 );
+		try {
+			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+			boolean morePages = true;
+			int pageCounter = 1;
+			while (morePages) {
+				try {
+					final Response<List<GetMarketsRegionIdOrders200Ok>> marketOrdersResponse = this.retrofitFactory
+							.accessUniverseConnector()
+							.create( MarketApiV2.class )
+							.getMarketsRegionIdOrders( regionId, "all", DEFAULT_ESI_SERVER, pageCounter, typeId, null )
+							.execute();
+					if (marketOrdersResponse.isSuccessful()) {
+						// Check for out of page running.
+						if (Objects.requireNonNull( marketOrdersResponse.body() ).isEmpty()) morePages = false;
+						else {
+							// Copy the assets to the result list.
+							returnMarketOrderList.addAll( Objects.requireNonNull( marketOrdersResponse.body() ) );
+							pageCounter++;
+						}
+					}
+				} catch (final RuntimeException rtex) {
+					LogWrapper.error( rtex );
+				}
+			}
+		} catch (final IOException ioe) {
+			LogWrapper.error( "IOException during ESI data access.", ioe );
+		} finally {
+			LogWrapper.exit();
+			return returnMarketOrderList;
+		}
+	}
+
 	public GetUniverseRegionsRegionIdOk getUniverseRegionById( final Integer regionId ) {
 		try {
 			// Create the request to be returned so it can be called.
@@ -217,6 +267,21 @@ public class ESIUniverseDataProvider {
 		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
 	}
 
+	// - A N C E S T R Y   D A T A
+	@RequiresNetwork
+	public GetUniverseAncestries200Ok searchSDEAncestry( final int identifier ) {
+		if (ancestriesCache.isEmpty()) // First download the family data.
+			this.downloadPilotFamilyData();
+		return ancestriesCache.get( identifier );
+	}
+
+	@RequiresNetwork
+	public GetUniverseBloodlines200Ok searchSDEBloodline( final int identifier ) {
+		if (bloodLinesCache.isEmpty()) // First download the family data.
+			this.downloadPilotFamilyData();
+		return bloodLinesCache.get( identifier );
+	}
+
 	// - S D E   I N T E R N A L   D A T A
 	public double searchSDEMarketPrice( final int typeId ) {
 		NeoComLogger.info( "Price for: {}", typeId + "" );
@@ -225,6 +290,25 @@ public class ESIUniverseDataProvider {
 		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
 		else return -1.0;
 	}
+
+	@RequiresNetwork
+	public GetUniverseRaces200Ok searchSDERace( final int identifier ) {
+		if (bloodLinesCache.isEmpty()) // First download the family data.
+			this.downloadPilotFamilyData();
+		return racesCache.get( identifier );
+	}
+
+	//	private Retrofit accessUniverseRetrofit() {
+	//		if (null == this.universeRetrofit) {
+	////			try {
+	//			this.universeRetrofit = this.retrofitFactory.accessUniverseConnector();
+	////			} catch (final IOException ioe) {
+	////				NeoComLogger.error( ioe );
+	////				throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
+	////			}
+	//		}
+	//		return this.universeRetrofit;
+	//	}
 
 	@TimeElapsed
 	public GetUniverseSystemsSystemIdOk searchSolarSystem4Id( final int solarSystemId ) {
@@ -241,10 +325,92 @@ public class ESIUniverseDataProvider {
 		}
 	}
 
+	private synchronized void downloadPilotFamilyData() {
+		// Download race, bloodline and other pilot data.
+		final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces( DEFAULT_ESI_SERVER );
+		NeoComLogger.info( "Download race: {} items", racesList.size() + "" );
+		for (GetUniverseRaces200Ok race : racesList) {
+			racesCache.put( race.getRaceId(), race );
+		}
+		final List<GetUniverseAncestries200Ok> ancestriesList = this.getUniverseAncestries( DEFAULT_ESI_SERVER );
+		NeoComLogger.info( "Download ancestries: {} items", ancestriesList.size() + "" );
+		for (GetUniverseAncestries200Ok ancestry : ancestriesList) {
+			ancestriesCache.put( ancestry.getId(), ancestry );
+		}
+		final List<GetUniverseBloodlines200Ok> bloodLineList = this.getUniverseBloodlines( DEFAULT_ESI_SERVER );
+		NeoComLogger.info( "-Download blood lines: {} items", bloodLineList.size() + "" );
+		for (GetUniverseBloodlines200Ok bloodLine : bloodLineList) {
+			bloodLinesCache.put( bloodLine.getBloodlineId(), bloodLine );
+		}
+	}
+
+	@TimeElapsed
+	private List<GetUniverseAncestries200Ok> getUniverseAncestries( final String datasource ) {
+		//		NeoComLogger.enter();
+		try {
+			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = this.retrofitFactory
+					.accessUniverseConnector()
+					.create( UniverseApi.class )
+					.getUniverseAncestries(
+							DEFAULT_ACCEPT_LANGUAGE,
+							datasource, null, "en-us" )
+					.execute();
+			if (ancestriesList.isSuccessful()) return ancestriesList.body();
+			else return new ArrayList<>();
+		} catch (final IOException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			//			NeoComLogger.exit();
+		}
+		return new ArrayList<>();
+	}
+
+	@TimeElapsed
+	private List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String datasource ) {
+		//		NeoComLogger.enter();
+		try {
+			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = this.retrofitFactory
+					.accessUniverseConnector()
+					.create(
+							UniverseApi.class )
+					.getUniverseBloodlines(
+							DEFAULT_ACCEPT_LANGUAGE,
+							datasource, null, "en-us" )
+					.execute();
+			if (bloodLinesList.isSuccessful()) return bloodLinesList.body();
+			else return new ArrayList<>();
+		} catch (final IOException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			//			NeoComLogger.exit();
+		}
+		return new ArrayList<>();
+	}
+
+	@TimeElapsed
+	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
+		//		NeoComLogger.enter();
+		try {
+			final Response<List<GetUniverseRaces200Ok>> racesList = this.retrofitFactory
+					.accessUniverseConnector()
+					.create( UniverseApi.class )
+					.getUniverseRaces( DEFAULT_ACCEPT_LANGUAGE, datasource, null, "en-us" )
+					.execute();
+			if (racesList.isSuccessful()) return racesList.body();
+			else return new ArrayList<>();
+		} catch (final IOException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			//			NeoComLogger.exit();
+		}
+		return new ArrayList<>();
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private ESIUniverseDataProvider onConstruction;
 
+		// - C O N S T R U C T O R S
 		public Builder() {
 			this.onConstruction = new ESIUniverseDataProvider();
 		}
