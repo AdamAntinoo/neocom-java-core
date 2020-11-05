@@ -3,6 +3,8 @@
 >* TokenVerification
 
 [CLASSES TO COMPLETE UNIT TESTING]
+* MiningExtraction
+
 
 >* NeoAsset
 >* SpaceKLocation - DELETED
