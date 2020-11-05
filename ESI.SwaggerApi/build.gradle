@@ -8,10 +8,10 @@ apply plugin: 'maven-publish'
 apply plugin: 'de.undercouch.download'
 apply plugin: 'org.hidetake.swagger.generator'
 
-//--- P R O J E C T   D E F I N I T I O N
-group = 'org.dimensinfin'
-version = '1.7.2'
-archivesBaseName = 'ESI.SwaggerApi'
+// - P R O J E C T   D E F I N I T I O N
+group = 'org.dimensinfin.neocom'
+version = '0.20.0'
+archivesBaseName = 'esi.swagger-api'
 description = 'Swagger Api to access ESI published Eve Online inside game data structures.'
 
 sourceCompatibility = "1.8"
@@ -25,8 +25,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-
-
+// - S O U R C E S
 def swaggerGenerated = "$projectDir/generated/"
 sourceSets {
     main {
@@ -41,22 +40,7 @@ sourceSets {
     }
 }
 
-//--- T A S K S
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
-}
-
+// - S W AG G E R   T A S K S
 task swaggerDownload(type: Download) {
     src 'https://esi.evetech.net/latest/swagger.json'
     dest projectDir
@@ -65,7 +49,6 @@ task swaggerDownload(type: Download) {
     compress false
 }
 
-//    task swaggerGenerate(type: GenerateSwaggerCode, dependsOn: swaggerDownload) {
 task swaggerGenerate(type: GenerateSwaggerCode) {
     language = 'java'
 
@@ -92,15 +75,34 @@ clean.doFirst {
     delete "$swaggerGenerated"
 }
 
-//--- P U B L I S H I N G
+// - T A S K   C O O R D I N A T I O N
+compileJava.dependsOn swaggerBuild
+publish.dependsOn build
+
+// - P U B L I S H I N G
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
 publishing {
     publications {
         jar(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
+            groupId = project.group
+            version = project.version
+            artifactId = project.archivesBaseName
             artifact(sourcesJar)
-            artifact("$buildDir/libs/${archivesBaseName}-${version}.jar")
+            artifact(javadocJar)
         }
     }
     repositories {
@@ -113,29 +115,21 @@ publishing {
         }
     }
 }
-
-//--- T A S K   C O O R D I N A T I O N
-compileJava.dependsOn swaggerBuild
 publish.dependsOn build
 
-//--- P R O D U C T   V E R S I O N S
+// - P R O D U C T   V E R S I O N S
 ext {
     jacksonVersion = '2.8.6'
     ormliteVersion = '4.48'
 }
 
-//--- D E P E N D E N C I E S
+// - D E P E N D E N C I E S
 dependencies {
-    // M O D U L E    D E P E N D E N C I E S
-    // C O R E   P L A T F O R M
+    // - C O R E
     compileOnly 'joda-time:joda-time:2.9.9'
     compileOnly 'javax.annotation:javax.annotation-api:1.2'
 
-    // P R O J E C T S
-
-    // L O C A L   L I B R A R I E S
-
-    // E S I . S W A G G E R A P I
+    // - E S I . S W A G G E R A P I
     swaggerCodegen 'io.swagger:swagger-codegen-cli:2.2.1'
     compileOnly 'io.swagger:swagger-annotations:1.5.17'
     compileOnly 'com.squareup.retrofit2:retrofit:2.3.0'
@@ -143,7 +137,4 @@ dependencies {
     compileOnly 'com.squareup.retrofit2:converter-scalars:2.3.0'
     compileOnly 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.1'
     compileOnly 'org.apache.httpcomponents:httpclient:4.5.4'
-
-    // T E S T I N G   D E P E N D E N C I E S
-    testImplementation 'junit:junit:4.12'
 }
