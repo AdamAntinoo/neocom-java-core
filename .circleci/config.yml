@@ -1,17 +1,92 @@
+# - C I R C L E C I   C O N T I N U O U S   I N T E G R A T I O N
+# Download, compile, test and deploy to the production server at Heroku.
+# CircleCI has the ability to deploy to Heroku and integrate more than one
+#   project on the same pipeline.
+# 
+# BRANCHES:
+#   Experimental: This branch is used to add code that should be confirmed and tested it is operational before going to development.
+#                 Usually this is when some changes break the API or are disruptive with previous running code.
+#                 The only actions are to compile the source code.
+#   Development: This branch compiles the code and checks that the installation and preparation stages are ready.
+#                Used to confirm there are no defects on the compilation code.
+#   Testing: This branch activales all unit tests, integration and accceptance tests.
+#            After the testing completes suucessfully then the script activated the steps to update the sonarcloud quality gate data.
+#
 version: 2.1
-executorType: machine
 jobs:
-  build:
+  start-job:
     docker:
-      - image: 'circleci/openjdk:11-jdk'
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - checkout
+      - ./gradlew --version
+
+  compile-swagger-job:
+    docker:
+      - image: circleci/openjdk:11-jdk
     steps:
       - checkout
       - run:
-          name: Analyze on SonarCloud
-          command: gradle build sonarqube
+          name: ESISWAGGER - Compile the current library
+          working_directory: ESI.SwaggerAPI
+          command: |
+            ../gradlew classes
+  compile-annotations-job:
+    docker:
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - checkout
+      - run:
+          name: NEOCOM-ANNOTATIONS - Compile the annotations defintions
+          working_directory: NeoCom.Annotations
+          command: |
+            ../gradlew classes
+  compile-datamanagement-job:
+    docker:
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - checkout
+      - run:
+          name: DATAMANAGEMENT - Compile the current library code
+          working_directory: ESI.SwaggerAPI
+          command: |
+            ../gradlew classes
 
 workflows:
-  main:
+  version: 2
+  datamanagement-stage:
     jobs:
-      - build:
-          context: SonarCloud
+      - start-job:
+          filters:
+            branches:
+              only:
+                - experimental
+                - development
+
+      - compile-swagger-job:
+          requires:
+            - start-job
+          filters:
+            branches:
+              only:
+                - experimental
+                - development
+                - test
+      - compile-annotations-job:
+          requires:
+            - start-job
+          filters:
+            branches:
+              only:
+                - experimental
+                - development
+                - test
+      - compile-datamanagement-job:
+          requires:
+            - start-job
+          filters:
+            branches:
+              only:
+                - experimental
+                - development
+                - test
