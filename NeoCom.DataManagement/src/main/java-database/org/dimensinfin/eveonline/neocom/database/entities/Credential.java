@@ -1,7 +1,6 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
 import java.util.Objects;
-import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

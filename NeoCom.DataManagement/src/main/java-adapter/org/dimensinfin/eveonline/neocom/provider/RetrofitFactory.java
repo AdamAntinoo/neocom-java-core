@@ -60,6 +60,7 @@ public class RetrofitFactory {
 							.create() );
 	private static final String UNIVERSE_CONNECTOR_IDENTIFIER = "-UNIVERSE-CONNECTOR-";
 	private static final String BACKEND_CONNECTOR_IDENTIFIER = "-BACKEND-CONNECTOR-";
+	// - P R O D U C T I O N   D E F A U L T S
 	private static final String DEFAULT_RETROFIT_AGENT = "Default agent";
 	private static final String DEFAULT_ESI_OAUTH_LOGIN_SERVER = "https://login.eveonline.com/";
 	private static final String DEFAULT_ESI_DATA_SERVER = "https://esi.evetech.net/latest/";

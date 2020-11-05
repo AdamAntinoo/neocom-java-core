@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import org.dimensinfin.eveonline.neocom.annotation.RequiresNetwork;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 
@@ -32,16 +33,7 @@ public class MiningExtraction {
 		super();
 	}
 
-// - G E T T E R S   &   S E T T E R S
-	public long getDelta() {
-		return this.delta;
-	}
-
-	public MiningExtraction setDelta( final long delta ) {
-		this.delta = delta;
-		return this;
-	}
-
+	// - G E T T E R S   &   S E T T E R S
 	public String getExtractionDateName() {
 		return this.extractionDateName;
 	}
@@ -59,16 +51,6 @@ public class MiningExtraction {
 				.concat( this.ownerId.toString() );
 	}
 
-	public String getPreviousHourId() {
-		return "".concat( this.extractionDateName ).concat( ":" )
-				.concat( String.format( Integer.toString( this.extractionHour - 1 ), "%d02" ) ).concat( "-" )
-				.concat( this.getLocationId().toString() ).concat( "-" )
-				.concat( this.getTypeId().toString() ).concat( "-" )
-				.concat( this.ownerId.toString() );
-	}
-	public SpaceSystem getSolarSystemLocation() {
-		return this.solarSystemLocation;
-	}
 	public Long getLocationId() {return this.solarSystemLocation.getLocationId();}
 
 	public long getOwnerId() {
@@ -91,33 +73,23 @@ public class MiningExtraction {
 		return this.quantity;
 	}
 
-	public long getDelta() {
-		return this.delta;
+	@RequiresNetwork
+	public String getResourceName() {return this.resourceItem.getName();}
+
+	public SpaceSystem getSolarSystemLocation() {
+		return this.solarSystemLocation;
 	}
 
-	public MiningExtraction setDelta( final long delta ) {
-		this.delta = delta;
-		return this;
-	}
+	public String getSystemName() {return this.solarSystemLocation.getSolarSystemName();}
 
-	public long getOwnerId() {
-		return this.ownerId;
-	}
+	public Integer getTypeId() {return this.resourceItem.getTypeId();}
 
 	public String getURLForItem() {
 		return this.resourceItem.getURLForItem();
 	}
 
-	public Long getQuantity() {
-		return this.quantity;
-	}
-
 	public double getVolume() {
 		return this.resourceItem.getVolume();
-	}
-
-	public double getPrice() {
-		return this.resourceItem.getPrice();
 	}
 
 	// - C O R E
@@ -170,9 +142,9 @@ public class MiningExtraction {
 
 	// - B U I L D E R
 	public static class Builder {
-		private MiningExtraction onConstruction;
+		private final MiningExtraction onConstruction;
 
-// - C O N S T R U C T O R S
+		// - C O N S T R U C T O R S
 		public Builder() {
 			this.onConstruction = new MiningExtraction();
 		}
