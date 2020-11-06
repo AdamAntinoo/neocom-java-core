@@ -94,7 +94,14 @@ workflows:
 
   neocom-core-deploy:
     jobs:
-      - start-job
+      - start-job:
+          requires:
+            - start-job
+          filters:
+            tags:
+              only: /0.*/
+            branches:
+              ignore: /.*/
 
       - build-swagger-job:
           requires:
