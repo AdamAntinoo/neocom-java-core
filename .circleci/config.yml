@@ -70,11 +70,6 @@ workflows:
   neocom-core-stage:
     jobs:
       - start-job:
-          filters:
-            branches:
-              only:
-                - experimental
-                - development
 
       - compile-swagger-job:
           requires:
@@ -85,6 +80,7 @@ workflows:
                 - experimental
                 - development
                 - test
+                - master
       - compile-annotations-job:
           requires:
             - start-job
@@ -94,6 +90,7 @@ workflows:
                 - experimental
                 - development
                 - test
+                - master
 
   neocom-core-deploy:
     jobs:
