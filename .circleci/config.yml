@@ -69,7 +69,7 @@ workflows:
   version: 2
   neocom-core-stage:
     jobs:
-      - start-job:
+      - start-job
 
       - compile-swagger-job:
           requires:
@@ -94,7 +94,7 @@ workflows:
 
   neocom-core-deploy:
     jobs:
-      - start-job:
+      - start-job
 
       - build-swagger-job:
           requires:
