@@ -30,7 +30,7 @@ jobs:
       - checkout
       - run:
           name: ESISWAGGER - Compile the current library
-          working_directory: ESI.SwaggerAPI
+          working_directory: ESI.SwaggerApi
           command: |
             ../gradlew classes
   compile-annotations-job:
@@ -50,7 +50,7 @@ jobs:
       - checkout
       - run:
           name: DATAMANAGEMENT - Compile the current library code
-          working_directory: ESI.SwaggerAPI
+          working_directory: NeoCom.DataManagement
           command: |
             ../gradlew classes
 
