@@ -43,65 +43,31 @@ jobs:
           working_directory: NeoCom.Annotations
           command: |
             ../gradlew classes
-  compile-datamanagement-job:
-    docker:
-      - image: circleci/openjdk:11-jdk
-    steps:
-      - checkout
-      - run:
-          name: DATAMANAGEMENT - Compile the current library code
-          working_directory: NeoCom.DataManagement
-          command: |
-            ../gradlew classes
 
-  test-datamanagement-job:
+  build-swagger-job:
     docker:
       - image: circleci/openjdk:11-jdk
-        environment:
-          _JAVA_OPTIONS: "-Xmx3g"
-          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
-      # - image: circleci/postgres:11.1
-      #   environment:
-      #     POSTGRES_USER: inno-user
-      #     POSTGRES_DB: inno-password
     steps:
       - checkout
-      # - run:
-      #     name: BACKEND - Start the application in local profile
-      #     working_directory: NeoCom.DataManagement
-      #     environment:
-      #       PORT: 5340 # This is the port configured on the AcceptancetargetConfig
-      #       JDBC_DATABASE_URL: "jdbc:postgresql://0.0.0.0:5432/postgres"
-      #       DB_USER: inno-user
-      #       DB_PASSWORD: inno-password
-      #     command: |
-      #       ./gradlew bootRun
-      #     background: true
-      # - run:
-      #     name: BACKEND - Waiting for application start
-      #     environment:
-      #       PORT: 5140
-      #     working_directory: Printer3D-backend
-      #     command: |
-      #       dockerize -wait tcp://localhost:${PORT}/actuator/health -timeout 3m
       - run:
-          name: BACKEND - Unit Testing application
-          working_directory: NeoCom.DataManagement
-          environment:
-            PORT: 5140
-            JDBC_DATABASE_URL: "jdbc:postgresql://0.0.0.0:5432/postgres"
-            DB_USER: inno-user
-            DB_PASSWORD: inno-password
+          name: ESISWAGGER - Build and prepare for deployment
+          working_directory: ESI.SwaggerApi
           command: |
-            ../gradlew test
-      - store_test_results:
-          path: ~/project/NeoCom.DataManagement/build/test-results
-      - store_artifacts:  
-          path: ~/project/NeoCom.DataManagement/build/libs
+            ../gradlew build
+  build-annotations-job:
+    docker:
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - checkout
+      - run:
+          name: NEOCOM-ANNOTATIONS - Build and prepare for deployment
+          working_directory: NeoCom.Annotations
+          command: |
+            ../gradlew build
 
 workflows:
   version: 2
-  datamanagement-stage:
+  neocom-core-stage:
     jobs:
       - start-job:
           filters:
@@ -128,21 +94,24 @@ workflows:
                 - experimental
                 - development
                 - test
-      - compile-datamanagement-job:
+
+  neocom-core-deploy:
+    jobs:
+      - start-job:
+
+      - build-swagger-job:
           requires:
             - start-job
           filters:
+            tags:
+              only: /0.*/
             branches:
-              only:
-                - experimental
-                - development
-                - test
-      - test-datamanagement-job:
+              ignore: /.*/
+      - build-annotations-job:
           requires:
-            - compile-swagger-job
-            - compile-annotations-job
-            - compile-datamanagement-job
+            - start-job
           filters:
+            tags:
+              only: /0.*/
             branches:
-              only:
-                - test
+              ignore: /.*/
