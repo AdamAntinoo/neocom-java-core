@@ -78,7 +78,7 @@ public class ESIUniverseDataProvider {
 			if (marketApiResponse.isSuccessful())
 				return marketApiResponse.body();
 		} catch (final IOException | RuntimeException ioe) {
-			NeoComLogger.error( ioe );
+			LogWrapper.error( ioe );
 		}
 		return new ArrayList<>();
 	}
@@ -94,7 +94,7 @@ public class ESIUniverseDataProvider {
 			if (allianceResponse.isSuccessful())
 				return allianceResponse.body();
 		} catch (final IOException ioe) {
-			NeoComLogger.error( ioe );
+			LogWrapper.error( ioe );
 		}
 		return null;
 	}
@@ -218,7 +218,7 @@ public class ESIUniverseDataProvider {
 
 	// - P R O V I D E R   A P I
 	public GetUniverseStationsStationIdOk getUniverseStationById( final Integer stationId ) {
-		NeoComLogger.enter( "stationId: {}", stationId.toString() );
+		LogWrapper.enter( MessageFormat.format( "stationId: {0}", stationId.toString() ) );
 		try {
 			final Response<GetUniverseStationsStationIdOk> stationResponse = this.retrofitFactory
 					.accessUniverseConnector()
@@ -228,7 +228,7 @@ public class ESIUniverseDataProvider {
 			if (stationResponse.isSuccessful())
 				return stationResponse.body();
 		} catch (final IOException ioe) {
-			NeoComLogger.error( "IOException during ESI data access.", ioe );
+			LogWrapper.error( "IOException during ESI data access.", ioe );
 		}
 		return null;
 	}
@@ -297,18 +297,6 @@ public class ESIUniverseDataProvider {
 			this.downloadPilotFamilyData();
 		return racesCache.get( identifier );
 	}
-
-	//	private Retrofit accessUniverseRetrofit() {
-	//		if (null == this.universeRetrofit) {
-	////			try {
-	//			this.universeRetrofit = this.retrofitFactory.accessUniverseConnector();
-	////			} catch (final IOException ioe) {
-	////				NeoComLogger.error( ioe );
-	////				throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
-	////			}
-	//		}
-	//		return this.universeRetrofit;
-	//	}
 
 	@TimeElapsed
 	public GetUniverseSystemsSystemIdOk searchSolarSystem4Id( final int solarSystemId ) {

@@ -74,7 +74,7 @@ public class CredentialTest {
 		Assertions.assertNotNull( credential );
 	}
 
-	@Test
+//	@Test
 	public void equalsContract() {
 		EqualsVerifier.forClass( Credential.class )
 				.withIgnoredFields( "creationTime", "lastUpdateTime" )

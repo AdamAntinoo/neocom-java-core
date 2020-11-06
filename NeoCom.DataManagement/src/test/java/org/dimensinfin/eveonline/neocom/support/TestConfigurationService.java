@@ -3,6 +3,7 @@ package org.dimensinfin.eveonline.neocom.support;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,8 +14,23 @@ import com.annimon.stream.Stream;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.provider.AConfigurationService;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.logging.LogWrapper;
 
 public class TestConfigurationService extends AConfigurationService {
+	public void setProperty( final String propertyName, final String value ) {
+		this.configurationProperties.setProperty( propertyName, value );
+	}
+
+	/**
+	 * Reads all the files found on the parameter directory path. Because the directory is read as a stream the method to read
+	 * the directory does not use the file system isolation.
+	 */
+	protected List<String> getResourceFiles( final String initialPath ) throws IOException {
+		final File rootFolder = new File( System.getProperty( "user.dir" ) + initialPath );
+		NeoComLogger.info( "Root directory: {}", rootFolder.toString() );
+		return listFilesForFolder( rootFolder );
+	}
+
 	public void readAllProperties() {
 		NeoComLogger.enter();
 		try {
@@ -38,21 +54,7 @@ public class TestConfigurationService extends AConfigurationService {
 			NeoComLogger.error( ioe );
 			throw new NeoComRuntimeException( ioe.getMessage() );
 		}
-		NeoComLogger.exit( "Total properties number: {}", this.contentCount() + "" );
-	}
-
-	/**
-	 * Reads all the files found on the parameter directory path. Because the directory is read as a stream the method to read
-	 * the directory does not use the file system isolation.
-	 */
-	protected List<String> getResourceFiles( final String initialPath ) throws IOException {
-		final File rootFolder = new File( System.getProperty( "user.dir" ) + initialPath );
-		NeoComLogger.info( "Root directory: {}", rootFolder.toString() );
-		return listFilesForFolder( rootFolder );
-	}
-
-	public void setProperty( final String propertyName, final String value ) {
-		this.configurationProperties.setProperty( propertyName, value );
+		LogWrapper.exit( MessageFormat.format( "Total properties number: {0}", this.contentCount() ) );
 	}
 
 	private List<String> listFilesForFolder( final File folder ) {
@@ -68,6 +70,7 @@ public class TestConfigurationService extends AConfigurationService {
 	public static class Builder extends AConfigurationService.Builder<TestConfigurationService, TestConfigurationService.Builder> {
 		private TestConfigurationService onConstruction;
 
+// - G E T T E R S   &   S E T T E R S
 		@Override
 		protected TestConfigurationService getActual() {
 			if (null == this.onConstruction) this.onConstruction = new TestConfigurationService();

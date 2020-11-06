@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.adapter;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,7 @@ import org.dimensinfin.eveonline.neocom.provider.IConfigurationService;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.logging.LogWrapper;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -64,16 +66,16 @@ public class StoreCacheManager {
 	private Store<GetUniverseTypesTypeIdOk, Integer> esiItemStore;
 	private Store<GetUniverseGroupsGroupIdOk, Integer> itemGroupStore;
 	private Store<GetUniverseCategoriesCategoryIdOk, Integer> categoryStore;
-//	private Store<GetUniverseStationsStationIdOk, Integer> stationStore;
+	//	private Store<GetUniverseStationsStationIdOk, Integer> stationStore;
 	private Store<GetUniverseSystemsSystemIdOk, Integer> systemsStoreCache;
-//	private Store<GetUniverseConstellationsConstellationIdOk, Integer> constellationsStoreCache;
-//	private Store<GetUniverseRegionsRegionIdOk, Integer> regionStoreCache;
+	//	private Store<GetUniverseConstellationsConstellationIdOk, Integer> constellationsStoreCache;
+	//	private Store<GetUniverseRegionsRegionIdOk, Integer> regionStoreCache;
 
 	// - S T O R A G E S
 	private DiskLruCache esiItemPersistentStore;
-//	private DiskLruCache systemsStoreCachePersistence;
-//	private DiskLruCache constellationsStoreCachePersistence;
-//	private DiskLruCache regionStoreCachePersistence;
+	//	private DiskLruCache systemsStoreCachePersistence;
+	//	private DiskLruCache constellationsStoreCachePersistence;
+	//	private DiskLruCache regionStoreCachePersistence;
 
 	// - C O N S T R U C T O R S
 	protected StoreCacheManager() { }
@@ -146,6 +148,7 @@ public class StoreCacheManager {
 	public static class Builder {
 		private StoreCacheManager onConstruction;
 
+// - C O N S T R U C T O R S
 		/**
 		 * This Builder declares the mandatory components to be linked on construction so the Null validation is done as soon as
 		 * possible.
@@ -188,6 +191,7 @@ public class StoreCacheManager {
 	public static class UniverseTypeFetcher implements Fetcher<GetUniverseTypesTypeIdOk, Integer> {
 		private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
+// - C O N S T R U C T O R S
 		public UniverseTypeFetcher( final Retrofit neocomRetrofitNoAuth ) {
 			this.neocomRetrofitNoAuth = neocomRetrofitNoAuth;
 		}
@@ -212,9 +216,9 @@ public class StoreCacheManager {
 							ESIDataProvider.DEFAULT_ESI_SERVER, null, null )
 					.execute();
 			if (itemListResponse.isSuccessful()) {
-				NeoComLogger.info( "Downloading: {}-{}"
-						, itemListResponse.body().getTypeId() + ""
-						, itemListResponse.body().getName() );
+				LogWrapper.info( MessageFormat.format( "Downloading: {0}-{1}",
+						itemListResponse.body().getTypeId(),
+						itemListResponse.body().getName() ) );
 				return itemListResponse.body();
 			}
 			return null;
@@ -225,6 +229,7 @@ public class StoreCacheManager {
 	public static class UniverseItemGroupFetcher implements Fetcher<GetUniverseGroupsGroupIdOk, Integer> {
 		private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
+// - C O N S T R U C T O R S
 		public UniverseItemGroupFetcher( final Retrofit neocomRetrofitNoAuth ) {
 			this.neocomRetrofitNoAuth = neocomRetrofitNoAuth;
 		}
@@ -255,6 +260,7 @@ public class StoreCacheManager {
 	public static class UniverseItemCategoryFetcher implements Fetcher<GetUniverseCategoriesCategoryIdOk, Integer> {
 		private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
+// - C O N S T R U C T O R S
 		public UniverseItemCategoryFetcher( final Retrofit neocomRetrofitNoAuth ) {
 			this.neocomRetrofitNoAuth = neocomRetrofitNoAuth;
 		}
@@ -288,6 +294,7 @@ public class StoreCacheManager {
 		private static final int TIMESTAMP_CACHE_INDEX = 1;
 		private DiskLruCache persistentStorage;
 
+// - C O N S T R U C T O R S
 		public EsiItemPersister( final DiskLruCache persistentStorage ) {
 			this.persistentStorage = persistentStorage;
 		}

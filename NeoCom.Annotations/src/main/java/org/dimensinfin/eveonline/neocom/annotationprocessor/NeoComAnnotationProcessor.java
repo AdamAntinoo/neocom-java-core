@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.annotationprocessor;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,23 +23,25 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 @AutoService(Processor.class)
 public class NeoComAnnotationProcessor extends AbstractProcessor {
-//	private static Logger logger = LoggerFactory.getLogger( NeoComAnnotationProcessor.class );
+	//	private static Logger logger = LoggerFactory.getLogger( NeoComAnnotationProcessor.class );
 	private static final Set<String> supported = new LinkedHashSet<>();
 
 	static {
 		supported.add( "LogEnterExit" );
 	}
 
+// - C O N S T R U C T O R S
 	private NeoComAnnotationProcessor() {}
+
+// - G E T T E R S   &   S E T T E R S
+	@Override
+	public Set<String> getSupportedAnnotationTypes() {
+		return supported;
+	}
 
 	@Override
 	public SourceVersion getSupportedSourceVersion() {
 		return SourceVersion.RELEASE_8;
-	}
-
-	@Override
-	public Set<String> getSupportedAnnotationTypes() {
-		return supported;
 	}
 
 	@Override
@@ -48,7 +51,7 @@ public class NeoComAnnotationProcessor extends AbstractProcessor {
 		while (it.hasNext()) {
 			final Element targetMethod = it.next();
 			try {
-				NeoComLogger.info( "targetMethod.getSimpleName().toString(): {}", targetMethod.getSimpleName().toString() );
+				NeoComLogger.info( MessageFormat.format( "targetMethod.getSimpleName().toString(): {0}", targetMethod.getSimpleName().toString() ) );
 				this.generateLogEnterExitWrapper( targetMethod.getSimpleName().toString(), targetMethod );
 			} catch (final IOException ioe) {
 				ioe.printStackTrace();
@@ -62,7 +65,7 @@ public class NeoComAnnotationProcessor extends AbstractProcessor {
 		MethodSpec main = MethodSpec.methodBuilder( wrappedMethod )
 				.addModifiers( target.getModifiers() )
 				.returns( void.class )
-//				.addParameter( String[].class, "args" )
+				//				.addParameter( String[].class, "args" )
 				.addStatement( "$T.enter()", NeoComLogger.class )
 				.build();
 		TypeSpec helloWorld = TypeSpec.classBuilder( "HelloWorld" )

@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.database.repositories;
 
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +23,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.logging.LogWrapper;
 
 public class AssetRepository {
 	private static final Logger logger = LoggerFactory.getLogger( AssetRepository.class );
@@ -30,6 +32,7 @@ public class AssetRepository {
 	protected Dao<NeoAsset, UUID> assetDao;
 	protected ConnectionSource connection4Transaction;
 
+// - C O N S T R U C T O R S
 	protected AssetRepository() {}
 
 	/**
@@ -46,18 +49,18 @@ public class AssetRepository {
 					final DeleteBuilder<NeoAsset, UUID> deleteBuilder = assetDao.deleteBuilder();
 					deleteBuilder.where().eq( OWNERID, (pilotIdentifier * -1) );
 					int count = deleteBuilder.delete();
-					NeoComLogger.info( "Invalid assets cleared for owner {}: {}",
-							(pilotIdentifier * -1) + "", count + "" );
+					LogWrapper.info( MessageFormat.format( "Invalid assets cleared for owner {}: {}",
+							(pilotIdentifier * -1), count ) );
 
 					// Remove all blueprints that do not have a valid owner.
 					// TODO - to activate when processing blueprints.
-//					final DeleteBuilder<NeoComBlueprint, String> deleteBuilderBlueprint = getBlueprintDao().deleteBuilder();
-//					deleteBuilderBlueprint.where().eq( "ownerId", (pilotIdentifier * -1) );
-//					count = deleteBuilderBlueprint.delete();
-//					logger.info(
-//							"-- [NeoComAndroidDBHelper.clearInvalidRecords]> Invalid blueprints cleared for owner {}: {}",
-//							(pilotIdentifier * -1),
-//							count );
+					//					final DeleteBuilder<NeoComBlueprint, String> deleteBuilderBlueprint = getBlueprintDao().deleteBuilder();
+					//					deleteBuilderBlueprint.where().eq( "ownerId", (pilotIdentifier * -1) );
+					//					count = deleteBuilderBlueprint.delete();
+					//					logger.info(
+					//							"-- [NeoComAndroidDBHelper.clearInvalidRecords]> Invalid blueprints cleared for owner {}: {}",
+					//							(pilotIdentifier * -1),
+					//							count );
 					return null;
 				} );
 			} catch (final SQLException sqle) {
@@ -164,6 +167,7 @@ public class AssetRepository {
 	public static class Builder {
 		private AssetRepository onConstruction;
 
+// - C O N S T R U C T O R S
 		public Builder() {
 			this.onConstruction = new AssetRepository();
 		}

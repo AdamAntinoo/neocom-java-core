@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.adapter;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +33,7 @@ import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
+import org.dimensinfin.logging.LogWrapper;
 
 import retrofit2.Response;
 
@@ -63,8 +65,10 @@ public class LocationCatalogService extends Job {
 	private boolean dirtyCache = false;
 	private LocationCacheAccessType lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 
+// - C O N S T R U C T O R S
 	protected LocationCatalogService() { }
 
+// - G E T T E R S   &   S E T T E R S
 	public Map<String, Integer> getLocationTypeCounters() {
 		return this.locationTypeCounters;
 	}
@@ -91,7 +95,7 @@ public class LocationCatalogService extends Job {
 	// - S T O R A G E
 	public void cleanLocationsCache() {
 		locationCache.clear();
-		this.dirtyCache=false;
+		this.dirtyCache = false;
 	}
 
 	/**
@@ -117,7 +121,8 @@ public class LocationCatalogService extends Job {
 		if (null != hit) {
 			this.lastLocationAccess = LocationCacheAccessType.GENERATED;
 			this.storeOnCacheLocation( hit );
-			NeoComLogger.info( "[HIT-{}/{} ] Location {} generated from ESI data.", hits + "", access + "", locationId + "" );
+			LogWrapper.info( MessageFormat.format( "[HIT-{0}/{1} ] Location {2} generated from ESI data.",
+					hits, access, locationId ) );
 			return hit;
 		} else return null;
 	}
@@ -256,14 +261,14 @@ public class LocationCatalogService extends Job {
 		int access = locationsCacheStatistics.accountAccess( true );
 		this.lastLocationAccess = LocationCacheAccessType.MEMORY_ACCESS;
 		int hits = locationsCacheStatistics.getHits();
-		NeoComLogger.info( "[HIT-{}/{} ] Location {}  found at cache.",
-				hits + "", access + "", locationId + "" );
+		LogWrapper.info( MessageFormat.format( "[HIT-{0}/{1} ] Location {2} found at cache.",
+				hits, access, locationId ) );
 		return locationCache.get( locationId );
 	}
 
 	private void startService() {
 		// TODO - This is not required until the citadel structures get stored on the SDE database.
-//		this.verifySDERepository(); // Check that the LocationsCache table exists and verify the contents
+		//		this.verifySDERepository(); // Check that the LocationsCache table exists and verify the contents
 		this.readLocationsDataCache(); // Load the cache from the storage.
 		this.registerOnScheduler(); // Register on scheduler to update storage every some minutes
 	}
@@ -280,6 +285,7 @@ public class LocationCatalogService extends Job {
 	public static class Builder {
 		private LocationCatalogService onConstruction;
 
+// - C O N S T R U C T O R S
 		public Builder() {
 			this.onConstruction = new LocationCatalogService();
 		}
