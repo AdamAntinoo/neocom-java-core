@@ -77,7 +77,6 @@ clean.doFirst {
 
 // - T A S K   C O O R D I N A T I O N
 compileJava.dependsOn swaggerBuild
-publish.dependsOn build
 
 // - P U B L I S H I N G
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -97,12 +96,37 @@ artifacts {
 }
 publishing {
     publications {
-        jar(MavenPublication) {
+        maven(MavenPublication) {
             groupId = project.group
             version = project.version
             artifactId = project.archivesBaseName
             artifact(sourcesJar)
             artifact(javadocJar)
+
+            from components.java
+            pom {
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'AdamAntinoo'
+                        name = 'Adam Antinoo'
+                        email = 'adamantinoo.git@gmail.com'
+                    }
+                }
+            }
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
         }
     }
     repositories {

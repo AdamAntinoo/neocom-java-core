@@ -38,12 +38,37 @@ artifacts {
 }
 publishing {
     publications {
-        jar(MavenPublication) {
+        maven(MavenPublication) {
             groupId = project.group
             version = project.version
             artifactId = project.archivesBaseName
             artifact(sourcesJar)
             artifact(javadocJar)
+
+            from components.java
+            pom {
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'AdamAntinoo'
+                        name = 'Adam Antinoo'
+                        email = 'adamantinoo.git@gmail.com'
+                    }
+                }
+            }
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
         }
     }
     repositories {
@@ -79,5 +104,6 @@ dependencies {
 }
 // - N E O C O M   L I B R A R I E SB
 dependencies {
-    compileOnly files('libs/CoreBase.core-3.2.0.jar')
+    implementation 'org.bitbucket.dimensinfin:core-lib:3.2.0'
+//    compileOnly files('libs/CoreBase.core-3.2.0.jar')
 }
