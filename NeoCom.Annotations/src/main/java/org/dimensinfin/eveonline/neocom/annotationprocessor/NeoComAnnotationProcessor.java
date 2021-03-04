@@ -1,8 +1,6 @@
 package org.dimensinfin.eveonline.neocom.annotationprocessor;
 
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
@@ -18,7 +16,6 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
-import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 @AutoService(Processor.class)
@@ -30,10 +27,10 @@ public class NeoComAnnotationProcessor extends AbstractProcessor {
 		supported.add( "LogEnterExit" );
 	}
 
-// - C O N S T R U C T O R S
+	// - C O N S T R U C T O R S
 	private NeoComAnnotationProcessor() {}
 
-// - G E T T E R S   &   S E T T E R S
+	// - G E T T E R S   &   S E T T E R S
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
 		return supported;
@@ -46,17 +43,17 @@ public class NeoComAnnotationProcessor extends AbstractProcessor {
 
 	@Override
 	public boolean process( final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv ) {
-		final Set<? extends Element> logEnterExitTargets = roundEnv.getElementsAnnotatedWith( LogEnterExit.class );
-		final Iterator<? extends Element> it = logEnterExitTargets.iterator();
-		while (it.hasNext()) {
-			final Element targetMethod = it.next();
-			try {
-				NeoComLogger.info( MessageFormat.format( "targetMethod.getSimpleName().toString(): {0}", targetMethod.getSimpleName().toString() ) );
-				this.generateLogEnterExitWrapper( targetMethod.getSimpleName().toString(), targetMethod );
-			} catch (final IOException ioe) {
-				ioe.printStackTrace();
-			}
-		}
+//		final Set<? extends Element> logEnterExitTargets = roundEnv.getElementsAnnotatedWith( LogEnterExit.class );
+//		final Iterator<? extends Element> it = logEnterExitTargets.iterator();
+//		while (it.hasNext()) {
+//			final Element targetMethod = it.next();
+//			try {
+//				NeoComLogger.info( MessageFormat.format( "targetMethod.getSimpleName().toString(): {0}", targetMethod.getSimpleName().toString() ) );
+//				this.generateLogEnterExitWrapper( targetMethod.getSimpleName().toString(), targetMethod );
+//			} catch (final IOException ioe) {
+//				ioe.printStackTrace();
+//			}
+//		}
 		return true;
 	}
 
