@@ -5,7 +5,7 @@ apply plugin: 'project-report'
 
 // - P R O J E C T   D E F I N I T I O N
 group = 'org.dimensinfin.neocom'
-version = '0.20.0'
+version = '0.20.2'
 archivesBaseName = 'neocom-annotations'
 description = 'Set of annotations that it is specific to the NeoCom project.'
 

@@ -5,5 +5,6 @@
     "groupId": "org.dimensinfin.eveonline.neocom",
     "artifactId": "esi.swaggerapi",
     "artifactVersion": "1.7.2",
-    "library": "retrofit2"
+    "library": "retrofit2",
+    "serializableModel" : true
 }
