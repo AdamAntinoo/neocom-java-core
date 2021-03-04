@@ -69,8 +69,14 @@ workflows:
   version: 2
   neocom-core-stage:
     jobs:
-      - start-job
-
+      - start-job:
+          filters:
+            branches:
+              only:
+                - experimental
+                - development
+                - test
+                - master
       - compile-swagger-job:
           requires:
             - start-job
@@ -95,8 +101,6 @@ workflows:
   neocom-core-deploy:
     jobs:
       - start-job:
-          requires:
-            - start-job
           filters:
             tags:
               only: /0.*/
